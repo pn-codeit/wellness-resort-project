@@ -16,7 +16,6 @@ University group project: cloud-native web application for a fictional wellness 
 - Tobias Tronicek
 - Willi Siedlaczek
 
-```md
 ## Project Structure
 
 ```text
@@ -27,8 +26,11 @@ wellness-resort-project/
 ├── docker-compose.yml
 ├── .gitignore
 └── README.md
+```
 
 ## Start
 Later via Docker Compose:
+
 ```bash
 docker compose up
+```
