@@ -16,15 +16,17 @@ University group project: cloud-native web application for a fictional wellness 
 - Tobias Tronicek
 - Willi Siedlaczek
 
+```md
 ## Project Structure
+
+```text
 wellness-resort-project/
-│
-├─ frontend/  -> UI, Konfigurator, Shop, Wetteranzeige
-├─ backend/   -> API, Buchungen, Produkte, AI-Feature
-├─ docs/      -> Architektur, Skizzen, Screenshots, Aufgabenverteilung
-├─ docker-compose.yml
-├─ .gitignore
-└─ README.md
+├── frontend/              # UI, configurator, shop, weather display
+├── backend/               # API, bookings, products, AI feature
+├── docs/                  # architecture, sketches, screenshots, task distribution
+├── docker-compose.yml
+├── .gitignore
+└── README.md
 
 ## Start
 Later via Docker Compose:
