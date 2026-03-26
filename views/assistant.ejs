@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+
+<section class="page-section">
+  <h1>Wellness Assistant</h1>
+  <p>Ask our assistant anything about your stay, treatments, or wellness tips.</p>
+
+  <div class="chat-container">
+    <div class="chat-messages" id="chatMessages">
+      <div class="message assistant-message">
+        Hello! I'm your Serenity Resort assistant. How can I help you today?
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="userInput" placeholder="Type your message..." autocomplete="off" />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+</section>
+
+<script>
+  const messagesEl = document.getElementById('chatMessages');
+  const input = document.getElementById('userInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  // Conversation history sent to the backend so Gemini has context
+  const history = [];
+
+  function addMessage(text, role) {
+    const div = document.createElement('div');
+    div.className = `message ${role}-message`;
+    div.textContent = text;
+    messagesEl.appendChild(div);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function setLoading(on) {
+    sendBtn.disabled = on;
+    sendBtn.textContent = on ? '...' : 'Send';
+  }
+
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMessage(text, 'user');
+    history.push({ role: 'user', text });
+    input.value = '';
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, history: history.slice(0, -1) }),
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        addMessage(`Error: ${data.error}`, 'assistant');
+      } else {
+        addMessage(data.reply, 'assistant');
+        history.push({ role: 'assistant', text: data.reply });
+      }
+    } catch (err) {
+      addMessage('Sorry, something went wrong. Please try again.', 'assistant');
+    } finally {
+      setLoading(false);
+      input.focus();
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+</script>
+
+<%- include('partials/footer') %>

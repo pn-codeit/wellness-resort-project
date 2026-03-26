@@ -31,15 +31,23 @@ All services are intended to run together via Docker Compose.
 
 ```text
 wellness-resort-project/
-├── frontend/              # UI, configurator, shop, weather display
-├── backend/               # API, bookings, products, AI feature
-├── docs/                  # architecture, sketches, screenshots, task distribution
-├── docker-compose.yml
+├── public/                # Client side code
+├── routes/                # Server side routes
+├── docs/                  # Architecture, sketches, screenshots, task distribution
+├── views/                 # ejs views
 ├── .gitignore
 └── README.md
 ```
 
 ## Start
+For now with npm:
+- Enter your Gemini API key & app port in a `.env` file on the project root (see `.env.sample`)
+
+```bash
+npm install
+npm start
+```
+
 Later via Docker Compose:
 
 ```bash

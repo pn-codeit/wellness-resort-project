@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serenity Wellness Resort</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">Serenity Resort</div>
+      <nav>
+        <a href="/" class="<%= page === 'home' ? 'active' : '' %>">Home</a>
+        <a href="/booking" class="<%= page === 'booking' ? 'active' : '' %>">Booking</a>
+        <a href="/impressions" class="<%= page === 'impressions' ? 'active' : '' %>">Impressions</a>
+        <a href="/weather" class="<%= page === 'weather' ? 'active' : '' %>">Weather</a>
+        <a href="/assistant" class="<%= page === 'assistant' ? 'active' : '' %>">Assistant</a>
+      </nav>
+    </div>
+  </header>
+  <main>
