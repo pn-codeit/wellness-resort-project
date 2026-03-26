@@ -171,6 +171,28 @@ main {
   border-bottom-right-radius: 4px;
 }
 
+.chat-starters {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-top: 1px solid #c8ddd2;
+}
+
+.starter-btn {
+  background: #f0f8f4;
+  border: 1px solid #a8d5b5;
+  border-radius: 16px;
+  color: #2e5e4e;
+  cursor: pointer;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.85rem;
+  transition: background-color 0.2s;
+}
+
+.starter-btn:hover {
+  background-color: #d4edda;
+}
+
 .chat-input-area {
   display: flex;
   border-top: 1px solid #c8ddd2;

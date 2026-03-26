@@ -1,14 +1,18 @@
 <%- include('partials/header') %>
 
 <section class="page-section">
-  <h1>Wellness Assistant</h1>
-  <p>Ask our assistant anything about your stay, treatments, or wellness tips.</p>
+  <h1>Serenity Assistant</h1>
+  <p>Ask our assistant anything about your stay or things to do in the Oberstdorf area.</p>
 
   <div class="chat-container">
     <div class="chat-messages" id="chatMessages">
       <div class="message assistant-message">
         Hello! I'm your Serenity Resort assistant. How can I help you today?
       </div>
+    </div>
+    <div class="chat-starters" id="chatStarters">
+      <button class="starter-btn" data-msg="What are good restaurants?">What are good restaurants?</button>
+      <button class="starter-btn" data-msg="Tell me more about Oberstdorf.">Tell me more about Oberstdorf.</button>
     </div>
     <div class="chat-input-area">
       <input type="text" id="userInput" placeholder="Type your message..." autocomplete="off" />
@@ -70,8 +74,22 @@
     }
   }
 
-  sendBtn.addEventListener('click', sendMessage);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+  const starters = document.getElementById('chatStarters');
+
+  function hideStarters() {
+    starters.style.display = 'none';
+  }
+
+  document.querySelectorAll('.starter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      input.value = btn.dataset.msg;
+      hideStarters();
+      sendMessage();
+    });
+  });
+
+  sendBtn.addEventListener('click', () => { hideStarters(); sendMessage(); });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { hideStarters(); sendMessage(); } });
 </script>
 
 <%- include('partials/footer') %>
