@@ -7,6 +7,7 @@
   <div id="error" style="display:none; color:red;">Fehler beim Laden der Wetterdaten.</div>
 
   <div id="weather-content" style="display:none;">
+
     <div class="weather-current">
       <div id="temp-now" class="temp-big"></div>
       <div>
@@ -23,7 +24,27 @@
       <div class="stat-card"><span>Niederschlag</span><strong id="precip"></strong></div>
     </div>
 
-    <div class="forecast-label">7-Tage-Vorhersage</div>
+    <div class="sun-row">
+      <div class="sun-card">
+        <span class="sun-icon">🌅</span>
+        <div>
+          <div class="sun-label">Sonnenaufgang</div>
+          <div class="sun-time" id="sunrise"></div>
+        </div>
+      </div>
+      <div class="sun-card">
+        <span class="sun-icon">🌇</span>
+        <div>
+          <div class="sun-label">Sonnenuntergang</div>
+          <div class="sun-time" id="sunset"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Nächste 24 Stunden</div>
+    <div id="hourly" class="hourly-grid"></div>
+
+    <div class="section-label">7-Tage-Vorhersage</div>
     <div id="forecast" class="forecast-grid"></div>
 
     <div id="updated-at" class="updated-at"></div>
@@ -34,31 +55,32 @@
 
 <script>
 const WMO = {
-  0:  ['Klar', '☀️'],
-  1:  ['Überwiegend klar', '🌤️'],
-  2:  ['Teilweise bewölkt', '⛅'],
-  3:  ['Bedeckt', '☁️'],
-  45: ['Nebel', '🌫️'],
-  61: ['Leichter Regen', '🌧️'],
-  63: ['Mäßiger Regen', '🌧️'],
-  65: ['Starker Regen', '🌧️'],
-  71: ['Leichter Schneefall', '❄️'],
-  73: ['Mäßiger Schneefall', '❄️'],
-  75: ['Starker Schneefall', '❄️'],
-  80: ['Regenschauer', '🌦️'],
-  85: ['Schneeschauer', '🌨️'],
-  95: ['Gewitter', '⛈️'],
+  0:['Klar','☀️'], 1:['Überwiegend klar','🌤️'], 2:['Teilweise bewölkt','⛅'], 3:['Bedeckt','☁️'],
+  45:['Nebel','🌫️'], 48:['Eisnebel','🌫️'],
+  51:['Leichter Nieselregen','🌦️'], 53:['Mäßiger Nieselregen','🌦️'], 55:['Starker Nieselregen','🌧️'],
+  61:['Leichter Regen','🌧️'], 63:['Mäßiger Regen','🌧️'], 65:['Starker Regen','🌧️'],
+  71:['Leichter Schneefall','❄️'], 73:['Mäßiger Schneefall','❄️'], 75:['Starker Schneefall','❄️'],
+  80:['Leichte Regenschauer','🌦️'], 81:['Mäßige Regenschauer','🌧️'], 82:['Heftige Regenschauer','⛈️'],
+  85:['Leichte Schneeschauer','🌨️'], 86:['Starke Schneeschauer','🌨️'],
+  95:['Gewitter','⛈️'], 96:['Gewitter mit Hagel','⛈️'], 99:['Gewitter mit Hagel','⛈️'],
 };
 const DAYS = ['So','Mo','Di','Mi','Do','Fr','Sa'];
 
 async function loadWeather() {
   try {
-    const url = 'https://api.open-meteo.com/v1/forecast?latitude=47.41&longitude=10.28&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe%2FBerlin&forecast_days=7';
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=47.41&longitude=10.28' +
+      '&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m' +
+      '&hourly=temperature_2m,weather_code,precipitation_probability' +
+      '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset' +
+      '&timezone=Europe%2FBerlin&forecast_days=7';
+
     const res = await fetch(url);
     const d = await res.json();
     const c = d.current;
     const daily = d.daily;
+    const hourly = d.hourly;
 
+    // Aktuelles Wetter
     const [condText, icon] = WMO[c.weather_code] || ['Unbekannt','🌡️'];
     document.getElementById('temp-now').textContent = Math.round(c.temperature_2m) + '°C';
     document.getElementById('condition-now').textContent = condText;
@@ -68,7 +90,34 @@ async function loadWeather() {
     document.getElementById('humidity').textContent = Math.round(c.relative_humidity_2m) + '%';
     document.getElementById('precip').textContent = c.precipitation.toFixed(1) + ' mm';
 
+    // Sonnenauf- und untergang (heute = index 0)
+    const sunriseTime = new Date(daily.sunrise[0]);
+    const sunsetTime = new Date(daily.sunset[0]);
+    document.getElementById('sunrise').textContent =
+      sunriseTime.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}) + ' Uhr';
+    document.getElementById('sunset').textContent =
+      sunsetTime.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}) + ' Uhr';
+
+    // Stündliche Vorhersage – nächste 24 Stunden ab jetzt
+    const nowIndex = hourly.time.findIndex(t => new Date(t) >= new Date(c.time));
+    const hc = document.getElementById('hourly');
+    hc.innerHTML = '';
+    for (let i = nowIndex; i < nowIndex + 24; i++) {
+      const time = new Date(hourly.time[i]);
+      const [, hIcon] = WMO[hourly.weather_code[i]] || ['','🌡️'];
+      const prob = hourly.precipitation_probability[i] ?? 0;
+      hc.innerHTML += `
+        <div class="hourly-card">
+          <div class="hourly-time">${time.getHours()}:00</div>
+          <div class="hourly-icon">${hIcon}</div>
+          <div class="hourly-temp">${Math.round(hourly.temperature_2m[i])}°</div>
+          <div class="hourly-prob">${prob}%</div>
+        </div>`;
+    }
+
+    // 7-Tage-Vorhersage
     const fc = document.getElementById('forecast');
+    fc.innerHTML = '';
     for (let i = 0; i < 7; i++) {
       const date = new Date(daily.time[i]);
       const [, fIcon] = WMO[daily.weather_code[i]] || ['','🌡️'];
@@ -89,6 +138,7 @@ async function loadWeather() {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('weather-content').style.display = 'block';
   } catch(e) {
+    console.error(e);
     document.getElementById('loading').style.display = 'none';
     document.getElementById('error').style.display = 'block';
   }
