@@ -1,8 +1,97 @@
 <%- include('partials/header') %>
 
 <section class="page-section">
-  <h1>Weather</h1>
-  <p>This page is coming soon. Stay tuned!</p>
+  <h1>Wetter</h1>
+
+  <div id="loading">Wetterdaten werden geladen…</div>
+  <div id="error" style="display:none; color:red;">Fehler beim Laden der Wetterdaten.</div>
+
+  <div id="weather-content" style="display:none;">
+    <div class="weather-current">
+      <div id="temp-now" class="temp-big"></div>
+      <div>
+        <div class="city-name">Oberstdorf</div>
+        <div id="condition-now"></div>
+      </div>
+      <div id="icon-now" class="weather-icon"></div>
+    </div>
+
+    <div class="weather-stats">
+      <div class="stat-card"><span>Gefühlt</span><strong id="feels-like"></strong></div>
+      <div class="stat-card"><span>Wind</span><strong id="wind"></strong></div>
+      <div class="stat-card"><span>Luftfeuchte</span><strong id="humidity"></strong></div>
+      <div class="stat-card"><span>Niederschlag</span><strong id="precip"></strong></div>
+    </div>
+
+    <div class="forecast-label">7-Tage-Vorhersage</div>
+    <div id="forecast" class="forecast-grid"></div>
+
+    <div id="updated-at" class="updated-at"></div>
+  </div>
 </section>
 
 <%- include('partials/footer') %>
+
+<script>
+const WMO = {
+  0:  ['Klar', '☀️'],
+  1:  ['Überwiegend klar', '🌤️'],
+  2:  ['Teilweise bewölkt', '⛅'],
+  3:  ['Bedeckt', '☁️'],
+  45: ['Nebel', '🌫️'],
+  61: ['Leichter Regen', '🌧️'],
+  63: ['Mäßiger Regen', '🌧️'],
+  65: ['Starker Regen', '🌧️'],
+  71: ['Leichter Schneefall', '❄️'],
+  73: ['Mäßiger Schneefall', '❄️'],
+  75: ['Starker Schneefall', '❄️'],
+  80: ['Regenschauer', '🌦️'],
+  85: ['Schneeschauer', '🌨️'],
+  95: ['Gewitter', '⛈️'],
+};
+const DAYS = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+
+async function loadWeather() {
+  try {
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=47.41&longitude=10.28&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe%2FBerlin&forecast_days=7';
+    const res = await fetch(url);
+    const d = await res.json();
+    const c = d.current;
+    const daily = d.daily;
+
+    const [condText, icon] = WMO[c.weather_code] || ['Unbekannt','🌡️'];
+    document.getElementById('temp-now').textContent = Math.round(c.temperature_2m) + '°C';
+    document.getElementById('condition-now').textContent = condText;
+    document.getElementById('icon-now').textContent = icon;
+    document.getElementById('feels-like').textContent = Math.round(c.apparent_temperature) + '°C';
+    document.getElementById('wind').textContent = Math.round(c.wind_speed_10m) + ' km/h';
+    document.getElementById('humidity').textContent = Math.round(c.relative_humidity_2m) + '%';
+    document.getElementById('precip').textContent = c.precipitation.toFixed(1) + ' mm';
+
+    const fc = document.getElementById('forecast');
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(daily.time[i]);
+      const [, fIcon] = WMO[daily.weather_code[i]] || ['','🌡️'];
+      fc.innerHTML += `
+        <div class="forecast-card">
+          <div class="forecast-day">${DAYS[date.getDay()]}</div>
+          <div class="forecast-date">${date.getDate()}.${date.getMonth()+1}.</div>
+          <div class="forecast-icon">${fIcon}</div>
+          <div class="forecast-max">${Math.round(daily.temperature_2m_max[i])}°</div>
+          <div class="forecast-min">${Math.round(daily.temperature_2m_min[i])}°</div>
+        </div>`;
+    }
+
+    const now = new Date();
+    document.getElementById('updated-at').textContent =
+      'Aktualisiert: ' + now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('weather-content').style.display = 'block';
+  } catch(e) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error').style.display = 'block';
+  }
+}
+loadWeather();
+</script>
