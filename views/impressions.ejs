@@ -1,8 +1,236 @@
 <%- include('partials/header') %>
 
-<section class="page-section">
-  <h1>Impressions</h1>
-  <p>This page is coming soon. Stay tuned!</p>
-</section>
+  <main>
+
+  <section class="impressions-hero">
+    <div class="tagline">Serenity Resort</div>
+    <h1>It looks so relaxing.</h1>
+    <p>A glimpse of what awaits you — the calm, the luxury, the quiet moments.</p>
+  </section>
+
+  <section class="gallery-section">
+
+    <div class="filter-tabs">
+      <button class="filter-btn active" data-filter="lounge">Lounge</button>
+      <button class="filter-btn" data-filter="spa">Spa & Massage</button>
+      <button class="filter-btn" data-filter="indoor">Indoor Pool</button>
+      <button class="filter-btn" data-filter="outdoor">Outdoor Pool</button>
+      <button class="filter-btn" data-filter="sauna">Steam Rooms</button>
+      <button class="filter-btn" data-filter="videos">Videos</button>
+    </div>
+
+    <div class="gallery-grid" id="galleryGrid">
+
+      <!-- Lounge -->
+      <div class="gallery-item" data-category="lounge">
+        <img src="https://i.imgur.com/atgzSsL.jpeg" alt="Reception" loading="lazy">
+        <div class="gallery-overlay"><span>Reception</span></div>
+      </div>
+
+       <div class="gallery-item wide" data-category="lounge">
+        <img src="https://i.imgur.com/UdycZyF.jpeg" alt="Meditation Lounge" loading="lazy">
+        <div class="gallery-overlay"><span>Meditation Lounge</span></div>
+      </div>
+
+      <div class="gallery-item tall" data-category="lounge">
+        <img src="https://images.unsplash.com/photo-1672983666814-a0e43bd3b1b9?w=900&auto=format&fit=crop&q=60" alt="Spa relaxation lounge" loading="lazy">
+        <div class="gallery-overlay"><span>Relaxation Lounge</span></div>
+      </div>
+
+      <div class="gallery-item wide" data-category="lounge">
+        <img src="https://i.imgur.com/C30SmY5.jpeg" alt="Bar" loading="lazy">
+        <div class="gallery-overlay"><span>Wellness Bar</span></div>
+      </div>
+
+      <div class="gallery-item" data-category="lounge">
+        <img src="https://i.imgur.com/jfNzKZV.jpeg" alt="Restaurant" loading="lazy">
+        <div class="gallery-overlay"><span>Restaurant</span></div>
+      </div>
+
+      <!-- Spa & Massage -->
+      <div class="gallery-item" data-category="spa">
+        <img src="https://images.unsplash.com/photo-1600334129128-685c5582fd35?w=900&auto=format&fit=crop&q=60" alt="Spa treatment" loading="lazy">
+        <div class="gallery-overlay"><span>Spa</span></div>
+      </div>
+
+
+      <div class="gallery-item wide" data-category="spa">
+        <img src="https://images.unsplash.com/photo-1639162906614-0603b0ae95fd?w=900&auto=format&fit=crop&q=60" alt="Spa relaxation" loading="lazy">
+        <div class="gallery-overlay"><span>Massage</span></div>
+      </div>
+
+      <div class="gallery-item tall" data-category="spa">
+        <img src="https://images.unsplash.com/photo-1712725213051-8d7d6a52edaf?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fG1hc3NhZ2UlMjByb29tfGVufDB8fDB8fHww" alt="Spa relaxation" loading="lazy">
+        <div class="gallery-overlay"><span>Massage</span></div>
+      </div>
+
+      <div class="gallery-item" data-category="spa">
+        <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=900&auto=format&fit=crop&q=60" alt="Spa treatment room" loading="lazy">
+        <div class="gallery-overlay"><span>Spa</span></div>
+      </div>
+
+      <div class="gallery-item" data-category="spa">
+        <img src="https://plus.unsplash.com/premium_photo-1683134297492-cce5fc6dae31?w=900&auto=format&fit=crop&q=60" alt="Massage" loading="lazy">
+        <div class="gallery-overlay"><span>Massage</span></div>
+      </div>
+
+      <!-- Indoor Pool -->
+      <div class="gallery-item wide" data-category="indoor">
+        <img src="https://i.imgur.com/k0pN3gF.jpeg" alt="Indoor swimming pool" loading="lazy">
+        <div class="gallery-overlay"><span>Indoor Pool</span></div>
+      </div>
+
+      <div class="gallery-item tall" data-category="indoor">
+        <img src="https://images.unsplash.com/photo-1731336477519-b0a34d2e3eea?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGluZG9vciUyMHBvb2x8ZW58MHx8MHx8fDA%3D" alt="Indoor pool details" loading="lazy">
+        <div class="gallery-overlay"><span>Indoor Pool</span></div>
+      </div>
+
+       <div class="gallery-item" data-category="indoor">
+        <img src="https://i.imgur.com/Sd7HeW5.jpeg" alt="Indoor pool details" loading="lazy">
+        <div class="gallery-overlay"><span>Kiddies Pool</span></div>
+      </div>
+
+      <!-- Outdoor Pool -->
+      <div class="gallery-item" data-category="outdoor">
+        <img src="https://images.unsplash.com/photo-1712129461388-8a817640c849?w=900&auto=format&fit=crop&q=60" alt="Outdoor pool with view" loading="lazy">
+        <div class="gallery-overlay"><span>Outdoor Pool</span></div>
+      </div>
+
+      <div class="gallery-item tall" data-category="outdoor">
+        <img src="https://plus.unsplash.com/premium_photo-1705266815981-4d3defacc4a5?w=900&auto=format&fit=crop&q=60" alt="Infinity pool" loading="lazy">
+        <div class="gallery-overlay"><span>Outdoor Pool</span></div>
+      </div>
+
+      <div class="gallery-item" data-category="outdoor">
+        <img src="https://plus.unsplash.com/premium_photo-1677687191072-8b3156d30888?w=900&auto=format&fit=crop&q=60" alt="Pool sunset" loading="lazy">
+        <div class="gallery-overlay"><span>Outdoor Pool</span></div>
+      </div>
+
+      <!-- Steam Room / Sauna -->
+      <div class="gallery-item" data-category="sauna">
+        <img src="https://images.unsplash.com/photo-1717356495389-6ab1e5ff9d84?w=900&auto=format&fit=crop&q=60" alt="Steam room" loading="lazy">
+        <div class="gallery-overlay"><span>Sauna</span></div>
+      </div>
+
+      <div class="gallery-item tall" data-category="sauna">
+        <img src="https://images.unsplash.com/photo-1660735698223-23a4edefa264?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2F1bmF8ZW58MHx8MHx8fDA%3D" alt="Sauna steam" loading="lazy">
+        <div class="gallery-overlay"><span>Steam Rocks</span></div>
+      </div>
+
+      <div class="gallery-item" data-category="sauna">
+        <img src="https://images.unsplash.com/photo-1712659604528-b179a3634560?w=900&auto=format&fit=crop&q=60" alt="Sauna interior" loading="lazy">
+        <div class="gallery-overlay"><span>Sauna</span></div>
+      </div>
+
+    </div><!-- end gallery-grid -->
+  </section>
+
+  <!-- Videos -->
+<div class="gallery-item video-item" data-category="videos">
+<iframe 
+  width="100%" 
+  height="500"
+  src="https://www.youtube.com/embed/7FNFxUt6C3k?autoplay=1&mute=1&controls=0&rel=0&loop=1&playlist=7FNFxUt6C3k"
+  frameborder="0"
+  allow="autoplay; encrypted-media"
+  allowfullscreen>
+</iframe>
+</div>
+
+  <!-- Lightbox -->
+  <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+    <button class="lightbox-prev" id="lightboxPrev">&#8249;</button>
+    <button class="lightbox-next" id="lightboxNext">&#8250;</button>
+    <div class="lightbox-content">
+      <img src="" alt="" id="lightboxImg">
+      <p class="lightbox-caption" id="lightboxCaption"></p>
+    </div>
+  </div>
+
+  </main>
+
+  <script src="/js/main.js"></script>
+  <script>
+  (function () {
+    const btns  = document.querySelectorAll('.filter-btn');
+    const items = document.querySelectorAll('.gallery-item');
+
+    function applyFilter(filter) {
+      items.forEach(item => {
+        item.style.display = item.dataset.category === filter ? '' : 'none';
+      });
+    }
+
+    // Show lounge on first load
+    applyFilter('lounge');
+
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilter(btn.dataset.filter);
+      });
+    });
+
+    // Lightbox
+    const lightbox  = document.getElementById('lightbox');
+    const backdrop  = document.getElementById('lightboxBackdrop');
+    const lbImg     = document.getElementById('lightboxImg');
+    const lbCaption = document.getElementById('lightboxCaption');
+    let current = 0;
+    let visible = [];
+
+    function getVisible() {
+      return [...items].filter(i => i.style.display !== 'none');
+    }
+
+    function open(idx) {
+      visible = getVisible();
+      current = idx;
+      const item = visible[current];
+      const img  = item.querySelector('img');
+      const cap  = item.querySelector('.gallery-overlay span');
+      lbImg.src  = img.src;
+      lbImg.alt  = img.alt;
+      lbCaption.textContent = cap ? cap.textContent : '';
+      lightbox.classList.add('open');
+      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      lightbox.classList.remove('open');
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    items.forEach(item => {
+      item.addEventListener('click', () => {
+        visible = getVisible();
+        open(visible.indexOf(item));
+      });
+    });
+
+    document.getElementById('lightboxClose').addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    document.getElementById('lightboxPrev').addEventListener('click', e => {
+      e.stopPropagation();
+      open((current - 1 + visible.length) % visible.length);
+    });
+    document.getElementById('lightboxNext').addEventListener('click', e => {
+      e.stopPropagation();
+      open((current + 1) % visible.length);
+    });
+
+    document.addEventListener('keydown', e => {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape')     close();
+      if (e.key === 'ArrowLeft')  open((current - 1 + visible.length) % visible.length);
+      if (e.key === 'ArrowRight') open((current + 1) % visible.length);
+    });
+  })();
+  </script>
 
 <%- include('partials/footer') %>
