@@ -52,7 +52,17 @@ async function createBooking(payload) {
 async function getShopCatalog(lang) {
   const remote = await requestJson(`${serviceUrls.shop}/catalog?lang=${lang}`);
   const base = content.shop[lang];
-  return remote || { ...base, products: content.products };
+  const data = remote || { ...base, products: content.products };
+
+  return {
+    ...data,
+    products: data.products.map((product) => ({
+      ...product,
+      mediaUrl: product.media && product.media.objectName
+        ? `/shop/media/${encodeURIComponent(product.media.objectName)}`
+        : null
+    }))
+  };
 }
 
 async function createOrder(payload) {
@@ -62,6 +72,23 @@ async function createOrder(payload) {
   });
 
   return remote || { reference: `OR-${Date.now()}` };
+}
+
+async function getShopMedia(objectName) {
+  if (!serviceUrls.shop || !objectName) return null;
+
+  try {
+    const res = await fetch(`${serviceUrls.shop}/media/${encodeURIComponent(objectName)}`, {
+      headers: {
+        Accept: '*/*'
+      }
+    });
+
+    if (!res.ok) return null;
+    return res;
+  } catch (_err) {
+    return null;
+  }
 }
 
 async function getImpressions(lang) {
@@ -260,6 +287,7 @@ module.exports = {
   createBooking,
   getShopCatalog,
   createOrder,
+  getShopMedia,
   getImpressions,
   getImpressionMedia,
   getWeather,

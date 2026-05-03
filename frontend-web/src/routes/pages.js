@@ -61,6 +61,29 @@ router.get('/shop', async (req, res, next) => {
   }
 });
 
+router.get(/^\/shop\/media\/(.+)$/, async (req, res, next) => {
+  try {
+    const objectName = decodeURIComponent(req.params[0] || '');
+    const media = await serviceClients.getShopMedia(objectName);
+
+    if (!media) {
+      return res.status(404).send('Media not found');
+    }
+
+    const contentType = media.headers.get('content-type');
+    const cacheControl = media.headers.get('cache-control');
+    const contentLength = media.headers.get('content-length');
+
+    if (contentType) res.setHeader('Content-Type', contentType);
+    if (cacheControl) res.setHeader('Cache-Control', cacheControl);
+    if (contentLength) res.setHeader('Content-Length', contentLength);
+
+    return Readable.fromWeb(media.body).pipe(res);
+  } catch (err) {
+    return next(err);
+  }
+});
+
 router.get('/impressions', async (req, res, next) => {
   try {
     const lang = getLang(req);

@@ -39,8 +39,14 @@ services:
       SERVICE_NAME: shop-service
       PORT: 3000
       MYSQL_HOST: mysql
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-wellness_resort}
+      MYSQL_USER: ${MYSQL_USER:-wellness}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-wellness}
       REDIS_HOST: redis
       MINIO_ENDPOINT: http://minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_SHOP_BUCKET: ${MINIO_SHOP_BUCKET:-wellness-shop}
     depends_on:
       mysql:
         condition: service_healthy

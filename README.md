@@ -13,10 +13,10 @@ The only host-facing application service is:
 - Frontend: http://localhost:8080
 - Health: http://localhost:8080/health
 
-The backend services are scaffolded as internal placeholders for later implementation:
+The backend services are internal-only Docker services:
 
 - `services/booking-service`
-- `services/shop-service`
+- `services/shop-service` (implemented with MySQL catalog/orders, Redis catalog cache, and MinIO product media)
 - `services/impressions-service` (implemented with MinIO-backed media storage)
 - `services/assistant-service`
 
