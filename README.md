@@ -17,11 +17,10 @@ The backend services are scaffolded as internal placeholders for later implement
 
 - `services/booking-service`
 - `services/shop-service`
-- `services/impressions-service`
-- `services/weather-service`
+- `services/impressions-service` (implemented with MinIO-backed media storage)
 - `services/assistant-service`
 
-MySQL, Redis, and MinIO are included in `docker-compose.yml` for the later service implementations.
+Weather data is fetched directly by the frontend server from the external Open-Meteo API. MySQL, Redis, and MinIO are included in `docker-compose.yml` for the service implementations.
 
 ## Local Frontend
 

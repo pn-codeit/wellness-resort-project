@@ -54,19 +54,13 @@ services:
     environment:
       SERVICE_NAME: impressions-service
       PORT: 3000
-      MYSQL_HOST: mysql
       MINIO_ENDPOINT: http://minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      MINIO_BUCKET: ${MINIO_IMPRESSIONS_BUCKET:-wellness-impressions}
     depends_on:
-      mysql:
-        condition: service_healthy
       minio:
         condition: service_started
-
-  weather-service:
-    build: ./services/weather-service
-    environment:
-      SERVICE_NAME: weather-service
-      PORT: 3000
 
   assistant-service:
     build: ./services/assistant-service

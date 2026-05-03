@@ -67,7 +67,34 @@ async function createOrder(payload) {
 async function getImpressions(lang) {
   const remote = await requestJson(`${serviceUrls.impressions}/impressions?lang=${lang}`);
   const base = content.impressions[lang];
-  return remote || { ...base, items: content.galleryItems, videos: content.videos };
+  const data = remote || { ...base, items: content.galleryItems, videos: content.videos };
+
+  return {
+    ...data,
+    items: data.items.map((item) => ({
+      ...item,
+      mediaUrl: item.media && item.media.objectName
+        ? `/impressions/media/${encodeURIComponent(item.media.objectName)}`
+        : null
+    }))
+  };
+}
+
+async function getImpressionMedia(objectName) {
+  if (!serviceUrls.impressions || !objectName) return null;
+
+  try {
+    const res = await fetch(`${serviceUrls.impressions}/media/${encodeURIComponent(objectName)}`, {
+      headers: {
+        Accept: '*/*'
+      }
+    });
+
+    if (!res.ok) return null;
+    return res;
+  } catch (_err) {
+    return null;
+  }
 }
 
 function wmoToCondition(code) {
@@ -234,6 +261,7 @@ module.exports = {
   getShopCatalog,
   createOrder,
   getImpressions,
+  getImpressionMedia,
   getWeather,
   getAssistantAdvice
 };
