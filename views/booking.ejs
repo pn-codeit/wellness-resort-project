@@ -1,8 +1,66 @@
-<%- include('partials/header') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>Complete Your Booking</h1>
+    <p>Enter your details to finish your wellness vacation booking.</p>
+  </header>
 
-<section class="page-section">
-  <h1>Booking</h1>
-  <p>This page is coming soon. Stay tuned!</p>
-</section>
+  <main class="container booking-layout">
+    <section class="booking-form-section">
+      <form id="booking-form">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input id="firstName" name="firstName" type="text" required />
+        </div>
 
-<%- include('partials/footer') %>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input id="lastName" name="lastName" type="text" required />
+        </div>
+
+        <div class="form-group">
+          <label for="street">Street / House Number</label>
+          <input id="street" name="street" type="text" required />
+        </div>
+
+        <div class="form-group">
+          <label for="zipCity">ZIP / City</label>
+          <input id="zipCity" name="zipCity" type="text" required />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone (optional)</label>
+          <input id="phone" name="phone" type="text" />
+        </div>
+
+        <button type="submit">Buy</button>
+      </form>
+    </section>
+
+    <aside class="summary">
+      <h2>Booking Summary</h2>
+      <p><strong>Duration:</strong> <span id="booking-duration">-</span></p>
+      <p><strong>Room:</strong> <span id="booking-room">-</span></p>
+      <p><strong>Package:</strong> <span id="booking-package">-</span></p>
+      <p><strong>Extras:</strong> <span id="booking-extras">-</span></p>
+      <hr />
+      <p class="price"><strong>Total:</strong> €<span id="booking-price">0</span></p>
+      <p id="booking-message"></p>
+    </aside>
+  </main>
+
+  <script src="/js/booking.js"></script>
+</body>
+</html>

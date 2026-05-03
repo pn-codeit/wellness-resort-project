@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>Build Your Wellness Stay</h1>
+    <p>Create your personal wellness vacation package.</p>
+  </header>
+
+  <main class="container">
+    <section class="configurator">
+      <div class="config-section">
+        <h2>1. Select Duration</h2>
+        <select id="duration">
+          <option value="2">2 Nights</option>
+          <option value="3">3 Nights</option>
+          <option value="5">5 Nights</option>
+        </select>
+      </div>
+
+      <div class="config-section">
+        <h2>2. Select Room</h2>
+        <div id="room-options" class="card-grid"></div>
+      </div>
+
+      <div class="config-section">
+        <h2>3. Select Package</h2>
+        <div id="package-options" class="card-grid"></div>
+      </div>
+
+      <div class="config-section">
+        <h2>4. Select Extras</h2>
+        <div id="extra-options" class="extra-list"></div>
+      </div>
+    </section>
+
+    <aside class="summary">
+      <h2>Your Stay</h2>
+      <p><strong>Duration:</strong> <span id="summary-duration">2 Nights</span></p>
+      <p><strong>Room:</strong> <span id="summary-room">Not selected</span></p>
+      <p><strong>Package:</strong> <span id="summary-package">Not selected</span></p>
+      <p><strong>Extras:</strong> <span id="summary-extras">None</span></p>
+      <hr />
+      <p class="price"><strong>Total:</strong> €<span id="summary-price">0</span></p>
+
+      <button id="continue-btn">Continue to Booking</button>
+    </aside>
+  </main>
+
+  <script src="/js/configurator.js"></script>
+</body>
+</html>
