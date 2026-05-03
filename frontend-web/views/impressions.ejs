@@ -1,0 +1,49 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="content-page impressions-page">
+  <header class="page-header">
+    <h1><%= impressions.title %></h1>
+    <p><%= impressions.subtitle %></p>
+  </header>
+
+  <section>
+    <h2 class="section-title"><%= impressions.photosTitle %></h2>
+    <div class="gallery-grid">
+      <% impressions.items.forEach((item) => { %>
+        <% const cat = lang === 'de' ? item.cat_de : item.cat_en; %>
+        <% const label = lang === 'de' ? item.label_de : item.label_en; %>
+        <article class="gallery-card">
+          <div class="gallery-art" style="--c1: <%= item.color1 %>; --c2: <%= item.color2 %>">
+            <svg viewBox="0 0 80 60" aria-hidden="true">
+              <polygon points="8,52 30,16 48,52"></polygon>
+              <polygon points="32,52 54,22 74,52"></polygon>
+              <circle cx="58" cy="16" r="8"></circle>
+            </svg>
+          </div>
+          <div>
+            <small><%= cat %></small>
+            <h3><%= label %></h3>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="video-section">
+    <h2 class="section-title"><%= impressions.videosTitle %></h2>
+    <div class="video-grid">
+      <% impressions.videos.forEach((video) => { %>
+        <article class="video-card">
+          <iframe src="https://www.youtube.com/embed/<%= video.youtubeId %>?rel=0&modestbranding=1" title="<%= lang === 'de' ? video.title_de : video.title_en %>" allowfullscreen></iframe>
+          <div>
+            <h3><%= lang === 'de' ? video.title_de : video.title_en %></h3>
+            <p><%= lang === 'de' ? video.desc_de : video.desc_en %></p>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

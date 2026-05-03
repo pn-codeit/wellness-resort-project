@@ -1,0 +1,67 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="content-page shop-page" data-shop-root>
+  <header class="page-header split">
+    <div>
+      <h1><%= shop.title %></h1>
+      <p><%= shop.subtitle %></p>
+    </div>
+    <button class="button dark" type="button" data-open-cart><%= shop.cartTitle %> <span data-cart-count>0</span></button>
+  </header>
+
+  <div class="filter-row" data-filter-row>
+    <% shop.categories.forEach((cat, index) => { %>
+      <button class="<%= index === 0 ? 'active' : '' %>" type="button" data-category="<%= cat %>"><%= cat %></button>
+    <% }) %>
+  </div>
+
+  <section class="product-grid">
+    <% shop.products.forEach((product) => { %>
+      <% const name = lang === 'de' ? product.name_de : product.name_en; %>
+      <% const desc = lang === 'de' ? product.desc_de : product.desc_en; %>
+      <% const cat = lang === 'de' ? product.cat_de : product.cat_en; %>
+      <article class="product-card" data-product-card data-category="<%= cat %>">
+        <div class="product-art" style="--product-color: <%= product.color %>">
+          <svg width="88" height="88" viewBox="0 0 80 80" aria-hidden="true">
+            <rect x="10" y="20" width="60" height="45" rx="8"></rect>
+            <rect x="20" y="10" width="40" height="20" rx="4"></rect>
+            <circle cx="40" cy="42" r="12"></circle>
+          </svg>
+          <span><%= product.price.toFixed(2) %> €</span>
+        </div>
+        <div class="product-body">
+          <small><%= cat %></small>
+          <h2><%= name %></h2>
+          <p><%= desc %></p>
+          <button class="button dark small" type="button" data-add-product='<%- JSON.stringify({ id: product.id, name, price: product.price, color: product.color }) %>'><%= shop.add %></button>
+        </div>
+      </article>
+    <% }) %>
+  </section>
+
+  <div class="drawer-backdrop" data-cart hidden>
+    <aside class="cart-drawer">
+      <button class="close-button" type="button" data-close-cart aria-label="Close">×</button>
+      <h2><%= shop.cartTitle %></h2>
+      <div data-cart-items></div>
+      <p class="cart-empty" data-cart-empty><%= shop.empty %></p>
+      <div class="total-row">
+        <span><%= shop.total %></span>
+        <strong data-cart-total>0.00 €</strong>
+      </div>
+      <form method="post" action="/shop/orders" class="checkout-form">
+        <input type="hidden" name="lang" value="<%= lang %>">
+        <input type="hidden" name="items" data-cart-payload value="[]">
+        <label><span><%= shop.labels.name %></span><input required name="name" type="text"></label>
+        <label><span><%= shop.labels.email %></span><input required name="email" type="email"></label>
+        <label><span><%= shop.labels.address %></span><input required name="address" type="text"></label>
+        <label><span><%= shop.labels.city %></span><input required name="city" type="text"></label>
+        <button class="button gold wide" type="submit"><%= shop.submit %></button>
+      </form>
+    </aside>
+  </div>
+</main>
+
+<script src="/js/shop.js"></script>
+<%- include('partials/footer') %>

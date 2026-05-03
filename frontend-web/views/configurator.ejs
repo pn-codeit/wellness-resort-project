@@ -1,0 +1,100 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="content-page configurator-page" data-booking-root>
+  <header class="page-header">
+    <h1><%= booking.title %></h1>
+    <p><%= booking.subtitle %></p>
+  </header>
+
+  <form class="config-layout" method="post" action="/booking">
+    <input type="hidden" name="lang" value="<%= lang %>">
+    <input type="hidden" name="estimatedTotal" data-total-input value="0">
+
+    <section class="config-column">
+      <div class="form-section">
+        <h2><%= booking.durationTitle %></h2>
+        <div class="choice-grid compact">
+          <% booking.durations.forEach((item, index) => { %>
+            <label class="choice-card">
+              <input type="radio" name="duration" value="<%= item.id %>" data-price="<%= item.price %>" data-nights="<%= item.nights %>" <%= index === 0 ? 'checked' : '' %>>
+              <span class="choice-body">
+                <strong><%= item.label %></strong>
+                <small><%= item.nights %> <%= booking.nightsLabel %></small>
+                <b>ab <%= item.price %> €</b>
+              </span>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2><%= booking.treatmentsTitle %></h2>
+        <div class="choice-grid">
+          <% booking.treatments.forEach((item) => { %>
+            <label class="choice-card">
+              <input type="checkbox" name="treatments" value="<%= item.id %>" data-price="<%= item.price %>">
+              <span class="choice-body">
+                <strong><%= item.label %></strong>
+                <small><%= item.desc %></small>
+                <b>+ <%= item.price %> €</b>
+              </span>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2><%= booking.roomTitle %></h2>
+        <div class="choice-list">
+          <% booking.rooms.forEach((item, index) => { %>
+            <label class="choice-card horizontal">
+              <input type="radio" name="room" value="<%= item.id %>" data-price-per-night="<%= item.pricePerNight %>" <%= index === 0 ? 'checked' : '' %>>
+              <span class="choice-body">
+                <strong><%= item.label %></strong>
+                <small><%= item.desc %></small>
+              </span>
+              <b><%= item.pricePerNight > 0 ? `+ ${item.pricePerNight} €/Nacht` : booking.included %></b>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2><%= booking.extrasTitle %></h2>
+        <div class="choice-grid">
+          <% booking.extras.forEach((item) => { %>
+            <label class="choice-card">
+              <input type="checkbox" name="extras" value="<%= item.id %>" data-price="<%= item.price || 0 %>" data-price-per-night="<%= item.pricePerNight || 0 %>">
+              <span class="choice-body">
+                <strong><%= item.label %></strong>
+                <small><%= item.desc %></small>
+                <b><%= item.pricePerNight ? `+ ${item.pricePerNight} €/Nacht` : `+ ${item.price} €` %></b>
+              </span>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+
+    <aside class="booking-sidebar">
+      <div class="sticky-panel">
+        <h2><%= booking.formTitle %></h2>
+        <label><span><%= booking.labels.name %></span><input required name="name" type="text"></label>
+        <label><span><%= booking.labels.email %></span><input required name="email" type="email"></label>
+        <label><span><%= booking.labels.phone %></span><input required name="phone" type="tel"></label>
+        <label><span><%= booking.labels.address %></span><input required name="address" type="text"></label>
+        <label><span><%= booking.labels.city %></span><input required name="city" type="text"></label>
+        <label><span><%= booking.labels.arrive %></span><input required name="arrive" type="date"></label>
+        <div class="total-row">
+          <span><%= booking.total %></span>
+          <strong data-total>0 €</strong>
+        </div>
+        <button class="button gold wide" type="submit"><%= booking.submit %></button>
+      </div>
+    </aside>
+  </form>
+</main>
+
+<script src="/js/configurator.js"></script>
+<%- include('partials/footer') %>

@@ -1,0 +1,44 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="page-enter">
+  <section class="hero">
+    <svg class="leaf-pattern" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <ellipse cx="120" cy="80" rx="80" ry="180" transform="rotate(-30 120 80)"></ellipse>
+      <ellipse cx="700" cy="100" rx="60" ry="150" transform="rotate(20 700 100)"></ellipse>
+      <ellipse cx="60" cy="420" rx="50" ry="130" transform="rotate(15 60 420)"></ellipse>
+      <ellipse cx="750" cy="450" rx="70" ry="160" transform="rotate(-20 750 450)"></ellipse>
+      <ellipse cx="250" cy="200" rx="40" ry="100" transform="rotate(-45 250 200)"></ellipse>
+      <ellipse cx="580" cy="300" rx="45" ry="110" transform="rotate(35 580 300)"></ellipse>
+    </svg>
+    <div class="hero-inner">
+      <p class="eyebrow"><%= home.heroSub %></p>
+      <h1><%= home.heroTitle %></h1>
+      <div class="button-row">
+        <a class="button gold" href="/configurator?lang=<%= lang %>"><%= home.ctaPrimary %></a>
+        <a class="button ghost" href="/impressions?lang=<%= lang %>"><%= home.ctaSecondary %></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><%= home.featuresTitle %></h2>
+    <div class="feature-grid">
+      <% home.features.forEach((feature) => { %>
+        <article class="feature-card">
+          <span class="line-icon icon-<%= feature.icon %>" aria-hidden="true"></span>
+          <h3><%= feature.title %></h3>
+          <p><%= feature.desc %></p>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <h2><%= home.ctaTitle %></h2>
+    <p><%= home.ctaText %></p>
+    <a class="button gold" href="/configurator?lang=<%= lang %>"><%= home.ctaButton %></a>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

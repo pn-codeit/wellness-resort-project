@@ -1,0 +1,19 @@
+{
+  "name": "serenity-frontend-web",
+  "version": "1.0.0",
+  "description": "Server-rendered Express/EJS frontend for the Serenity wellness resort project.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "check": "node --check src/app.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

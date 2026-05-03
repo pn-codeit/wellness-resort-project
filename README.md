@@ -1,55 +1,34 @@
-# wellness-resort-project
+# Serenity Wellness Resort
 
-## Description
-University group project: a cloud-native web application for a fictional wellness resort with a booking configurator, shop, weather integration, and AI features.
+Server-rendered Express/EJS frontend for the university wellness resort project.
 
-## Tech Stack
-- **Frontend:** HTML, CSS, JavaScript
-- **Backend:** Node.js
-- **Database:** MySQL
-- **Caching / Cart:** Redis
-- **Object Storage:** MinIO
-- **Weather Data:** External weather API or simulated weather data
-- **AI Feature:** Google Gemini
-- **Containerization:** Docker, Docker Compose
-
-## Architecture Overview
-The project consists of a frontend service built with HTML, CSS, and JavaScript, and a backend service built with Node.js.  
-MySQL is used as the main database for storing bookings, products, and customer data. Redis can be used for shopping cart state or caching.  
-MinIO is used for storing images of wellness offers and products. Weather data is either fetched from an external API or simulated.  
-The AI feature is implemented using Google Gemini.  
-All services are intended to run together via Docker Compose.
-
-## Features
-- Wellness vacation configurator with booking functionality
-- Wellness shop with shopping cart
-- Impressions with images and videos
-- Weather display
-- AI feature with Gemini
-
-## Project Structure
-
-```text
-wellness-resort-project/
-├── public/                # Client side code
-├── routes/                # Server side routes
-├── docs/                  # Architecture, sketches, screenshots, task distribution
-├── views/                 # ejs views
-├── .gitignore
-└── README.md
-```
-
-## Start
-For now with npm:
-- Enter your Gemini API key & app port in a `.env` file on the project root (see `.env.sample`)
+## Run with Docker
 
 ```bash
+docker compose up --build
+```
+
+The only host-facing application service is:
+
+- Frontend: http://localhost:8080
+- Health: http://localhost:8080/health
+
+The backend services are scaffolded as internal placeholders for later implementation:
+
+- `services/booking-service`
+- `services/shop-service`
+- `services/impressions-service`
+- `services/weather-service`
+- `services/assistant-service`
+
+MySQL, Redis, and MinIO are included in `docker-compose.yml` for the later service implementations.
+
+## Local Frontend
+
+```bash
+cd frontend-web
 npm install
 npm start
 ```
 
-Later via Docker Compose:
-
-```bash
-docker compose up
-```
+The frontend fetches service data on the server side and renders EJS templates. Browser-side code only talks to frontend routes.

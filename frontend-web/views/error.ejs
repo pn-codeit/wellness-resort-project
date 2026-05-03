@@ -1,0 +1,10 @@
+<%- include('partials/head') %>
+<%- include('partials/nav', { navItems: navItems || [{ id: 'home', href: '/', label: 'Start' }], lang: lang || 'de', langSwitch: langSwitch || 'en', page: page || 'error' }) %>
+<main class="simple-page">
+  <section class="message-panel">
+    <h1><%= title %></h1>
+    <p><%= message %></p>
+    <a class="button gold" href="/">Zur Startseite</a>
+  </section>
+</main>
+<%- include('partials/footer') %>
