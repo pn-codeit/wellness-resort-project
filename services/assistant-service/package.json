@@ -3,6 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node src/app.js"
+    "start": "node src/app.js",
+    "check": "node --check src/app.js src/cache/redisClient.js src/clients/geminiClient.js src/clients/resortServices.js src/advisor/fallbackAdvice.js src/advisor/resortContext.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "redis": "^4.7.0"
   }
 }

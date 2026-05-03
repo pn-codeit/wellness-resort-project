@@ -1,6 +1,7 @@
 const content = require('../data/content');
 
 const SERVICE_TIMEOUT_MS = Number(process.env.SERVICE_TIMEOUT_MS || 2500);
+const ASSISTANT_TIMEOUT_MS = Number(process.env.ASSISTANT_TIMEOUT_MS || 10000);
 
 const serviceUrls = {
   booking: process.env.BOOKING_SERVICE_URL,
@@ -13,16 +14,18 @@ async function requestJson(url, options = {}) {
   if (!url) return null;
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), SERVICE_TIMEOUT_MS);
+  const timeoutMs = options.timeoutMs || SERVICE_TIMEOUT_MS;
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  const { timeoutMs: _timeoutMs, ...fetchOptions } = options;
 
   try {
     const res = await fetch(url, {
-      ...options,
+      ...fetchOptions,
       signal: controller.signal,
       headers: {
         Accept: 'application/json',
-        ...(options.body ? { 'Content-Type': 'application/json' } : {}),
-        ...(options.headers || {})
+        ...(fetchOptions.body ? { 'Content-Type': 'application/json' } : {}),
+        ...(fetchOptions.headers || {})
       }
     });
 
@@ -301,7 +304,8 @@ function localAdvice(input, lang) {
 async function getAssistantAdvice(payload) {
   const remote = await requestJson(`${serviceUrls.assistant}/advice`, {
     method: 'POST',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
+    timeoutMs: ASSISTANT_TIMEOUT_MS
   });
 
   return remote || localAdvice(payload.input, payload.lang);

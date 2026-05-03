@@ -10,6 +10,7 @@ services:
       IMPRESSIONS_SERVICE_URL: http://impressions-service:3000
       ASSISTANT_SERVICE_URL: http://assistant-service:3000
       SERVICE_TIMEOUT_MS: 1500
+      ASSISTANT_TIMEOUT_MS: ${ASSISTANT_TIMEOUT_MS:-10000}
     depends_on:
       booking-service:
         condition: service_started
@@ -79,8 +80,22 @@ services:
       SERVICE_NAME: assistant-service
       PORT: 3000
       REDIS_HOST: redis
+      BOOKING_SERVICE_URL: http://booking-service:3000
+      SHOP_SERVICE_URL: http://shop-service:3000
+      IMPRESSIONS_SERVICE_URL: http://impressions-service:3000
+      SERVICE_TIMEOUT_MS: 2000
+      ASSISTANT_CACHE_SECONDS: ${ASSISTANT_CACHE_SECONDS:-300}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.0-flash}
+      GEMINI_TIMEOUT_MS: ${GEMINI_TIMEOUT_MS:-8000}
     depends_on:
       redis:
+        condition: service_started
+      booking-service:
+        condition: service_started
+      shop-service:
+        condition: service_started
+      impressions-service:
         condition: service_started
 
   mysql:
