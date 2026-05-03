@@ -661,6 +661,182 @@ footer {
 .lightbox-prev:hover,
 .lightbox-next:hover { background: rgba(46,94,78,0.85); }
  
+/* =========================
+   Wellness Configurator & Booking
+   ========================= */
 
+.configurator-header {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+  border-bottom: 1px solid #d4e6da;
+  margin-bottom: 2rem;
+}
+
+.configurator-header h1 {
+  font-size: 2.6rem;
+  color: #2e5e4e;
+  margin-bottom: 0.5rem;
+}
+
+.configurator-header p {
+  color: #5a7a6a;
+  font-size: 1rem;
+}
+
+.configurator-layout,
+.booking-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.configurator-panel,
+.summary-panel,
+.booking-form-section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.config-section {
+  margin-bottom: 2rem;
+}
+
+.config-section h2,
+.summary-panel h2,
+.booking-form-section h2 {
+  color: #2e5e4e;
+  margin-bottom: 1rem;
+}
+
+.config-section select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #c8ddd2;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #fff;
+  color: #3b3228;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.config-card {
+  border: 2px solid #dbe8e0;
+  border-radius: 10px;
+  padding: 1rem;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.config-card h3 {
+  color: #2e5e4e;
+  margin-bottom: 0.5rem;
+}
+
+.config-card p {
+  color: #5a7a6a;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.config-card:hover {
+  border-color: #7fb397;
+  transform: translateY(-2px);
+}
+
+.config-card.selected {
+  border-color: #2e5e4e;
+  background: #eef7f1;
+}
+
+.extra-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.extra-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafdfb;
+  border: 1px solid #dbe8e0;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+}
+
+.extra-item span {
+  color: #3b3228;
+}
+
+.summary-panel p,
+.booking-summary p {
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.summary-panel hr,
+.booking-summary hr {
+  border: none;
+  border-top: 1px solid #d4e6da;
+  margin: 1rem 0;
+}
+
+.total-price {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #2e5e4e;
+}
+
+.booking-form .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.booking-form label {
+  margin-bottom: 0.4rem;
+  color: #2e5e4e;
+  font-weight: bold;
+}
+
+.booking-form input {
+  padding: 0.85rem 1rem;
+  border: 1px solid #c8ddd2;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: #3b3228;
+  background: #fff;
+}
+
+.booking-form input:focus,
+.config-section select:focus {
+  outline: none;
+  border-color: #2e5e4e;
+  box-shadow: 0 0 0 3px rgba(46, 94, 78, 0.12);
+}
+
+.booking-message {
+  margin-top: 1rem;
+  color: #2e5e4e;
+  font-weight: bold;
+}
+
+@media (max-width: 900px) {
+  .configurator-layout,
+  .booking-layout {
+    grid-template-columns: 1fr;
+  }
+}
 
 

@@ -35,7 +35,7 @@ function renderRooms() {
   roomOptions.innerHTML = "";
   rooms.forEach((room) => {
     const card = document.createElement("div");
-    card.className = `card ${state.room?.id === room.id ? "selected" : ""}`;
+    card.className = `config-card ${state.room?.id === room.id ? "selected" : ""}`;
     card.innerHTML = `
       <h3>${room.name}</h3>
       <p>${room.description}</p>
@@ -54,7 +54,7 @@ function renderPackages() {
   packageOptions.innerHTML = "";
   packages.forEach((pkg) => {
     const card = document.createElement("div");
-    card.className = `card ${state.package?.id === pkg.id ? "selected" : ""}`;
+    card.className = `config-card ${state.package?.id === pkg.id ? "selected" : ""}`;
     card.innerHTML = `
       <h3>${pkg.name}</h3>
       <p>${pkg.description}</p>
