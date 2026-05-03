@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><%= title %></title>
   <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
 </head>
 <body>
   <header class="configurator-header">
@@ -16,11 +17,8 @@
     <section class="configurator-panel">
       <div class="config-section">
         <h2>1. Select Duration</h2>
-        <select id="duration">
-          <option value="2">2 Nights</option>
-          <option value="3">3 Nights</option>
-          <option value="5">5 Nights</option>
-        </select>
+        <input id="date-range" class="date-picker-input" placeholder="Check-in → Check-out" readonly />
+        <p id="nights-display" class="nights-display">Bitte Anreise- und Abreisedatum wählen</p>
       </div>
 
       <div class="config-section">
@@ -52,6 +50,7 @@
     </aside>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="/js/configurator.js"></script>
 </body>
 </html>

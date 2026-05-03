@@ -19,13 +19,14 @@ const extras = [
 ];
 
 const state = {
-  duration: 2,
+  duration: 0,
+  checkIn: null,
+  checkOut: null,
   room: null,
   package: null,
   extras: []
 };
 
-const durationSelect = document.getElementById("duration");
 const roomOptions = document.getElementById("room-options");
 const packageOptions = document.getElementById("package-options");
 const extraOptions = document.getElementById("extra-options");
@@ -104,7 +105,8 @@ function calculateTotal() {
 }
 
 function updateSummary() {
-  document.getElementById("summary-duration").textContent = `${state.duration} Nights`;
+  document.getElementById("summary-duration").textContent =
+    state.duration > 0 ? `${state.duration} Nacht${state.duration !== 1 ? "e" : ""}` : "Nicht gewählt";
   document.getElementById("summary-room").textContent = state.room ? state.room.name : "Not selected";
   document.getElementById("summary-package").textContent = state.package ? state.package.name : "Not selected";
   document.getElementById("summary-extras").textContent =
@@ -112,19 +114,34 @@ function updateSummary() {
   document.getElementById("summary-price").textContent = calculateTotal();
 }
 
-durationSelect.addEventListener("change", (event) => {
-  state.duration = Number(event.target.value);
-  updateSummary();
+flatpickr("#date-range", {
+  mode: "range",
+  minDate: "today",
+  dateFormat: "d.m.Y",
+  locale: { rangeSeparator: " → " },
+  onChange(selectedDates) {
+    if (selectedDates.length === 2) {
+      const nights = Math.round((selectedDates[1] - selectedDates[0]) / 86400000);
+      state.duration = nights;
+      state.checkIn = selectedDates[0];
+      state.checkOut = selectedDates[1];
+      document.getElementById("nights-display").textContent =
+        `${nights} Nacht${nights !== 1 ? "e" : ""}`;
+      updateSummary();
+    }
+  }
 });
 
 continueBtn.addEventListener("click", () => {
-  if (!state.room || !state.package) {
-    alert("Please select a room and a package before continuing.");
+  if (!state.duration || !state.room || !state.package) {
+    alert("Bitte Reisedaten, Zimmer und Paket auswählen.");
     return;
   }
 
   localStorage.setItem("wellnessBooking", JSON.stringify({
     duration: state.duration,
+    checkIn: state.checkIn,
+    checkOut: state.checkOut,
     room: state.room,
     package: state.package,
     extras: state.extras,

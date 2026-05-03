@@ -21,7 +21,14 @@ bookingForm.addEventListener("submit", (event) => {
     return;
   }
 
-  bookingMessage.textContent = "Booking submitted successfully.";
-  bookingForm.reset();
   localStorage.removeItem("wellnessBooking");
+
+  document.body.innerHTML = `
+    <div class="booking-success">
+      <div class="success-icon">✓</div>
+      <h1>Buchung erfolgreich!</h1>
+      <p>Vielen Dank für Ihre Buchung. Wir freuen uns auf Ihren Aufenthalt.</p>
+      <a href="/" class="btn">Zurück zur Startseite</a>
+    </div>
+  `;
 });

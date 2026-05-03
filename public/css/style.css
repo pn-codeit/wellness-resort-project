@@ -826,10 +826,67 @@ footer {
   box-shadow: 0 0 0 3px rgba(46, 94, 78, 0.12);
 }
 
+.date-picker-input {
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  background: white;
+}
+
+.date-picker-input:focus {
+  outline: none;
+  border-color: #2e5e4e;
+  box-shadow: 0 0 0 3px rgba(46, 94, 78, 0.12);
+}
+
+.nights-display {
+  margin-top: 0.6rem;
+  font-size: 0.95rem;
+  color: #2e5e4e;
+  font-weight: 600;
+}
+
 .booking-message {
   margin-top: 1rem;
   color: #2e5e4e;
   font-weight: bold;
+}
+
+.booking-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.booking-success .success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #2e5e4e;
+  color: white;
+  font-size: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.booking-success h1 {
+  font-size: 2rem;
+  color: #2e5e4e;
+}
+
+.booking-success p {
+  color: #555;
+  font-size: 1.1rem;
+  max-width: 420px;
 }
 
 @media (max-width: 900px) {
