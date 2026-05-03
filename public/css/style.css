@@ -433,3 +433,234 @@ footer {
   color: #5a7a6a;
   margin-top: 2px;
 }
+
+.impressions-hero {
+  text-align: center;
+  padding: 3.5rem 1rem 2.5rem;
+  border-bottom: 1px solid #d4e6da;
+  margin-bottom: 2rem;
+}
+
+.impressions-hero h1 {
+  font-size: 3rem;
+  color: #2e5e4e;
+  font-family: Georgia, serif;
+  font-weight: bold;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.4rem;
+}
+
+.impressions-hero .tagline {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #a8d5b5;
+  font-family: Georgia, serif;
+  margin-bottom: 0.6rem;
+  font-style: normal;
+}
+
+.impressions-hero p {
+  color: #5a7a6a;
+  font-size: 0.95rem;
+  font-style: normal;
+  max-width: 420px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+ 
+/* Filter Tabs */
+.filter-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+ 
+.filter-btn {
+  background: transparent;
+  border: 1.5px solid #a8d5b5;
+  color: #2e5e4e;
+  padding: 0.45rem 1.2rem;
+  border-radius: 24px;
+  font-size: 0.88rem;
+  font-family: Georgia, serif;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+ 
+.filter-btn:hover {
+  background: #d4edda;
+  border-color: #2e5e4e;
+}
+ 
+.filter-btn.active {
+  background: #2e5e4e;
+  color: #fff;
+  border-color: #2e5e4e;
+}
+ 
+/* Masonry Grid */
+.gallery-grid {
+  columns: 3;
+  column-gap: 0.75rem;
+}
+ 
+@media (max-width: 900px) { .gallery-grid { columns: 2; } }
+@media (max-width: 540px) { .gallery-grid { columns: 1; } }
+ 
+/* Items */
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  break-inside: avoid;
+  cursor: pointer;
+  background: #e0ece5;
+}
+ 
+.gallery-item img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  aspect-ratio: 4 / 3;
+  transition: transform 0.4s ease;
+}
+ 
+.gallery-item.tall img { aspect-ratio: 3 / 4; }
+.gallery-item.wide { break-inside: avoid; }
+ 
+.gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(46,94,78,0.72) 0%, transparent 55%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  display: flex;
+  align-items: flex-end;
+  padding: 1rem;
+}
+ 
+.gallery-overlay span {
+  color: #fff;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: Georgia, serif;
+}
+ 
+.gallery-item:hover img { transform: scale(1.05); }
+.gallery-item:hover .gallery-overlay { opacity: 1; }
+
+/* Video items */
+.gallery-item.video-item {
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  position: relative;  /* ← add this */
+}
+
+.gallery-item.video-item iframe {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 6px;
+}
+ 
+/* Lightbox */
+.lightbox-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 28, 22, 0.9);
+  z-index: 999;
+}
+.lightbox-backdrop.open { display: block; }
+ 
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.lightbox.open { display: flex; }
+ 
+.lightbox-content {
+  pointer-events: auto;
+  text-align: center;
+  animation: lbIn 0.22s ease;
+}
+ 
+@keyframes lbIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+ 
+.lightbox-content img {
+  max-width: 90vw;
+  max-height: 82vh;
+  object-fit: contain;
+  border-radius: 4px;
+  display: block;
+  margin: 0 auto;
+}
+ 
+.lightbox-caption {
+  color: #a8d5b5;
+  font-size: 0.8rem;
+  margin-top: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: Georgia, serif;
+}
+ 
+.lightbox-close {
+  position: fixed;
+  top: 1rem; right: 1.5rem;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 2.4rem;
+  cursor: pointer;
+  z-index: 1001;
+  pointer-events: auto;
+  opacity: 0.75;
+  transition: opacity 0.2s;
+}
+.lightbox-close:hover { opacity: 1; }
+ 
+.lightbox-prev,
+.lightbox-next {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(46,94,78,0.5);
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  width: 48px;
+  height: 64px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1001;
+  pointer-events: auto;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox-prev { left: 1rem; }
+.lightbox-next { right: 1rem; }
+.lightbox-prev:hover,
+.lightbox-next:hover { background: rgba(46,94,78,0.85); }
+ 
+
+
+
