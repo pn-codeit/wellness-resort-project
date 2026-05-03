@@ -85,7 +85,15 @@
         <label><span><%= booking.labels.phone %></span><input required name="phone" type="tel"></label>
         <label><span><%= booking.labels.address %></span><input required name="address" type="text"></label>
         <label><span><%= booking.labels.city %></span><input required name="city" type="text"></label>
-        <label><span><%= booking.labels.arrive %></span><input required name="arrive" type="date"></label>
+        <div class="date-picker-field" data-date-picker>
+          <span><%= booking.labels.arrive %></span>
+          <input name="arrive" type="hidden" data-arrival-date>
+          <button class="date-picker-toggle" type="button" data-date-toggle aria-haspopup="grid" aria-expanded="false">
+            <span data-date-label><%= lang === 'de' ? 'Datum waehlen' : 'Choose date' %></span>
+          </button>
+          <div class="date-picker-popover" data-date-calendar hidden></div>
+          <small data-date-message></small>
+        </div>
         <div class="total-row">
           <span><%= booking.total %></span>
           <strong data-total>0 €</strong>
@@ -96,5 +104,6 @@
   </form>
 </main>
 
+<script type="application/json" data-booking-availability><%- JSON.stringify(booking.availability || {}) %></script>
 <script src="/js/configurator.js"></script>
 <%- include('partials/footer') %>

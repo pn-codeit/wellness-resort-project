@@ -35,18 +35,43 @@ async function requestJson(url, options = {}) {
   }
 }
 
+async function postJsonStrict(url, payload) {
+  if (!url) {
+    throw new Error('Required backend service URL is not configured.');
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), SERVICE_TIMEOUT_MS);
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(body.message || `Backend service returned ${res.status}.`);
+    }
+
+    return body;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 async function getBookingOptions(lang) {
   const remote = await requestJson(`${serviceUrls.booking}/options?lang=${lang}`);
   return remote || content.booking[lang];
 }
 
 async function createBooking(payload) {
-  const remote = await requestJson(`${serviceUrls.booking}/bookings`, {
-    method: 'POST',
-    body: JSON.stringify(payload)
-  });
-
-  return remote || { reference: `BK-${Date.now()}` };
+  return postJsonStrict(`${serviceUrls.booking}/bookings`, payload);
 }
 
 async function getShopCatalog(lang) {

@@ -15,7 +15,7 @@ The only host-facing application service is:
 
 The backend services are internal-only Docker services:
 
-- `services/booking-service`
+- `services/booking-service` (implemented with MySQL booking/options persistence, Redis option cache, and service-backed arrival-date availability)
 - `services/shop-service` (implemented with MySQL catalog/orders, Redis catalog cache, and MinIO product media)
 - `services/impressions-service` (implemented with MinIO-backed media storage)
 - `services/assistant-service`

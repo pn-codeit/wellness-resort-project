@@ -589,6 +589,111 @@ textarea:focus {
   border-color: var(--green-mid);
 }
 
+.date-picker-field small {
+  display: block;
+  min-height: 18px;
+  margin-top: 6px;
+  color: #a74430;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.date-picker-field {
+  position: relative;
+}
+
+.date-picker-toggle {
+  width: 100%;
+  border: 1px solid oklch(80% 0.05 145);
+  border-radius: var(--radius);
+  background: white;
+  color: var(--text);
+  cursor: pointer;
+  padding: 12px 14px;
+  text-align: left;
+}
+
+.date-picker-toggle:focus,
+.date-picker-toggle[aria-expanded="true"] {
+  border-color: var(--green-mid);
+  outline: none;
+}
+
+.date-picker-toggle[aria-invalid="true"],
+input:invalid {
+  border-color: #b85d4a;
+}
+
+.date-picker-popover {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  left: 0;
+  margin-top: 8px;
+  border: 1px solid oklch(84% 0.04 145);
+  border-radius: var(--radius);
+  background: white;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 16%);
+  padding: 14px;
+}
+
+.date-picker-header,
+.date-weekdays,
+.date-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.date-picker-header {
+  grid-template-columns: 34px 1fr 34px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.date-picker-header strong {
+  color: var(--green-deep);
+  text-align: center;
+}
+
+.date-picker-header button,
+.date-cell {
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: var(--cream);
+  color: var(--text);
+  cursor: pointer;
+  min-height: 34px;
+}
+
+.date-weekdays {
+  margin-bottom: 6px;
+  color: var(--text-muted);
+  font-size: 11px;
+  text-align: center;
+}
+
+.date-cell.empty {
+  background: transparent;
+}
+
+.date-cell:hover:not(:disabled),
+.date-picker-header button:hover:not(:disabled) {
+  border-color: var(--green-mid);
+}
+
+.date-cell.selected {
+  background: var(--green-deep);
+  color: white;
+}
+
+.date-cell:disabled,
+.date-picker-header button:disabled {
+  cursor: not-allowed;
+  opacity: 0.34;
+}
+
 .total-row {
   display: flex;
   justify-content: space-between;

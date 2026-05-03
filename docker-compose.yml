@@ -26,7 +26,12 @@ services:
       SERVICE_NAME: booking-service
       PORT: 3000
       MYSQL_HOST: mysql
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-wellness_resort}
+      MYSQL_USER: ${MYSQL_USER:-wellness}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-wellness}
       REDIS_HOST: redis
+      BOOKING_AVAILABILITY_DAYS: ${BOOKING_AVAILABILITY_DAYS:-180}
+      BOOKING_DAILY_ARRIVAL_CAPACITY: ${BOOKING_DAILY_ARRIVAL_CAPACITY:-8}
     depends_on:
       mysql:
         condition: service_healthy
