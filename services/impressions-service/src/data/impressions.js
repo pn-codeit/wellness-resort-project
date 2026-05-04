@@ -24,7 +24,7 @@ const galleryItems = [
     label_en: 'Infinity Pool',
     color1: '#6ab0c8',
     color2: '#4a8fa8',
-    objectName: 'impressions/photos/infinity-pool.svg'
+    objectName: 'impressions/photos/indoor.svg'
   },
   {
     id: 'mountain-panorama',
@@ -34,7 +34,7 @@ const galleryItems = [
     label_en: 'Allgaeu Mountain Panorama',
     color1: '#7aaa6a',
     color2: '#3a7a3a',
-    objectName: 'impressions/photos/mountain-panorama.svg'
+    objectName: 'impressions/photos/indoor.png'
   },
   {
     id: 'herbal-steam',

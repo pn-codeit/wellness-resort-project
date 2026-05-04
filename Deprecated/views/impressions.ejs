@@ -155,7 +155,7 @@
   <script>
   (function () {
     const btns  = document.querySelectorAll('.filter-btn');
-    const items = document.querySelectorAll('.gallery-item');
+    const items = document.querySelectorAll('ery-item');
 
     function applyFilter(filter) {
       items.forEach(item => {
@@ -191,7 +191,7 @@
       current = idx;
       const item = visible[current];
       const img  = item.querySelector('img');
-      const cap  = item.querySelector('.gallery-overlay span');
+      const cap  = item.querySelector('ery-overlay span');
       lbImg.src  = img.src;
       lbImg.alt  = img.alt;
       lbCaption.textContent = cap ? cap.textContent : '';
