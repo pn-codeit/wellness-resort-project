@@ -115,8 +115,8 @@ function Impressionen({ lang }) {
   const [filter, setFilter] = React.useState(0);
   const [lightbox, setLightbox] = React.useState(null);
 
-  const cats_de = ['Alle', 'Spa & Wellness', 'Natur', 'Kulinarik', 'Zimmer'];
-  const cats_en = ['All', 'Spa & Wellness', 'Nature', 'Cuisine', 'Rooms'];
+  const cats_de = ['Alle', 'Spa & Wellness', 'Natur', 'Kulinarik', 'Zimmer','Videos'];
+  const cats_en = ['All', 'Spa & Wellness', 'Nature', 'Cuisine', 'Rooms','Videos'];
   const cats = lang === 'de' ? cats_de : cats_en;
 
   const filtered = filter === 0 ? GALLERY_ITEMS : GALLERY_ITEMS.filter(item =>
