@@ -181,7 +181,7 @@ function wmoToEmoji(code, isDayVal) {
 function wmoToDesc(code, lang) {
   if (lang === 'de') {
     if (code === 0) return 'Klarer Himmel';
-    if (code <= 3) return code === 1 ? 'Überwiegend klar' : code === 2 ? 'Teilweise bewölkt' : 'Bedeckt';
+    if (code <= 3) return code === 1 ? 'Überwiegend klar' : code === 2 ? 'Teilweise bewölkt' : 'Bewölkt';
     if (code <= 49) return 'Neblig';
     if (code <= 59) return 'Nieselregen';
     if (code <= 69) return code <= 63 ? 'Leichter Regen' : 'Starker Regen';
