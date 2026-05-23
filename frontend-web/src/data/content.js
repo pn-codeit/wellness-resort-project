@@ -249,7 +249,7 @@ const weatherText = {
     pressure: 'Luftdruck',
     sunrise: 'Sonnenaufgang',
     sunset: 'Sonnenuntergang',
-    forecastTitle: '5-Tage-Vorschau',
+    forecastTitle: '7-Tage-Vorschau',
     tipTitle: 'Wellness-Tipp für heute',
     days: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
     tips: {
@@ -271,7 +271,7 @@ const weatherText = {
     pressure: 'Pressure',
     sunrise: 'Sunrise',
     sunset: 'Sunset',
-    forecastTitle: '5-Day Forecast',
+    forecastTitle: '7-Day Forecast',
     tipTitle: "Today's Wellness Tip",
     days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     tips: {

@@ -7,7 +7,7 @@
       <p class="eyebrow light"><%= weather.subtitle %></p>
       <h1><%= weather.title %></h1>
       <div class="current-weather">
-        <span class="weather-icon condition-<%= weather.current.condition %>" aria-hidden="true"></span>
+        <span style="font-size: 80px; line-height: 1;"><%- weather.current.emoji %></span>
         <div>
           <strong><%= weather.current.temp %>°C</strong>
           <p><%= weather.current.description %></p>
@@ -18,26 +18,95 @@
         <div><span><%= weather.humidity %></span><b><%= weather.current.humidity %>%</b></div>
         <div><span><%= weather.wind %></span><b><%= weather.current.wind %> km/h</b></div>
         <div><span><%= weather.pressure %></span><b><%= weather.current.pressure %> hPa</b></div>
-        <div><span><%= weather.sunrise %></span><b><%= weather.current.sunrise %></b></div>
-        <div><span><%= weather.sunset %></span><b><%= weather.current.sunset %></b></div>
+        <div><span><%= weather.sunrise %></span><b><%= weather.current.sunrise %> Uhr</b></div>
+        <div><span><%= weather.sunset %></span><b><%= weather.current.sunset %> Uhr</b></div>
+        <div><span><%= weather.precip || 'Niederschlag' %></span><b><%= weather.current.precip %> mm</b></div>
+        <div><span>UV-Index</span><b><%= weather.current.uv %></b></div>
       </div>
+       <div class="live-row">
+        <span class="live-dot"></span>
+        <span>Zuletzt aktualisiert: <%= new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) %> Uhr</span>
+            </div>
+            <div class="daylight-bar">
+              <span>🌅 Sonnenaufgang<br><%= weather.current.sunrise %> Uhr</span>
+              <div class="daylight-track">
+                <div class="daylight-fill"></div>
+                <div class="sun-dot"></div>
+              </div>
+              <span>🌇 Sonnenuntergang<br><%= weather.current.sunset %> Uhr</span>
+            </div>
     </div>
   </section>
 
   <section class="content-page">
+<% if (weather.hourly && weather.hourly.length > 0) { %>
+<h2 class="section-title"><%= weather.hourlyTitle || 'Nächste 24 Stunden' %></h2>
+<div class="hourly-scroll">
+  <% weather.hourly.forEach(h => { %>
+    <div class="h-card <%= h.isNow ? 'h-now' : '' %>">
+      <div class="h-time"><%= h.isNow ? 'Jetzt' : h.hour + ':00' %></div>
+    <span style="font-size: 24px;"><%- h.emoji %></span>
+      <div class="h-temp"><%= h.temp %>°</div>
+      <% if (h.prob > 0) { %><div class="h-prob"><%= h.prob %>%</div><% } %>
+    </div>
+  <% }) %>
+</div>
+<% } %>
+
+
     <h2 class="section-title"><%= weather.forecastTitle %></h2>
     <div class="forecast-grid">
       <% weather.forecast.forEach((day, index) => { %>
         <% const date = new Date(day.time); %>
         <article class="<%= index === 0 ? 'today' : '' %>">
-          <b><%= weather.days[date.getDay()] %></b>
-          <small><%= date.getDate() %>.<%= date.getMonth() + 1 %>.</small>
-          <span class="weather-icon small condition-<%= day.condition %>" aria-hidden="true"></span>
+          <b><%= index === 0 ? 'Heute' : weather.days[date.getDay()] %></b>
+<small><%= date.getDate() %>.<%= date.getMonth() + 1 %>.</small>
+<span style="font-size: 28px;"><%- day.emoji %></span> 
           <p><%= day.description %></p>
           <strong><%= day.max %>° <em><%= day.min %>°</em></strong>
+          <% if (parseFloat(day.precip) > 0) { %><small class="precip"><%= day.precip %> mm</small><% } %>
         </article>
       <% }) %>
     </div>
+
+      <h2 class="section-title">Temperaturverlauf</h2>
+  <div class="temp-chart">
+    <%
+      const maxAll = Math.max(...weather.forecast.map(d => d.max));
+      const minAll = Math.min(...weather.forecast.map(d => d.min));
+      const range = maxAll - minAll || 1;
+      const w = 860;
+      const h = 120;
+      const pad = 40;
+      const step = (w - pad*2) / (weather.forecast.length - 1);
+
+      const maxPoints = weather.forecast.map((d, i) => ({
+        x: pad + i * step,
+        y: h - pad - ((d.max - minAll) / range) * (h - pad*2)
+      }));
+      const minPoints = weather.forecast.map((d, i) => ({
+        x: pad + i * step,
+        y: h - pad - ((d.min - minAll) / range) * (h - pad*2)
+      }));
+
+      const toPath = pts => pts.map((p,i) => (i===0?'M':'L')+p.x+','+p.y).join(' ');
+    %>
+    <svg viewBox="0 0 <%= w %> <%= h %>" style="width:100%;height:auto;">
+      <polyline points="<%= maxPoints.map(p=>p.x+','+p.y).join(' ') %>" fill="none" stroke="var(--green-mid)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <polyline points="<%= minPoints.map(p=>p.x+','+p.y).join(' ') %>" fill="none" stroke="var(--stone-light)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="4,3"/>
+
+      <% weather.forecast.forEach((day, i) => { %>
+        <% const date = new Date(day.time); %>
+        <% const mx = maxPoints[i]; %>
+        <% const mn = minPoints[i]; %>
+        <circle cx="<%= mx.x %>" cy="<%= mx.y %>" r="4" fill="var(--green-mid)"/>
+        <circle cx="<%= mn.x %>" cy="<%= mn.y %>" r="3" fill="var(--stone-light)"/>
+        <text x="<%= mx.x %>" y="<%= mx.y - 8 %>" text-anchor="middle" font-size="11" fill="var(--green-deep)" font-weight="600"><%= day.max %>°</text>
+        <text x="<%= mn.x %>" y="<%= mn.y + 16 %>" text-anchor="middle" font-size="10" fill="var(--stone)"><%= day.min %>°</text>
+        <text x="<%= mx.x %>" y="<%= h - 4 %>" text-anchor="middle" font-size="10" fill="var(--text-muted)"><%= i === 0 ? 'Heute' : ['So','Mo','Di','Mi','Do','Fr','Sa'][date.getDay()] %></text>
+      <% }) %>
+    </svg>
+  </div>
 
     <aside class="tip-card">
       <span class="line-icon icon-leaf" aria-hidden="true"></span>

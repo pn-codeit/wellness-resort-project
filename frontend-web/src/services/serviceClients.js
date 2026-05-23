@@ -164,6 +164,20 @@ function wmoToCondition(code) {
   return 'Thunderstorm';
 }
 
+function wmoToEmoji(code, isDayVal) {
+  if (code === 0)  return isDayVal ? '☀️' : '🌙';
+  if (code === 1)  return isDayVal ? '🌤️' : '🌙';
+  if (code === 2)  return isDayVal ? '⛅' : '☁️';
+  if (code === 3)  return '☁️';
+  if (code <= 49)  return '🌫️';
+  if (code <= 59)  return '🌦️';
+  if (code <= 65)  return '🌧️';
+  if (code <= 79)  return '❄️';
+  if (code <= 82)  return '🌧️';
+  if (code <= 86)  return '🌨️';
+  return '⛈️';
+}
+
 function wmoToDesc(code, lang) {
   if (lang === 'de') {
     if (code === 0) return 'Klarer Himmel';
@@ -212,7 +226,11 @@ function fallbackWeather(lang) {
 }
 
 async function getWeather(lang) {
-  const url = 'https://api.open-meteo.com/v1/forecast?latitude=47.41&longitude=10.28&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,surface_pressure&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=Europe%2FBerlin&forecast_days=5';
+  const url = 'https://api.open-meteo.com/v1/forecast?latitude=47.41&longitude=10.28' +
+    '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,surface_pressure,precipitation,uv_index,is_day' +
+    '&hourly=temperature_2m,weather_code,precipitation_probability,is_day' +
+    '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset' +
+    '&timezone=Europe%2FBerlin&forecast_days=7';
   const data = await requestJson(url);
 
   if (!data || !data.current || !data.daily) {
@@ -221,6 +239,25 @@ async function getWeather(lang) {
 
   const c = data.current;
   const d = data.daily;
+  const h = data.hourly;
+
+  // Stündlich – nächste 24h
+  const nowTime = new Date(c.time);
+  let startIdx = h.time.findIndex(t => new Date(t) >= nowTime);
+  if (startIdx < 0) startIdx = 0;
+  const hourly = [];
+ for (let i = startIdx; i < Math.min(startIdx + 24, h.time.length); i++) {
+    hourly.push({
+      time:      h.time[i],
+      hour:      new Date(h.time[i]).getHours(),
+      isNow:     i === startIdx,
+      condition: wmoToCondition(h.weather_code[i]),
+      temp:      Math.round(h.temperature_2m[i]),
+      prob:      h.precipitation_probability[i] ?? 0,
+      isDay:     h.is_day[i] === 1,
+      emoji: wmoToEmoji(h.weather_code[i], h.is_day[i] === 1), 
+    });
+  }
 
   return {
     ...content.weatherText[lang],
@@ -230,17 +267,23 @@ async function getWeather(lang) {
       humidity: c.relative_humidity_2m,
       wind: Math.round(c.wind_speed_10m),
       pressure: Math.round(c.surface_pressure),
+      precip: c.precipitation != null ? c.precipitation.toFixed(1) : '0.0', uv: Math.round(c.uv_index ?? 0),
       condition: wmoToCondition(c.weather_code),
+      isDay: c.is_day === 1,
+      emoji: wmoToEmoji(c.weather_code, c.is_day === 1),
       description: wmoToDesc(c.weather_code, lang),
       sunrise: new Date(d.sunrise[0]).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }),
       sunset: new Date(d.sunset[0]).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
     },
+    hourly,
     forecast: d.time.map((time, i) => ({
       time,
       condition: wmoToCondition(d.weather_code[i]),
+      emoji:     wmoToEmoji(d.weather_code[i], true),
       description: wmoToDesc(d.weather_code[i], lang),
       max: Math.round(d.temperature_2m_max[i]),
-      min: Math.round(d.temperature_2m_min[i])
+      min: Math.round(d.temperature_2m_min[i]),
+      precip: d.precipitation_sum[i] != null ? d.precipitation_sum[i].toFixed(1) : '0.0'
     })),
     source: 'open-meteo'
   };
