@@ -21,6 +21,13 @@ let ready = false;
 let lastError = null;
 let initializing = null;
 
+const roomInventory = {
+  standard: 30,
+  superior: 15,
+  penthouse: 3,
+  family: 10
+};
+
 async function createSchema() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS booking_durations (
@@ -151,6 +158,15 @@ function addDays(date, days) {
 
 function dateKey(date) {
   return date.toISOString().slice(0, 10);
+}
+
+function dateKeysBetween(startKey, nights) {
+  const dates = [];
+  const start = new Date(`${startKey}T00:00:00Z`);
+  for (let i = 0; i < nights; i += 1) {
+    dates.push(dateKey(addDays(start, i)));
+  }
+  return dates;
 }
 
 function availabilityWindow() {
@@ -340,6 +356,35 @@ async function getAvailability() {
     [window.startDate, window.endDate]
   );
 
+  const [roomRows] = await pool.query(
+    `
+      SELECT arrival_date, nights, room_id, room_count
+      FROM bookings
+      WHERE status <> 'cancelled'
+        AND arrival_date <= ?
+        AND DATE_ADD(arrival_date, INTERVAL nights DAY) >= ?
+    `,
+    [window.endDate, window.startDate]
+  );
+
+  const roomBookedByDate = Object.fromEntries(
+    Object.keys(roomInventory).map((roomId) => [roomId, {}])
+  );
+
+  for (const row of roomRows) {
+    const roomId = row.room_id;
+    if (!roomBookedByDate[roomId]) roomBookedByDate[roomId] = {};
+
+    const bookedNights = Math.max(0, Number(row.nights || 0));
+    const bookedRooms = Math.max(0, Number(row.room_count || 0));
+    const arrivalKey = dateKey(new Date(row.arrival_date));
+
+    for (const key of dateKeysBetween(arrivalKey, bookedNights)) {
+      if (key < window.startDate || key > window.endDate) continue;
+      roomBookedByDate[roomId][key] = (roomBookedByDate[roomId][key] || 0) + bookedRooms;
+    }
+  }
+
   const countByDate = new Map(rows.map((row) => [
     dateKey(new Date(row.arrival_date)),
     Number(row.booking_count)
@@ -367,7 +412,9 @@ async function getAvailability() {
     availableDates,
     unavailableDates,
     closedWeekdays: [1],
-    capacityPerArrivalDate: capacity
+    capacityPerArrivalDate: capacity,
+    roomInventory,
+    roomBookedByDate
   };
 }
 
@@ -389,6 +436,16 @@ function basePriceForNights(nights) {
 
 function roomLabelForError(room, lang) {
   return lang === 'en' ? room.label_en : room.label_de;
+}
+
+function hasRoomAvailabilityForStay({ availability, roomId, arrivalDate, nights, roomCount }) {
+  const inventory = Number(availability.roomInventory?.[roomId] || 0);
+  if (inventory <= 0) return false;
+
+  return dateKeysBetween(arrivalDate, nights).every((key) => {
+    const booked = Number(availability.roomBookedByDate?.[roomId]?.[key] || 0);
+    return booked + roomCount <= inventory;
+  });
 }
 
 async function createBooking({ customer, selection, lang }) {
@@ -435,6 +492,16 @@ async function createBooking({ customer, selection, lang }) {
       new Error(`At least ${minRoomCount} rooms are required for ${guestCount} guests in ${roomLabelForError(room, lang)}.`),
       { statusCode: 400 }
     );
+  }
+
+  if (!hasRoomAvailabilityForStay({
+    availability,
+    roomId: room.id,
+    arrivalDate: selection.arrive,
+    nights: selection.nights,
+    roomCount: selection.roomCount
+  })) {
+    throw Object.assign(new Error('The selected room category is not available for the requested stay.'), { statusCode: 400 });
   }
 
   const lines = [];

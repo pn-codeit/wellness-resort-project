@@ -25,6 +25,8 @@ if (root) {
   const availability = availabilityNode ? JSON.parse(availabilityNode.textContent || '{}') : {};
   const availableDates = new Set(availability.availableDates || []);
   const unavailableDates = new Set(availability.unavailableDates || []);
+  const roomInventory = availability.roomInventory || {};
+  const roomBookedByDate = availability.roomBookedByDate || {};
   const locale = document.documentElement.lang === 'en' ? 'en-GB' : 'de-DE';
   const lang = document.documentElement.lang === 'en' ? 'en' : 'de';
 
@@ -51,6 +53,23 @@ if (root) {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  function addDaysToKey(key, days) {
+    const date = dateFromKey(key);
+    date.setDate(date.getDate() + days);
+    return keyFromDate(date);
+  }
+
+  function dateKeysBetween(fromKey, toKey) {
+    const dates = [];
+    if (!fromKey || !toKey || toKey <= fromKey) return dates;
+
+    for (let cursor = fromKey; cursor < toKey; cursor = addDaysToKey(cursor, 1)) {
+      dates.push(cursor);
+    }
+
+    return dates;
   }
 
   function formatDate(key, options = { day: '2-digit', month: 'long', year: 'numeric' }) {
@@ -102,6 +121,14 @@ if (root) {
     };
   }
 
+  function selectedRoomId() {
+    return root.querySelector('input[name="room"]:checked')?.value || '';
+  }
+
+  function selectedRoomInventory() {
+    return Number(roomInventory[selectedRoomId()] || 0);
+  }
+
   function minRoomsForSelection() {
     const guests = guestBreakdown();
     const limits = selectedRoomLimits();
@@ -116,11 +143,16 @@ if (root) {
 
     const minRooms = minRoomsForSelection();
     const currentRoomCount = Number(roomCountInput.value || 0);
+    const maxRooms = selectedRoomInventory();
     const shouldFollowMinimum = currentRoomCount <= lastAutoRoomCount;
 
     roomCountInput.min = String(minRooms);
+    if (maxRooms > 0) roomCountInput.max = String(maxRooms);
     if (shouldFollowMinimum || currentRoomCount < minRooms) {
       roomCountInput.value = String(minRooms);
+    }
+    if (maxRooms > 0 && Number(roomCountInput.value || 0) > maxRooms) {
+      roomCountInput.value = String(maxRooms);
     }
     lastAutoRoomCount = minRooms;
 
@@ -138,7 +170,42 @@ if (root) {
     if (availability.minArrivalDate && key < availability.minArrivalDate) return false;
     if (availability.maxArrivalDate && key > availability.maxArrivalDate) return false;
     if (unavailableDates.has(key)) return false;
-    return availableDates.size === 0 || availableDates.has(key);
+    if (availableDates.size > 0 && !availableDates.has(key)) return false;
+    return isRoomAvailableForRange(key, addDaysToKey(key, 1));
+  }
+
+  function isRoomAvailableForRange(fromKey, toKey) {
+    const roomId = selectedRoomId();
+    if (!roomId) return true;
+
+    const inventory = Number(roomInventory[roomId] || 0);
+    if (inventory <= 0) return false;
+
+    const minRooms = minRoomsForSelection();
+    if (minRooms > inventory) return false;
+
+    const requestedRooms = Number(roomCountInput?.value || minRoomsForSelection());
+    const roomCount = Math.min(Math.max(minRooms, requestedRooms), inventory);
+    return dateKeysBetween(fromKey, toKey).every((key) => {
+      const booked = Number(roomBookedByDate[roomId]?.[key] || 0);
+      return booked + roomCount <= inventory;
+    });
+  }
+
+  function ensureSelectedRangeIsAvailable() {
+    if (rangeCheckIn && !isCheckInAvailable(rangeCheckIn)) {
+      rangeCheckIn = '';
+      rangeCheckOut = '';
+      rangeState = 0;
+      updateRangeDisplay();
+      return;
+    }
+
+    if (rangeCheckIn && rangeCheckOut && !isRoomAvailableForRange(rangeCheckIn, rangeCheckOut)) {
+      rangeCheckOut = '';
+      rangeState = 1;
+      updateRangeDisplay();
+    }
   }
 
   function calculateTotal() {
@@ -206,7 +273,7 @@ if (root) {
 
       let disabled = false;
       if (rangeState === 1) {
-        disabled = key <= rangeCheckIn;
+        disabled = key <= rangeCheckIn || !isRoomAvailableForRange(rangeCheckIn, key);
       } else {
         disabled = !isCheckInAvailable(key);
       }
@@ -340,19 +407,27 @@ if (root) {
   if (roomCountInput) {
     roomCountInput.addEventListener('input', () => {
       const minRooms = minRoomsForSelection();
+      const maxRooms = selectedRoomInventory();
       const currentRoomCount = Number(roomCountInput.value || 0);
       if (currentRoomCount < minRooms) {
         roomCountInput.value = String(minRooms);
+      }
+      if (maxRooms > 0 && Number(roomCountInput.value || 0) > maxRooms) {
+        roomCountInput.value = String(maxRooms);
       }
       calculateTotal();
     });
   }
 
-  root.addEventListener('change', calculateTotal);
+  root.addEventListener('change', () => {
+    ensureSelectedRangeIsAvailable();
+    renderRangeCalendar();
+    calculateTotal();
+  });
 
   const defaultDate = availability.minArrivalDate || '';
   if (defaultDate) calendarMonth = dateFromKey(defaultDate);
   updateRangeDisplay();
-  renderRangeCalendar();
   calculateTotal();
+  renderRangeCalendar();
 }
