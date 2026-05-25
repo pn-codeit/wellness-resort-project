@@ -1,0 +1,14 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="simple-page">
+  <section class="message-panel">
+    <span class="success-mark" aria-hidden="true">✓</span>
+    <h1><%= heading %></h1>
+    <p><%= message %></p>
+    <% if (reference) { %>
+      <p class="reference">Referenz: <strong><%= reference %></strong></p>
+    <% } %>
+    <a class="button gold" href="/?lang=<%= lang %>">Serenity Resort</a>
+  </section>
+</main>
+<%- include('partials/footer') %>

@@ -1,0 +1,62 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="assistant-page">
+  <section class="assistant-hero">
+    <div class="assistant-inner">
+      <span class="spark">✦</span>
+      <div>
+        <h1><%= assistant.title %></h1>
+        <p><%= assistant.subtitle %></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="assistant-panel">
+    <% if (!advice) { %>
+      <form method="post" action="/assistant/advice">
+        <input type="hidden" name="lang" value="<%= lang %>">
+        <textarea name="input" required rows="6" placeholder="<%= assistant.placeholder %>"><%= input %></textarea>
+        <% if (error) { %><p class="form-error"><%= error %></p><% } %>
+        <button class="button dark" type="submit">✦ <%= assistant.send %></button>
+      </form>
+      <div class="examples">
+        <p><%= assistant.examplesTitle %></p>
+        <% assistant.examples.forEach((example) => { %>
+          <button type="button" data-fill-example="<%= example %>">„<%= example %>“</button>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <article class="advice-card">
+        <p class="recap">„<%= input %>“</p>
+        <p class="advisor-greeting"><%= advice.greeting %></p>
+        <div class="recommendation">
+          <header>
+            <h2><%= assistant.packagesTitle %></h2>
+            <strong><%= advice.recommendation.total_price %></strong>
+          </header>
+          <div class="recommendation-grid">
+            <div><small><%= lang === 'de' ? 'Aufenthalt' : 'Stay' %></small><b><%= advice.recommendation.duration %></b></div>
+            <div><small><%= lang === 'de' ? 'Zimmer' : 'Room' %></small><b><%= advice.recommendation.room %></b></div>
+          </div>
+          <h3><%= lang === 'de' ? 'Behandlungen' : 'Treatments' %></h3>
+          <div class="pill-row">
+            <% advice.recommendation.treatments.forEach((item) => { %><span><%= item %></span><% }) %>
+          </div>
+          <h3>Extras</h3>
+          <div class="pill-row gold-pills">
+            <% advice.recommendation.extras.forEach((item) => { %><span><%= item %></span><% }) %>
+          </div>
+          <p><%= advice.recommendation.reasoning %></p>
+          <div class="button-row left">
+            <a class="button gold" href="/configurator?lang=<%= lang %>"><%= assistant.bookCta %></a>
+            <a class="button pale" href="/assistant?lang=<%= lang %>"><%= lang === 'de' ? 'Neue Beratung' : 'New Advice' %></a>
+          </div>
+        </div>
+      </article>
+    <% } %>
+  </section>
+</main>
+
+<script src="/js/assistant.js"></script>
+<%- include('partials/footer') %>

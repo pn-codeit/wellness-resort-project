@@ -1,0 +1,52 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="weather-page">
+  <section class="weather-hero">
+    <div class="weather-inner">
+      <p class="eyebrow light"><%= weather.subtitle %></p>
+      <h1><%= weather.title %></h1>
+      <div class="current-weather">
+        <span class="weather-icon condition-<%= weather.current.condition %>" aria-hidden="true"></span>
+        <div>
+          <strong><%= weather.current.temp %>°C</strong>
+          <p><%= weather.current.description %></p>
+        </div>
+      </div>
+      <div class="weather-stats">
+        <div><span><%= weather.feels %></span><b><%= weather.current.feels %>°C</b></div>
+        <div><span><%= weather.humidity %></span><b><%= weather.current.humidity %>%</b></div>
+        <div><span><%= weather.wind %></span><b><%= weather.current.wind %> km/h</b></div>
+        <div><span><%= weather.pressure %></span><b><%= weather.current.pressure %> hPa</b></div>
+        <div><span><%= weather.sunrise %></span><b><%= weather.current.sunrise %></b></div>
+        <div><span><%= weather.sunset %></span><b><%= weather.current.sunset %></b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-page">
+    <h2 class="section-title"><%= weather.forecastTitle %></h2>
+    <div class="forecast-grid">
+      <% weather.forecast.forEach((day, index) => { %>
+        <% const date = new Date(day.time); %>
+        <article class="<%= index === 0 ? 'today' : '' %>">
+          <b><%= weather.days[date.getDay()] %></b>
+          <small><%= date.getDate() %>.<%= date.getMonth() + 1 %>.</small>
+          <span class="weather-icon small condition-<%= day.condition %>" aria-hidden="true"></span>
+          <p><%= day.description %></p>
+          <strong><%= day.max %>° <em><%= day.min %>°</em></strong>
+        </article>
+      <% }) %>
+    </div>
+
+    <aside class="tip-card">
+      <span class="line-icon icon-leaf" aria-hidden="true"></span>
+      <div>
+        <h2><%= weather.tipTitle %></h2>
+        <p><%= weather.tips[weather.current.condition] || weather.tips.Clouds %></p>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

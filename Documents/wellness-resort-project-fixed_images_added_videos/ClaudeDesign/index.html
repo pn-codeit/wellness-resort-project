@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Serenity Resort — Wellness & Spa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-deep:   oklch(28% 0.08 145);
+      --green-mid:    oklch(40% 0.10 148);
+      --green-light:  oklch(60% 0.10 148);
+      --green-pale:   oklch(88% 0.05 145);
+      --cream:        oklch(97% 0.012 85);
+      --cream-dark:   oklch(93% 0.018 80);
+      --gold:         oklch(72% 0.12 85);
+      --gold-light:   oklch(85% 0.10 88);
+      --stone:        oklch(45% 0.04 80);
+      --stone-light:  oklch(70% 0.03 80);
+      --text:         oklch(22% 0.04 80);
+      --text-muted:   oklch(55% 0.04 80);
+      --font-serif:   'Cormorant Garamond', Georgia, serif;
+      --font-sans:    'DM Sans', system-ui, sans-serif;
+      --nav-h:        72px;
+      --r:            6px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    #root { min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--cream-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--green-light); border-radius: 3px; }
+
+    /* Page transitions */
+    .page-enter { animation: fadeSlideIn 0.4s ease forwards; }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Utility */
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="components/Nav.jsx"></script>
+  <script type="text/babel" src="components/Home.jsx"></script>
+  <script type="text/babel" src="components/Konfigurator.jsx"></script>
+  <script type="text/babel" src="components/Shop.jsx"></script>
+  <script type="text/babel" src="components/Impressionen.jsx"></script>
+  <script type="text/babel" src="components/Wetter.jsx"></script>
+  <script type="text/babel" src="components/KIBerater.jsx"></script>
+  <script type="text/babel" src="components/App.jsx"></script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="content-page impressions-page">
+  <header class="page-header">
+    <h1><%= impressions.title %></h1>
+    <p><%= impressions.subtitle %></p>
+  </header>
+
+  <section>
+    <h2 class="section-title"><%= impressions.photosTitle %></h2>
+
+    <div class="filter-row">
+      <% impressions.categories.forEach((category, index) => { %>
+        <button 
+          class="<%= index === 0 ? 'active' : '' %>" 
+          data-filter="<%= category %>">
+          <%= category %>
+        </button>
+      <% }) %>
+    </div>
+
+    <div class="gallery-grid">
+      <% impressions.items.forEach((item, index) => { %>
+        <% const cat = lang === 'de' ? item.cat_de : item.cat_en; %>
+        <% const label = lang === 'de' ? item.label_de : item.label_en; %>
+
+        <article class="gallery-card" data-category="<%= cat %>">
+          <div class="gallery-art" style="--c1: <%= item.color1 %>; --c2: <%= item.color2 %>">
+            <% if (item.mediaUrl) { %>
+              <img
+                src="<%= item.mediaUrl %>"
+                alt="<%= label %>"
+                loading="lazy"
+                class="gallery-image"
+                data-index="<%= index %>"
+              >
+            <% } else { %>
+              <svg viewBox="0 0 80 60" aria-hidden="true">
+                <polygon points="8,52 30,16 48,52"></polygon>
+                <polygon points="32,52 54,22 74,52"></polygon>
+                <circle cx="58" cy="16" r="8"></circle>
+              </svg>
+            <% } %>
+          </div>
+
+          <div>
+            <small><%= cat %></small>
+            <h3><%= label %></h3>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <div id="lightbox" class="lightbox">
+    <button class="lightbox-close">&times;</button>
+    <button class="lightbox-prev">&#10094;</button>
+    <img id="lightbox-img" src="" alt="Gallery image">
+    <button class="lightbox-next">&#10095;</button>
+  </div>
+
+  <section class="video-section">
+    <h2 class="section-title"><%= impressions.videosTitle %></h2>
+
+    <div class="video-grid">
+      <% impressions.videos.forEach((video) => { %>
+        <article class="video-card">
+          <iframe
+            src="https://www.youtube.com/embed/<%= video.youtubeId %>?rel=0&modestbranding=1"
+            title="<%= lang === 'de' ? video.title_de : video.title_en %>"
+            allowfullscreen>
+          </iframe>
+
+          <div>
+            <h3><%= lang === 'de' ? video.title_de : video.title_en %></h3>
+            <p><%= lang === 'de' ? video.desc_de : video.desc_en %></p>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const images = Array.from(document.querySelectorAll('.gallery-image'));
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const closeBtn = document.querySelector('.lightbox-close');
+      const prevBtn = document.querySelector('.lightbox-prev');
+      const nextBtn = document.querySelector('.lightbox-next');
+
+      let currentIndex = 0;
+
+      function openLightbox(index) {
+        currentIndex = index;
+        lightboxImg.src = images[currentIndex].src;
+        lightbox.classList.add('active');
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove('active');
+        lightboxImg.src = '';
+      }
+
+      function showNext(event) {
+        event.stopPropagation();
+        currentIndex = (currentIndex + 1) % images.length;
+        lightboxImg.src = images[currentIndex].src;
+      }
+
+      function showPrev(event) {
+        event.stopPropagation();
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        lightboxImg.src = images[currentIndex].src;
+      }
+
+      images.forEach((img, index) => {
+        img.addEventListener('click', () => openLightbox(index));
+      });
+
+      closeBtn.addEventListener('click', closeLightbox);
+      nextBtn.addEventListener('click', showNext);
+      prevBtn.addEventListener('click', showPrev);
+
+      lightbox.addEventListener('click', (event) => {
+        if (event.target === lightbox) closeLightbox();
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (!lightbox.classList.contains('active')) return;
+
+        if (event.key === 'Escape') closeLightbox();
+        if (event.key === 'ArrowRight') showNext(event);
+        if (event.key === 'ArrowLeft') showPrev(event);
+      });
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterButtons = document.querySelectorAll('.filter-row button');
+      const cards = document.querySelectorAll('.gallery-card');
+
+      filterButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const filter = button.dataset.filter;
+
+          filterButtons.forEach((btn) => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          cards.forEach((card) => {
+            const category = card.dataset.category;
+
+            if (
+              filter === 'Alle' ||
+              filter === 'All' ||
+              category === filter
+            ) {
+              card.style.display = '';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+  </script>
+</main>
+
+<%- include('partials/footer') %>
