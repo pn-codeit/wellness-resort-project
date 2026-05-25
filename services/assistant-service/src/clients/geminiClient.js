@@ -36,6 +36,8 @@ function normalizeAdvice(value) {
       treatments: Array.isArray(recommendation.treatments) ? recommendation.treatments.map(String).filter(Boolean) : [],
       room: String(recommendation.room || '').trim(),
       extras: Array.isArray(recommendation.extras) ? recommendation.extras.map(String).filter(Boolean) : [],
+      focus_areas: Array.isArray(recommendation.focus_areas) ? recommendation.focus_areas.map(String).filter(Boolean).slice(0, 4) : [],
+      schedule: Array.isArray(recommendation.schedule) ? recommendation.schedule.map(String).filter(Boolean).slice(0, 3) : [],
       reasoning: String(recommendation.reasoning || '').trim(),
       total_price: String(recommendation.total_price || '').trim()
     }
@@ -64,7 +66,8 @@ function buildPrompt({ input, lang, context }) {
     'Use only resort facts from the JSON context. Do not invent unavailable rooms, treatments, extras, products or media.',
     'Recommend one package that fits the guest request. Keep it practical and warm, not medical.',
     'Return valid JSON only with this exact shape:',
-    '{"greeting":"...","recommendation":{"duration":"...","treatments":["..."],"room":"...","extras":["..."],"reasoning":"...","total_price":"..."}}',
+    '{"greeting":"...","recommendation":{"duration":"...","treatments":["..."],"room":"...","extras":["..."],"focus_areas":["..."],"schedule":["...","...","..."],"reasoning":"...","total_price":"..."}}',
+    'Use three short schedule items. They should explain a simple arrival/treatment/recovery rhythm.',
     'Use EUR prices from the context and estimate the total if possible.',
     '',
     `Guest request: ${input}`,

@@ -306,10 +306,17 @@ const weatherText = {
 
 const assistant = {
   de: {
+    eyebrow: 'Persönliche Empfehlung',
     title: 'KI-Wellness-Berater',
-    subtitle: 'Beschreiben Sie Ihre Stimmung, Ihre Ziele oder Ihre Beschwerden. Unser KI-Berater empfiehlt passende Wellness-Pakete und Behandlungen.',
-    placeholder: 'Wie fühlen Sie sich heute? Was erhoffen Sie sich von Ihrem Aufenthalt?',
+    subtitle: 'Beschreiben Sie kurz, was Sie brauchen. Der Berater kombiniert Aufenthaltsdauer, Zimmer, Behandlungen und Extras zu einem passenden Wellness-Plan.',
+    heroPointsLabel: 'Beratungsschwerpunkte',
+    heroPoints: ['Erholung', 'Behandlungen', 'Aufenthaltsplan'],
+    stepLabel: 'Schritt 1',
+    inputTitle: 'Ihr Wellness-Ziel',
+    inputLabel: 'Wunsch, Stimmung oder Beschwerde',
+    placeholder: 'Zum Beispiel: Ich bin gestresst, schlafe schlecht und möchte eine ruhige Woche ohne zu viele Termine.',
     send: 'Beratung starten',
+    privacyNote: 'Kurze Beschreibung genügt. Keine medizinischen Details erforderlich.',
     examplesTitle: 'Beispiel-Eingaben:',
     examples: [
       'Ich bin ausgebrannt und habe seit Wochen nicht richtig geschlafen.',
@@ -317,14 +324,35 @@ const assistant = {
       'Ich leide unter Rückenschmerzen und Verspannungen im Nackenbereich.',
       'Wir feiern unseren Hochzeitstag und suchen etwas Romantisches.'
     ],
+    recapLabel: 'Ihre Anfrage',
+    resultTitle: 'Beratungsergebnis',
+    resultEyebrow: 'Empfehlung',
     packagesTitle: 'Empfohlenes Paket',
-    bookCta: 'Paket buchen'
+    stayLabel: 'Aufenthalt',
+    roomLabel: 'Zimmer',
+    treatmentsTitle: 'Behandlungen',
+    extrasTitle: 'Extras',
+    planTitle: 'Einfacher Tagesrhythmus',
+    sourceLabel: 'Quelle',
+    sourceAi: 'KI-Service',
+    sourceFallback: 'Regelbasierte Empfehlung',
+    cachedLabel: 'aus Cache',
+    bookingSourceLabel: 'Resortdaten geladen',
+    bookCta: 'Paket buchen',
+    newAdvice: 'Neue Beratung'
   },
   en: {
+    eyebrow: 'Personal recommendation',
     title: 'AI Wellness Advisor',
-    subtitle: 'Describe your mood, goals or concerns. Our AI advisor will recommend suitable wellness packages and treatments.',
-    placeholder: 'How are you feeling today? What do you hope to get out of your stay?',
+    subtitle: 'Briefly describe what you need. The advisor combines stay length, room, treatments and extras into one practical wellness plan.',
+    heroPointsLabel: 'Advisor focus areas',
+    heroPoints: ['Recovery', 'Treatments', 'Stay plan'],
+    stepLabel: 'Step 1',
+    inputTitle: 'Your wellness goal',
+    inputLabel: 'Wish, mood or concern',
+    placeholder: 'For example: I am stressed, sleeping poorly and want a quiet week without too many appointments.',
     send: 'Get Advice',
+    privacyNote: 'A short description is enough. No medical details required.',
     examplesTitle: 'Example inputs:',
     examples: [
       "I'm burnt out and have not slept properly in weeks.",
@@ -332,8 +360,22 @@ const assistant = {
       'I suffer from back pain and tension in my neck.',
       "We're celebrating our anniversary and looking for something romantic."
     ],
+    recapLabel: 'Your request',
+    resultTitle: 'Advisor result',
+    resultEyebrow: 'Recommendation',
     packagesTitle: 'Recommended Package',
-    bookCta: 'Book Package'
+    stayLabel: 'Stay',
+    roomLabel: 'Room',
+    treatmentsTitle: 'Treatments',
+    extrasTitle: 'Extras',
+    planTitle: 'Simple daily rhythm',
+    sourceLabel: 'Source',
+    sourceAi: 'AI service',
+    sourceFallback: 'Rule-based recommendation',
+    cachedLabel: 'from cache',
+    bookingSourceLabel: 'Resort data loaded',
+    bookCta: 'Book Package',
+    newAdvice: 'New Advice'
   }
 };
 

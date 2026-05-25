@@ -292,8 +292,42 @@ async function getWeather(lang) {
 function localAdvice(input, lang) {
   const lower = input.toLowerCase();
   const stress = /stress|burn|schlaf|ausgebrannt|ruhe|sleep/.test(lower);
-  const pain = /rücken|nacken|pain|back|neck|verspann/.test(lower);
+  const pain = /rücken|ruecken|rucken|nacken|pain|back|neck|verspann/.test(lower);
   const romance = /hochzeit|romant|anniversary|romance/.test(lower);
+  const detox = /detox|reinig|energie|energy|clean/.test(lower);
+  const type = romance ? 'romance' : pain ? 'pain' : detox ? 'detox' : stress ? 'stress' : 'balance';
+  const focus = {
+    de: {
+      stress: ['Schlaf', 'Stressabbau', 'ruhiger Rhythmus'],
+      pain: ['Verspannungen', 'Wärme', 'sanfte Bewegung'],
+      romance: ['Privatsphäre', 'Rituale', 'gemeinsame Zeit'],
+      detox: ['Energie', 'leichte Aktivierung', 'Natur'],
+      balance: ['Erholung', 'Bewegung', 'Wellness']
+    },
+    en: {
+      stress: ['Sleep', 'stress relief', 'calm rhythm'],
+      pain: ['Tension', 'heat', 'gentle movement'],
+      romance: ['Privacy', 'rituals', 'time together'],
+      detox: ['Energy', 'light activation', 'nature'],
+      balance: ['Recovery', 'movement', 'wellness']
+    }
+  };
+  const schedules = {
+    de: {
+      stress: ['Ankommen mit Sauna-Ritual und früher Ruhezeit.', 'Yoga und Ayurveda mit viel Abstand zwischen den Terminen.', 'Geführte Wanderung als leichter Abschluss in der Natur.'],
+      pain: ['Start mit Wärme und Fango, damit der Körper loslassen kann.', 'Massage als zentraler Behandlungstermin am zweiten Tag.', 'Kneipp-Anwendung und kurze Spaziergänge zur sanften Mobilisierung.'],
+      romance: ['Private Anreise mit Blumen und ruhigem Abendessen.', 'Ayurveda und Sauna als gemeinsames Wellness-Ritual.', 'Freier Vormittag ohne Programm vor der Abreise.'],
+      detox: ['Leichter Start mit Yoga und viel Wasserzeit.', 'Ayurveda und Kneipp zur Aktivierung ohne Überladung.', 'Wanderung als frischer Abschluss mit Bewegung an der Luft.'],
+      balance: ['Ruhig ankommen und den ersten Abend bewusst frei halten.', 'Wellness-Behandlungen und Yoga im Wechsel planen.', 'Naturzeit als Abschluss einbauen.']
+    },
+    en: {
+      stress: ['Arrive with a sauna ritual and early quiet time.', 'Yoga and Ayurveda with enough space between appointments.', 'Finish with a guided hike as gentle time in nature.'],
+      pain: ['Start with heat and fango so the body can settle.', 'Use the massage as the central treatment on day two.', 'Add Kneipp therapy and short walks for gentle mobility.'],
+      romance: ['Private arrival with flowers and a quiet dinner.', 'Ayurveda and sauna as a shared wellness ritual.', 'Keep the last morning open before departure.'],
+      detox: ['Start lightly with yoga and plenty of water time.', 'Use Ayurveda and Kneipp for activation without overload.', 'End with a guided hike and fresh outdoor movement.'],
+      balance: ['Arrive calmly and keep the first evening open.', 'Alternate wellness treatments with yoga.', 'Close with time in nature.']
+    }
+  };
 
   if (lang === 'de') {
     if (romance) {
@@ -304,6 +338,8 @@ function localAdvice(input, lang) {
           treatments: ['Ayurveda Abhyanga', 'Sauna-Ritual'],
           room: 'Wellness-Penthouse',
           extras: ['Blumenarrangement', 'Weinpaket', 'Halbpension'],
+          focus_areas: focus.de[type],
+          schedule: schedules.de[type],
           reasoning: 'Das Penthouse gibt Ihnen viel Privatsphäre, während Ayurveda und Sauna den Aufenthalt entschleunigen. Die Extras setzen bewusst romantische Akzente.',
           total_price: 'ca. 1.070 €'
         }
@@ -319,6 +355,8 @@ function localAdvice(input, lang) {
         treatments: pain ? ['Klassische Massage', 'Fango-Packung', 'Kneipp-Therapie'] : ['Yoga-Paket', 'Ayurveda Abhyanga', 'Sauna-Ritual'],
         room: 'Superior Suite',
         extras: ['Frühstücksbuffet', 'Geführte Wanderung'],
+        focus_areas: focus.de[type],
+        schedule: schedules.de[type],
         reasoning: pain
           ? 'Wärme, Massage und Wasseranwendungen lösen Verspannungen gezielt, ohne den Aufenthalt zu überladen.'
           : 'Yoga, Ayurveda und Sauna unterstützen Regeneration, Schlaf und einen ruhigeren Tagesrhythmus.',
@@ -334,8 +372,10 @@ function localAdvice(input, lang) {
     recommendation: {
       duration: pain ? '4 Nights' : '1 Week',
       treatments: pain ? ['Classic Massage', 'Fango Pack', 'Kneipp Therapy'] : ['Yoga Package', 'Ayurveda Abhyanga', 'Sauna Ritual'],
-      room: 'Superior Suite',
-      extras: ['Breakfast Buffet', 'Guided Hike'],
+      room: romance ? 'Wellness Penthouse' : 'Superior Suite',
+      extras: romance ? ['Flower Arrangement', 'Wine Package', 'Half Board'] : ['Breakfast Buffet', 'Guided Hike'],
+      focus_areas: focus.en[type],
+      schedule: schedules.en[type],
       reasoning: pain
         ? 'Heat, massage and water therapy target tension without overloading your schedule.'
         : 'Yoga, Ayurveda and sauna rituals support recovery, better sleep and a calmer rhythm.',
