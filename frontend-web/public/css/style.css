@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+[hidden] { display: none !important; }
+
+:root {
+}
+
 :root {
   --green-deep: oklch(28% 0.08 145);
   --green-mid: oklch(40% 0.10 148);
