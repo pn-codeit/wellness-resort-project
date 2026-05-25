@@ -1543,3 +1543,164 @@ input:invalid {
   background: #7080a0;
   box-shadow: 20px 8px 0 #8090a8;
 }
+
+/* ── Range Date Picker ─────────────────────────────────────── */
+
+.range-info-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid oklch(84% 0.04 145);
+  border-radius: var(--radius);
+  background: white;
+}
+
+.range-info-item {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.range-info-item--right {
+  text-align: right;
+}
+
+.range-info-item small {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.range-info-item strong {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.range-nights-badge {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--cream-dark);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+
+.range-nights-badge--active {
+  background: var(--green-deep);
+  color: white;
+}
+
+.range-calendar {
+  border: 1px solid oklch(84% 0.04 145);
+  border-radius: var(--radius);
+  background: white;
+  padding: 14px;
+}
+
+.range-calendar-header {
+  display: grid;
+  grid-template-columns: 34px 1fr 34px;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.range-calendar-header strong {
+  color: var(--green-deep);
+  text-align: center;
+  font-size: 14px;
+}
+
+.range-calendar-header button {
+  min-width: 0;
+  min-height: 34px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: var(--cream);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.range-calendar-header button:hover:not(:disabled) {
+  border-color: var(--green-mid);
+}
+
+.range-calendar-header button:disabled {
+  cursor: not-allowed;
+  opacity: 0.34;
+}
+
+.range-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 6px;
+  color: var(--text-muted);
+  font-size: 11px;
+  text-align: center;
+}
+
+.range-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.range-grid .date-cell {
+  border-radius: 0;
+  font-size: 13px;
+  min-height: 36px;
+}
+
+.range-grid .date-cell.empty {
+  background: transparent;
+}
+
+.range-grid .date-cell:hover:not(:disabled) {
+  background: var(--green-pale);
+  border-color: transparent;
+}
+
+.range-grid .date-cell.in-range {
+  background: oklch(93% 0.05 145);
+  border-color: transparent;
+  border-radius: 0;
+}
+
+.range-grid .date-cell.range-start {
+  background: var(--green-deep);
+  color: white;
+  border-radius: 7px 0 0 7px;
+}
+
+.range-grid .date-cell.range-end {
+  background: var(--green-deep);
+  color: white;
+  border-radius: 0 7px 7px 0;
+}
+
+.range-grid .date-cell.range-start.range-end {
+  border-radius: 7px;
+}
+
+.range-hint {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.range-hint--error {
+  color: #a74430;
+  font-weight: 500;
+}

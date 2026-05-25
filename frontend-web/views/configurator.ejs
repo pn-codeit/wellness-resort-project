@@ -14,17 +14,31 @@
     <section class="config-column">
       <div class="form-section">
         <h2><%= booking.durationTitle %></h2>
-        <div class="choice-grid compact">
-          <% booking.durations.forEach((item, index) => { %>
-            <label class="choice-card">
-              <input type="radio" name="duration" value="<%= item.id %>" data-price="<%= item.price %>" data-nights="<%= item.nights %>" <%= index === 0 ? 'checked' : '' %>>
-              <span class="choice-body">
-                <strong><%= item.label %></strong>
-                <small><%= item.nights %> <%= booking.nightsLabel %></small>
-                <b>ab <%= item.price %> €</b>
-              </span>
-            </label>
-          <% }) %>
+        <div class="range-picker" data-range-picker>
+          <div class="range-info-bar">
+            <div class="range-info-item">
+              <small><%= lang === 'de' ? 'Anreise' : 'Check-in' %></small>
+              <strong data-range-checkin-label><%= lang === 'de' ? 'Datum wählen' : 'Select date' %></strong>
+            </div>
+            <div class="range-nights-badge" data-range-nights-badge>—</div>
+            <div class="range-info-item range-info-item--right">
+              <small><%= lang === 'de' ? 'Abreise' : 'Check-out' %></small>
+              <strong data-range-checkout-label><%= lang === 'de' ? 'Datum wählen' : 'Select date' %></strong>
+            </div>
+          </div>
+          <input type="hidden" name="arrive" data-range-checkin>
+          <input type="hidden" name="depart" data-range-checkout>
+          <input type="hidden" name="nights" data-range-nights-value value="0">
+          <div class="range-calendar">
+            <div class="range-calendar-header">
+              <button type="button" data-range-prev aria-label="Previous month">&#8249;</button>
+              <strong data-range-month-label></strong>
+              <button type="button" data-range-next aria-label="Next month">&#8250;</button>
+            </div>
+            <div class="range-weekdays" data-range-weekdays></div>
+            <div class="range-grid" data-range-grid role="grid"></div>
+          </div>
+          <small class="range-hint" data-range-hint><%= lang === 'de' ? 'Wählen Sie Ihr Anreisedatum' : 'Select your check-in date' %></small>
         </div>
       </div>
 
@@ -85,15 +99,6 @@
         <label><span><%= booking.labels.phone %></span><input required name="phone" type="tel"></label>
         <label><span><%= booking.labels.address %></span><input required name="address" type="text"></label>
         <label><span><%= booking.labels.city %></span><input required name="city" type="text"></label>
-        <div class="date-picker-field" data-date-picker>
-          <span><%= booking.labels.arrive %></span>
-          <input name="arrive" type="hidden" data-arrival-date>
-          <button class="date-picker-toggle" type="button" data-date-toggle aria-haspopup="grid" aria-expanded="false">
-            <span data-date-label><%= lang === 'de' ? 'Datum waehlen' : 'Choose date' %></span>
-          </button>
-          <div class="date-picker-popover" data-date-calendar hidden></div>
-          <small data-date-message></small>
-        </div>
         <div class="total-row">
           <span><%= booking.total %></span>
           <strong data-total>0 €</strong>

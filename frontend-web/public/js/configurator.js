@@ -4,49 +4,36 @@ if (root) {
   const totalNode = root.querySelector('[data-total]');
   const totalInput = root.querySelector('[data-total-input]');
   const form = root.querySelector('form');
-  const datePicker = root.querySelector('[data-date-picker]');
-  const dateInput = root.querySelector('[data-arrival-date]');
-  const dateToggle = root.querySelector('[data-date-toggle]');
-  const dateLabel = root.querySelector('[data-date-label]');
-  const dateCalendar = root.querySelector('[data-date-calendar]');
-  const dateMessage = root.querySelector('[data-date-message]');
+
+  const rangeCheckInInput = root.querySelector('[data-range-checkin]');
+  const rangeCheckOutInput = root.querySelector('[data-range-checkout]');
+  const rangeNightsInput = root.querySelector('[data-range-nights-value]');
+  const rangeCheckInLabel = root.querySelector('[data-range-checkin-label]');
+  const rangeCheckOutLabel = root.querySelector('[data-range-checkout-label]');
+  const rangeNightsBadge = root.querySelector('[data-range-nights-badge]');
+  const rangeGrid = root.querySelector('[data-range-grid]');
+  const rangeWeekdays = root.querySelector('[data-range-weekdays]');
+  const rangeMonthLabel = root.querySelector('[data-range-month-label]');
+  const rangePrevBtn = root.querySelector('[data-range-prev]');
+  const rangeNextBtn = root.querySelector('[data-range-next]');
+  const rangeHint = root.querySelector('[data-range-hint]');
+
   const availabilityNode = document.querySelector('[data-booking-availability]');
   const availability = availabilityNode ? JSON.parse(availabilityNode.textContent || '{}') : {};
   const availableDates = new Set(availability.availableDates || []);
   const unavailableDates = new Set(availability.unavailableDates || []);
   const locale = document.documentElement.lang === 'en' ? 'en-GB' : 'de-DE';
+  const lang = document.documentElement.lang === 'en' ? 'en' : 'de';
+
+  let rangeCheckIn = '';
+  let rangeCheckOut = '';
+  // 0 = awaiting check-in, 1 = check-in set awaiting check-out, 2 = both set
+  let rangeState = 0;
+  let rangeHover = '';
   let calendarMonth = availability.minArrivalDate ? dateFromKey(availability.minArrivalDate) : new Date();
 
   function numberFrom(input, key) {
     return Number(input.dataset[key] || 0);
-  }
-
-  function calculateTotal() {
-    const duration = root.querySelector('input[name="duration"]:checked');
-    const room = root.querySelector('input[name="room"]:checked');
-    const nights = duration ? numberFrom(duration, 'nights') : 0;
-    let total = duration ? numberFrom(duration, 'price') : 0;
-
-    root.querySelectorAll('input[name="treatments"]:checked').forEach((input) => {
-      total += numberFrom(input, 'price');
-    });
-
-    if (room) total += numberFrom(room, 'pricePerNight') * nights;
-
-    root.querySelectorAll('input[name="extras"]:checked').forEach((input) => {
-      total += numberFrom(input, 'price') + numberFrom(input, 'pricePerNight') * nights;
-    });
-
-    totalNode.textContent = `${total.toLocaleString('de-DE')} €`;
-    totalInput.value = String(total);
-  }
-
-  function firstAvailableDate() {
-    if (Array.isArray(availability.availableDates) && availability.availableDates.length > 0) {
-      return availability.availableDates[0];
-    }
-
-    return availability.minArrivalDate || '';
   }
 
   function dateFromKey(key) {
@@ -69,7 +56,22 @@ if (root) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
   }
 
-  function isAvailable(key) {
+  function nightsBetween(fromKey, toKey) {
+    if (!fromKey || !toKey) return 0;
+    const from = dateFromKey(fromKey);
+    const to = dateFromKey(toKey);
+    return Math.round((to - from) / (1000 * 60 * 60 * 24));
+  }
+
+  function basePriceForNights(nights) {
+    if (nights <= 0) return 0;
+    if (nights <= 2) return Math.round(190 * nights);
+    if (nights <= 4) return Math.round(180 * nights);
+    if (nights <= 7) return Math.round(169 * nights);
+    return Math.round(150 * nights);
+  }
+
+  function isCheckInAvailable(key) {
     if (!key) return false;
     if (availability.minArrivalDate && key < availability.minArrivalDate) return false;
     if (availability.maxArrivalDate && key > availability.maxArrivalDate) return false;
@@ -77,23 +79,53 @@ if (root) {
     return availableDates.size === 0 || availableDates.has(key);
   }
 
-  function renderCalendar() {
-    if (!dateCalendar) return;
+  function calculateTotal() {
+    const nights = Number(rangeNightsInput ? rangeNightsInput.value : 0);
+    let total = basePriceForNights(nights);
+
+    const room = root.querySelector('input[name="room"]:checked');
+    root.querySelectorAll('input[name="treatments"]:checked').forEach((input) => {
+      total += numberFrom(input, 'price');
+    });
+    if (room) total += numberFrom(room, 'pricePerNight') * nights;
+    root.querySelectorAll('input[name="extras"]:checked').forEach((input) => {
+      total += numberFrom(input, 'price') + numberFrom(input, 'pricePerNight') * nights;
+    });
+
+    totalNode.textContent = `${total.toLocaleString('de-DE')} €`;
+    totalInput.value = String(total);
+  }
+
+  function renderRangeCalendar() {
+    if (!rangeGrid) return;
 
     const year = calendarMonth.getFullYear();
     const month = calendarMonth.getMonth();
     const first = new Date(year, month, 1);
     const last = new Date(year, month + 1, 0);
     const offset = (first.getDay() + 6) % 7;
+    const currentMonthKey = monthKey(calendarMonth);
     const minMonth = availability.minArrivalDate ? monthKey(dateFromKey(availability.minArrivalDate)) : null;
     const maxMonth = availability.maxArrivalDate ? monthKey(dateFromKey(availability.maxArrivalDate)) : null;
-    const currentMonth = monthKey(calendarMonth);
-    const weekdays = [];
 
-    for (let i = 0; i < 7; i += 1) {
-      const weekdayDate = new Date(2026, 5, 1 + i);
-      weekdays.push(weekdayDate.toLocaleDateString(locale, { weekday: 'short' }));
+    if (rangeWeekdays) {
+      const weekdays = [];
+      for (let i = 0; i < 7; i += 1) {
+        const d = new Date(2026, 5, 1 + i);
+        weekdays.push(d.toLocaleDateString(locale, { weekday: 'short' }));
+      }
+      rangeWeekdays.innerHTML = weekdays.map((d) => `<span>${d}</span>`).join('');
     }
+
+    if (rangeMonthLabel) {
+      rangeMonthLabel.textContent = calendarMonth.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+    }
+
+    if (rangePrevBtn) rangePrevBtn.disabled = !!(minMonth && currentMonthKey <= minMonth);
+    if (rangeNextBtn) rangeNextBtn.disabled = !!(maxMonth && currentMonthKey >= maxMonth);
+
+    const effectiveEnd = rangeCheckOut
+      || (rangeState === 1 && rangeHover && rangeHover > rangeCheckIn ? rangeHover : '');
 
     let cells = '';
     for (let i = 0; i < offset; i += 1) {
@@ -103,142 +135,141 @@ if (root) {
     for (let day = 1; day <= last.getDate(); day += 1) {
       const date = new Date(year, month, day);
       const key = keyFromDate(date);
-      const disabled = !isAvailable(key);
-      const selected = key === dateInput.value;
-      cells += `
-        <button
-          class="date-cell${selected ? ' selected' : ''}"
-          type="button"
-          data-date-value="${key}"
-          ${disabled ? 'disabled' : ''}
-          aria-label="${formatDate(key)}"
-        >${day}</button>
-      `;
+      const isStart = key === rangeCheckIn;
+      const isEnd = key === rangeCheckOut;
+      const isHoverEnd = rangeState === 1 && key === rangeHover && rangeHover > rangeCheckIn;
+      const inRange = !!(rangeCheckIn && effectiveEnd && key > rangeCheckIn && key < effectiveEnd);
+
+      let disabled = false;
+      if (rangeState === 1) {
+        disabled = key <= rangeCheckIn;
+      } else {
+        disabled = !isCheckInAvailable(key);
+      }
+
+      const classes = ['date-cell'];
+      if (isStart) classes.push('range-start');
+      if (isEnd || isHoverEnd) classes.push('range-end');
+      if (inRange) classes.push('in-range');
+
+      cells += `<button class="${classes.join(' ')}" type="button" data-date-value="${key}" ${disabled ? 'disabled' : ''} aria-label="${formatDate(key)}">${day}</button>`;
     }
 
-    dateCalendar.innerHTML = `
-      <div class="date-picker-header">
-        <button type="button" data-date-prev ${minMonth && currentMonth <= minMonth ? 'disabled' : ''} aria-label="Previous month">&lsaquo;</button>
-        <strong>${calendarMonth.toLocaleDateString(locale, { month: 'long', year: 'numeric' })}</strong>
-        <button type="button" data-date-next ${maxMonth && currentMonth >= maxMonth ? 'disabled' : ''} aria-label="Next month">&rsaquo;</button>
-      </div>
-      <div class="date-weekdays">
-        ${weekdays.map((day) => `<span>${day}</span>`).join('')}
-      </div>
-      <div class="date-grid" role="grid">
-        ${cells}
-      </div>
-    `;
+    rangeGrid.innerHTML = cells;
   }
 
-  function openCalendar() {
-    if (!dateCalendar || !dateToggle) return;
-    dateCalendar.hidden = false;
-    dateToggle.setAttribute('aria-expanded', 'true');
-    renderCalendar();
-  }
+  function updateRangeDisplay() {
+    const nights = nightsBetween(rangeCheckIn, rangeCheckOut);
 
-  function closeCalendar() {
-    if (!dateCalendar || !dateToggle) return;
-    dateCalendar.hidden = true;
-    dateToggle.setAttribute('aria-expanded', 'false');
-  }
-
-  function setSelectedDate(key) {
-    if (!dateInput || !isAvailable(key)) return;
-    dateInput.value = key;
-    if (dateLabel) dateLabel.textContent = formatDate(key);
-    calendarMonth = dateFromKey(key);
-    updateDateValidity();
-    renderCalendar();
-    closeCalendar();
-  }
-
-  function updateDateValidity() {
-    if (!dateInput) return;
-
-    const value = dateInput.value;
-    let message = '';
-
-    if (!value) {
-      message = document.documentElement.lang === 'en'
-        ? 'Please choose an arrival date.'
-        : 'Bitte waehlen Sie ein Anreisedatum.';
-    } else if (value && unavailableDates.has(value)) {
-      message = dateInput.dataset.unavailableMessage || 'Dieser Anreisetag ist nicht verfuegbar.';
-    } else if (value && availability.minArrivalDate && value < availability.minArrivalDate) {
-      message = dateInput.dataset.rangeMessage || 'Bitte waehlen Sie ein spaeteres Datum.';
-    } else if (value && availability.maxArrivalDate && value > availability.maxArrivalDate) {
-      message = dateInput.dataset.rangeMessage || 'Bitte waehlen Sie ein Datum im verfuegbaren Zeitraum.';
+    if (rangeCheckInLabel) {
+      rangeCheckInLabel.textContent = rangeCheckIn
+        ? formatDate(rangeCheckIn, { day: '2-digit', month: 'short' })
+        : (lang === 'de' ? 'Datum wählen' : 'Select date');
     }
 
-    dateInput.setCustomValidity(message);
-    if (dateMessage) dateMessage.textContent = message;
-    if (dateToggle) dateToggle.setAttribute('aria-invalid', message ? 'true' : 'false');
-    return message;
+    if (rangeCheckOutLabel) {
+      rangeCheckOutLabel.textContent = rangeCheckOut
+        ? formatDate(rangeCheckOut, { day: '2-digit', month: 'short' })
+        : (lang === 'de' ? 'Datum wählen' : 'Select date');
+    }
+
+    if (rangeNightsBadge) {
+      rangeNightsBadge.textContent = nights > 0
+        ? (lang === 'de' ? `${nights} Nächte` : `${nights} nights`)
+        : '—';
+      rangeNightsBadge.classList.toggle('range-nights-badge--active', nights > 0);
+    }
+
+    if (rangeHint) {
+      rangeHint.classList.remove('range-hint--error');
+      if (rangeState === 0 || rangeState === 2) {
+        rangeHint.textContent = lang === 'de' ? 'Wählen Sie Ihr Anreisedatum' : 'Select your check-in date';
+      } else {
+        rangeHint.textContent = lang === 'de' ? 'Wählen Sie Ihr Abreisedatum' : 'Select your check-out date';
+      }
+    }
+
+    if (rangeCheckInInput) rangeCheckInInput.value = rangeCheckIn;
+    if (rangeCheckOutInput) rangeCheckOutInput.value = rangeCheckOut;
+    if (rangeNightsInput) rangeNightsInput.value = String(nights);
   }
 
-  if (dateInput) {
-    dateInput.dataset.unavailableMessage = document.documentElement.lang === 'en'
-      ? 'This arrival date is not available.'
-      : 'Dieser Anreisetag ist nicht verfuegbar.';
-    dateInput.dataset.rangeMessage = document.documentElement.lang === 'en'
-      ? 'Please choose a date in the available range.'
-      : 'Bitte waehlen Sie ein Datum im verfuegbaren Zeitraum.';
-
-    const defaultDate = firstAvailableDate();
-    if (defaultDate) calendarMonth = dateFromKey(defaultDate);
-    updateDateValidity();
-    renderCalendar();
+  function selectRangeDate(key) {
+    if (rangeState === 0 || rangeState === 2) {
+      if (!isCheckInAvailable(key)) return;
+      rangeCheckIn = key;
+      rangeCheckOut = '';
+      rangeState = 1;
+      calendarMonth = dateFromKey(key);
+    } else if (key <= rangeCheckIn) {
+      if (!isCheckInAvailable(key)) return;
+      rangeCheckIn = key;
+      rangeCheckOut = '';
+      calendarMonth = dateFromKey(key);
+    } else {
+      rangeCheckOut = key;
+      rangeState = 2;
+    }
+    updateRangeDisplay();
+    renderRangeCalendar();
+    calculateTotal();
   }
 
-  if (dateToggle) {
-    dateToggle.addEventListener('click', () => {
-      if (dateCalendar.hidden) openCalendar();
-      else closeCalendar();
+  if (rangeGrid) {
+    rangeGrid.addEventListener('click', (event) => {
+      const btn = event.target.closest('[data-date-value]');
+      if (btn && !btn.disabled) selectRangeDate(btn.dataset.dateValue);
     });
-  }
 
-  if (dateCalendar) {
-    dateCalendar.addEventListener('click', (event) => {
-      const prev = event.target.closest('[data-date-prev]');
-      const next = event.target.closest('[data-date-next]');
-      const dateButton = event.target.closest('[data-date-value]');
-
-      if (prev) {
-        calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1);
-        renderCalendar();
+    rangeGrid.addEventListener('mouseover', (event) => {
+      const btn = event.target.closest('[data-date-value]');
+      if (btn && rangeState === 1) {
+        rangeHover = btn.dataset.dateValue;
+        renderRangeCalendar();
       }
+    });
 
-      if (next) {
-        calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1);
-        renderCalendar();
-      }
-
-      if (dateButton) {
-        setSelectedDate(dateButton.dataset.dateValue);
+    rangeGrid.addEventListener('mouseleave', () => {
+      if (rangeState === 1) {
+        rangeHover = '';
+        renderRangeCalendar();
       }
     });
   }
 
-  document.addEventListener('click', (event) => {
-    if (datePicker && !datePicker.contains(event.target)) closeCalendar();
-  });
+  if (rangePrevBtn) {
+    rangePrevBtn.addEventListener('click', () => {
+      calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1);
+      renderRangeCalendar();
+    });
+  }
 
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeCalendar();
-  });
+  if (rangeNextBtn) {
+    rangeNextBtn.addEventListener('click', () => {
+      calendarMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1);
+      renderRangeCalendar();
+    });
+  }
 
   if (form) {
     form.addEventListener('submit', (event) => {
-      const dateError = updateDateValidity();
-      if (dateError) {
+      if (!rangeCheckIn || !rangeCheckOut) {
         event.preventDefault();
-        openCalendar();
+        if (rangeHint) {
+          rangeHint.textContent = lang === 'de'
+            ? 'Bitte wählen Sie Anreise- und Abreisedatum.'
+            : 'Please select check-in and check-out dates.';
+          rangeHint.classList.add('range-hint--error');
+        }
       }
     });
   }
 
   root.addEventListener('change', calculateTotal);
+
+  const defaultDate = availability.minArrivalDate || '';
+  if (defaultDate) calendarMonth = dateFromKey(defaultDate);
+  updateRangeDisplay();
+  renderRangeCalendar();
   calculateTotal();
 }

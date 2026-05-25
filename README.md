@@ -13,6 +13,15 @@ The only host-facing application service is:
 - Frontend: http://localhost:8080
 - Health: http://localhost:8080/health
 
+If port `8080` is already in use, set `FRONTEND_PORT` in `.env` and start Compose again:
+
+```bash
+FRONTEND_PORT=8081
+docker compose up --build
+```
+
+Then open `http://localhost:8081`.
+
 The backend services are internal-only Docker services:
 
 - `services/booking-service` (implemented with MySQL booking/options persistence, Redis option cache, and service-backed arrival-date availability)
