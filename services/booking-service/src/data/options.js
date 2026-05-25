@@ -24,6 +24,7 @@ const pageText = {
       children: 'Kinder',
       roomCount: 'Zimmer',
       roomCapacity: 'Bis zu {count} Personen pro Zimmer',
+      familyRoomCapacity: '1-2 Erwachsene und 1-2 Kinder pro Zimmer',
       minRooms: 'Mindestens {count} Zimmer fuer diese Gaestezahl'
     }
   },
@@ -52,6 +53,7 @@ const pageText = {
       children: 'Children',
       roomCount: 'Rooms',
       roomCapacity: 'Up to {count} guests per room',
+      familyRoomCapacity: '1-2 adults and 1-2 children per room',
       minRooms: 'At least {count} rooms for this guest count'
     }
   }
@@ -123,7 +125,9 @@ const seedRooms = [
     desc_de: 'Gemuetliches Zimmer mit Bergblick, 22 qm',
     desc_en: 'Cozy room with mountain view, 22 sqm',
     capacity: 2,
-    price_per_night: 0
+    adult_capacity: 2,
+    child_capacity: 2,
+    price_per_night: 159
   },
   {
     id: 'superior',
@@ -131,8 +135,10 @@ const seedRooms = [
     label_en: 'Superior Suite',
     desc_de: 'Wohnbereich und Balkon mit Alpenpanorama, 38 qm',
     desc_en: 'Living area and balcony with Alpine panorama, 38 sqm',
-    capacity: 4,
-    price_per_night: 60
+    capacity: 2,
+    adult_capacity: 2,
+    child_capacity: 2,
+    price_per_night: 249
   },
   {
     id: 'penthouse',
@@ -140,8 +146,21 @@ const seedRooms = [
     label_en: 'Wellness Penthouse',
     desc_de: 'Private Sauna, Whirlpool und Dachterrasse, 65 qm',
     desc_en: 'Private sauna, whirlpool and rooftop terrace, 65 sqm',
-    capacity: 5,
-    price_per_night: 140
+    capacity: 2,
+    adult_capacity: 2,
+    child_capacity: 2,
+    price_per_night: 399
+  },
+  {
+    id: 'family',
+    label_de: 'Family Zimmer',
+    label_en: 'Family Room',
+    desc_de: 'Grosszuegiges Familienzimmer mit Schlafbereich fuer Kinder, 34 qm',
+    desc_en: 'Spacious family room with a sleeping area for children, 34 sqm',
+    capacity: 4,
+    adult_capacity: 2,
+    child_capacity: 2,
+    price_per_night: 289
   }
 ];
 

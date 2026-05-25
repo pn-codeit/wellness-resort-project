@@ -8,7 +8,17 @@
     <% if (reference) { %>
       <p class="reference">Referenz: <strong><%= reference %></strong></p>
     <% } %>
+    <% if (typeof redirectLabel !== 'undefined' && redirectLabel) { %>
+      <p class="redirect-note"><%= redirectLabel %></p>
+    <% } %>
     <a class="button gold" href="/?lang=<%= lang %>">Serenity Resort</a>
   </section>
 </main>
+<% if (typeof redirectUrl !== 'undefined' && redirectUrl) { %>
+  <script>
+    window.setTimeout(() => {
+      window.location.assign('<%= redirectUrl %>');
+    }, <%= typeof redirectDelayMs !== 'undefined' ? redirectDelayMs : 3500 %>);
+  </script>
+<% } %>
 <%- include('partials/footer') %>

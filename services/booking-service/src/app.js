@@ -125,6 +125,8 @@ async function buildOptions(lang) {
       label: lang === 'en' ? item.label_en : item.label_de,
       desc: lang === 'en' ? item.desc_en : item.desc_de,
       capacity: item.capacity,
+      adultCapacity: item.adult_capacity,
+      childCapacity: item.child_capacity,
       pricePerNight: item.price_per_night
     })),
     extras: options.extras.map((item) => ({

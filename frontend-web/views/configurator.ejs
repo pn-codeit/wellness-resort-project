@@ -58,6 +58,30 @@
       </div>
 
       <div class="form-section">
+        <h2><%= booking.roomTitle %></h2>
+        <div class="choice-list">
+          <% booking.rooms.forEach((item, index) => { %>
+            <label class="choice-card horizontal">
+              <input type="radio" name="room" value="<%= item.id %>" data-price-per-night="<%= item.pricePerNight %>" data-capacity="<%= item.capacity || 2 %>" data-adult-capacity="<%= item.adultCapacity || item.capacity || 2 %>" data-child-capacity="<%= item.childCapacity || item.capacity || 2 %>" <%= index === 0 ? 'checked' : '' %>>
+              <span class="choice-body">
+                <strong><%= item.label %></strong>
+                <small><%= item.desc %></small>
+                <small><%= item.id === 'family' ? (booking.labels.familyRoomCapacity || (lang === 'de' ? '1-2 Erwachsene und 1-2 Kinder pro Zimmer' : '1-2 adults and 1-2 children per room')) : (booking.labels.roomCapacity || (lang === 'de' ? 'Bis zu {count} Personen pro Zimmer' : 'Up to {count} guests per room')).replace('{count}', item.capacity || 2) %></small>
+              </span>
+              <b><%= item.pricePerNight > 0 ? `+ ${item.pricePerNight} €/Nacht` : booking.included %></b>
+            </label>
+          <% }) %>
+        </div>
+        <div class="room-count-field">
+          <label>
+            <span><%= booking.labels.roomCount || (lang === 'de' ? 'Zimmer' : 'Rooms') %></span>
+            <input required name="roomCount" type="number" min="1" max="12" step="1" value="1" data-room-count>
+          </label>
+          <small data-room-count-hint></small>
+        </div>
+      </div>
+
+      <div class="form-section">
         <h2><%= booking.treatmentsTitle %></h2>
         <div class="choice-grid">
           <% booking.treatments.forEach((item) => { %>
@@ -70,30 +94,6 @@
               </span>
             </label>
           <% }) %>
-        </div>
-      </div>
-
-      <div class="form-section">
-        <h2><%= booking.roomTitle %></h2>
-        <div class="choice-list">
-          <% booking.rooms.forEach((item, index) => { %>
-            <label class="choice-card horizontal">
-              <input type="radio" name="room" value="<%= item.id %>" data-price-per-night="<%= item.pricePerNight %>" data-capacity="<%= item.capacity || 2 %>" <%= index === 0 ? 'checked' : '' %>>
-              <span class="choice-body">
-                <strong><%= item.label %></strong>
-                <small><%= item.desc %></small>
-                <small><%= (booking.labels.roomCapacity || (lang === 'de' ? 'Bis zu {count} Personen pro Zimmer' : 'Up to {count} guests per room')).replace('{count}', item.capacity || 2) %></small>
-              </span>
-              <b><%= item.pricePerNight > 0 ? `+ ${item.pricePerNight} €/Nacht` : booking.included %></b>
-            </label>
-          <% }) %>
-        </div>
-        <div class="room-count-field">
-          <label>
-            <span><%= booking.labels.roomCount || (lang === 'de' ? 'Zimmer' : 'Rooms') %></span>
-            <input required name="roomCount" type="number" min="1" max="12" step="1" value="1" data-room-count>
-          </label>
-          <small data-room-count-hint></small>
         </div>
       </div>
 

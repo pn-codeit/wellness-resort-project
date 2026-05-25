@@ -20,9 +20,14 @@ router.post('/booking', async (req, res, next) => {
       title: lang === 'de' ? 'Buchung eingegangen' : 'Booking received',
       heading: lang === 'de' ? 'Buchung eingegangen' : 'Booking received',
       message: lang === 'de'
-        ? 'Vielen Dank. Wir senden Ihnen in Kürze eine Bestätigung per E-Mail.'
-        : 'Thank you. We will send you a confirmation by email shortly.',
-      reference: result.reference
+        ? 'Vielen Dank für Ihre Buchung. Wir leiten Sie gleich zurück zur Startseite.'
+        : 'Thank you for your booking. We will redirect you back to the home page shortly.',
+      reference: result.reference,
+      redirectUrl: `/?lang=${lang}`,
+      redirectDelayMs: 3500,
+      redirectLabel: lang === 'de'
+        ? 'Sie werden automatisch zurück zum Hauptmenü geleitet.'
+        : 'You will be redirected back to the main menu automatically.'
     });
   } catch (err) {
     next(err);

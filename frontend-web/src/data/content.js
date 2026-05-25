@@ -82,6 +82,7 @@ const booking = {
       children: 'Kinder',
       roomCount: 'Zimmer',
       roomCapacity: 'Bis zu {count} Personen pro Zimmer',
+      familyRoomCapacity: '1-2 Erwachsene und 1-2 Kinder pro Zimmer',
       minRooms: 'Mindestens {count} Zimmer für diese Gästezahl'
     },
     durations: [
@@ -99,9 +100,10 @@ const booking = {
       { id: 'kneipp', label: 'Kneipp-Therapie', desc: 'Wassertreten & Güsse', price: 45 }
     ],
     rooms: [
-      { id: 'standard', label: 'Panorama-Zimmer', desc: 'Gemütliches Zimmer mit Bergblick, 22 m²', capacity: 2, pricePerNight: 0 },
-      { id: 'superior', label: 'Superior Suite', desc: 'Wohnbereich und Balkon mit Alpenpanorama, 38 m²', capacity: 4, pricePerNight: 60 },
-      { id: 'penthouse', label: 'Wellness-Penthouse', desc: 'Private Sauna, Whirlpool und Dachterrasse, 65 m²', capacity: 5, pricePerNight: 140 }
+      { id: 'standard', label: 'Panorama-Zimmer', desc: 'Gemütliches Zimmer mit Bergblick, 22 m²', capacity: 2, adultCapacity: 2, childCapacity: 2, pricePerNight: 159 },
+      { id: 'superior', label: 'Superior Suite', desc: 'Wohnbereich und Balkon mit Alpenpanorama, 38 m²', capacity: 2, adultCapacity: 2, childCapacity: 2, pricePerNight: 249 },
+      { id: 'penthouse', label: 'Wellness-Penthouse', desc: 'Private Sauna, Whirlpool und Dachterrasse, 65 m²', capacity: 2, adultCapacity: 2, childCapacity: 2, pricePerNight: 399 },
+      { id: 'family', label: 'Family Zimmer', desc: 'Großzügiges Familienzimmer mit Schlafbereich für Kinder, 34 m²', capacity: 4, adultCapacity: 2, childCapacity: 2, pricePerNight: 289 }
     ],
     extras: [
       { id: 'breakfast', label: 'Frühstücksbuffet', desc: 'Bio-Frühstück täglich', pricePerNight: 28 },
@@ -137,6 +139,7 @@ const booking = {
       children: 'Children',
       roomCount: 'Rooms',
       roomCapacity: 'Up to {count} guests per room',
+      familyRoomCapacity: '1-2 adults and 1-2 children per room',
       minRooms: 'At least {count} rooms for this guest count'
     },
     durations: [
@@ -154,9 +157,10 @@ const booking = {
       { id: 'kneipp', label: 'Kneipp Therapy', desc: 'Water treading & affusions', price: 45 }
     ],
     rooms: [
-      { id: 'standard', label: 'Panorama Room', desc: 'Cozy room with mountain view, 22 m²', capacity: 2, pricePerNight: 0 },
-      { id: 'superior', label: 'Superior Suite', desc: 'Living area and balcony with Alpine panorama, 38 m²', capacity: 4, pricePerNight: 60 },
-      { id: 'penthouse', label: 'Wellness Penthouse', desc: 'Private sauna, whirlpool and rooftop terrace, 65 m²', capacity: 5, pricePerNight: 140 }
+      { id: 'standard', label: 'Panorama Room', desc: 'Cozy room with mountain view, 22 m²', capacity: 2, adultCapacity: 2, childCapacity: 2, pricePerNight: 159 },
+      { id: 'superior', label: 'Superior Suite', desc: 'Living area and balcony with Alpine panorama, 38 m²', capacity: 2, adultCapacity: 2, childCapacity: 2, pricePerNight: 249 },
+      { id: 'penthouse', label: 'Wellness Penthouse', desc: 'Private sauna, whirlpool and rooftop terrace, 65 m²', capacity: 2, adultCapacity: 2, childCapacity: 2, pricePerNight: 399 },
+      { id: 'family', label: 'Family Room', desc: 'Spacious family room with a sleeping area for children, 34 m²', capacity: 4, adultCapacity: 2, childCapacity: 2, pricePerNight: 289 }
     ],
     extras: [
       { id: 'breakfast', label: 'Breakfast Buffet', desc: 'Organic breakfast daily', pricePerNight: 28 },

@@ -1289,6 +1289,11 @@ input:invalid {
   color: var(--green-deep);
 }
 
+.redirect-note {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
 .page-enter {
   animation: fadeSlideIn 0.35s ease forwards;
 }

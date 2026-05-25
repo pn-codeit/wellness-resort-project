@@ -55,6 +55,8 @@ async function createSchema() {
       desc_de TEXT NOT NULL,
       desc_en TEXT NOT NULL,
       capacity INT NOT NULL DEFAULT 2,
+      adult_capacity INT NOT NULL DEFAULT 2,
+      child_capacity INT NOT NULL DEFAULT 2,
       price_per_night DECIMAL(10,2) NOT NULL,
       active BOOLEAN NOT NULL DEFAULT TRUE,
       updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -120,6 +122,8 @@ async function createSchema() {
   await ensureColumn('bookings', 'child_count', 'INT NOT NULL DEFAULT 0 AFTER adult_count');
   await ensureColumn('bookings', 'room_count', 'INT NOT NULL DEFAULT 1 AFTER child_count');
   await ensureColumn('booking_rooms', 'capacity', 'INT NOT NULL DEFAULT 2 AFTER desc_en');
+  await ensureColumn('booking_rooms', 'adult_capacity', 'INT NOT NULL DEFAULT 2 AFTER capacity');
+  await ensureColumn('booking_rooms', 'child_capacity', 'INT NOT NULL DEFAULT 2 AFTER adult_capacity');
 }
 
 async function ensureColumn(tableName, columnName, definition) {
@@ -203,7 +207,9 @@ async function seedOptions() {
 
   await pool.query(
     `
-      INSERT INTO booking_rooms (id, label_de, label_en, desc_de, desc_en, capacity, price_per_night, active)
+      INSERT INTO booking_rooms (
+        id, label_de, label_en, desc_de, desc_en, capacity, adult_capacity, child_capacity, price_per_night, active
+      )
       VALUES ?
       ON DUPLICATE KEY UPDATE
         label_de = VALUES(label_de),
@@ -211,6 +217,8 @@ async function seedOptions() {
         desc_de = VALUES(desc_de),
         desc_en = VALUES(desc_en),
         capacity = VALUES(capacity),
+        adult_capacity = VALUES(adult_capacity),
+        child_capacity = VALUES(child_capacity),
         price_per_night = VALUES(price_per_night),
         active = VALUES(active)
     `,
@@ -221,6 +229,8 @@ async function seedOptions() {
       item.desc_de,
       item.desc_en,
       item.capacity,
+      item.adult_capacity,
+      item.child_capacity,
       item.price_per_night,
       true
     ])]
@@ -293,10 +303,10 @@ async function getOptions() {
   `);
 
   const [rooms] = await pool.query(`
-    SELECT id, label_de, label_en, desc_de, desc_en, capacity, price_per_night
+    SELECT id, label_de, label_en, desc_de, desc_en, capacity, adult_capacity, child_capacity, price_per_night
     FROM booking_rooms
     WHERE active = TRUE
-    ORDER BY FIELD(id, 'standard', 'superior', 'penthouse'), id
+    ORDER BY FIELD(id, 'standard', 'superior', 'penthouse', 'family'), id
   `);
 
   const [extras] = await pool.query(`
@@ -374,11 +384,7 @@ function byId(rows) {
 }
 
 function basePriceForNights(nights) {
-  if (nights <= 0) return 0;
-  if (nights <= 2) return Math.round(190 * nights);
-  if (nights <= 4) return Math.round(180 * nights);
-  if (nights <= 7) return Math.round(169 * nights);
-  return Math.round(150 * nights);
+  return 0;
 }
 
 function roomLabelForError(room, lang) {
@@ -411,9 +417,19 @@ async function createBooking({ customer, selection, lang }) {
     throw Object.assign(new Error(`Unknown room id ${selection.roomId}`), { statusCode: 400 });
   }
 
+  if (room.id === 'family' && selection.children < 1) {
+    throw Object.assign(new Error('Family Zimmer requires at least one child.'), { statusCode: 400 });
+  }
+
   const guestCount = selection.adults + selection.children;
   const roomCapacity = Math.max(1, Number(room.capacity || 2));
-  const minRoomCount = Math.ceil(guestCount / roomCapacity);
+  const adultCapacity = Math.max(1, Number(room.adult_capacity || roomCapacity));
+  const childCapacity = Math.max(0, Number(room.child_capacity || roomCapacity));
+  const minRoomCount = Math.max(
+    Math.ceil(guestCount / roomCapacity),
+    Math.ceil(selection.adults / adultCapacity),
+    childCapacity > 0 ? Math.ceil(selection.children / childCapacity) : 1
+  );
   if (selection.roomCount < minRoomCount) {
     throw Object.assign(
       new Error(`At least ${minRoomCount} rooms are required for ${guestCount} guests in ${roomLabelForError(room, lang)}.`),
@@ -428,14 +444,16 @@ async function createBooking({ customer, selection, lang }) {
   const roomLabel = lang === 'en' ? room.label_en : room.label_de;
   const basePrice = basePriceForNights(selection.nights);
 
-  lines.push({
-    type: 'duration',
-    itemId: duration.id,
-    label: durationLabel,
-    quantity: selection.roomCount,
-    unitPrice: basePrice,
-    lineTotal: Number((basePrice * selection.roomCount).toFixed(2))
-  });
+  if (basePrice > 0) {
+    lines.push({
+      type: 'duration',
+      itemId: duration.id,
+      label: durationLabel,
+      quantity: selection.roomCount,
+      unitPrice: basePrice,
+      lineTotal: Number((basePrice * selection.roomCount).toFixed(2))
+    });
+  }
 
   if (room.price_per_night > 0) {
     lines.push({

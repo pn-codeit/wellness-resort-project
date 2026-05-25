@@ -34,6 +34,7 @@ if (root) {
   let rangeState = 0;
   let rangeHover = '';
   let calendarMonth = availability.minArrivalDate ? dateFromKey(availability.minArrivalDate) : new Date();
+  let lastAutoRoomCount = roomCountInput ? Number(roomCountInput.value || 1) : 1;
 
   function numberFrom(input, key) {
     if (!input) return 0;
@@ -68,11 +69,7 @@ if (root) {
   }
 
   function basePriceForNights(nights) {
-    if (nights <= 0) return 0;
-    if (nights <= 2) return Math.round(190 * nights);
-    if (nights <= 4) return Math.round(180 * nights);
-    if (nights <= 7) return Math.round(169 * nights);
-    return Math.round(150 * nights);
+    return 0;
   }
 
   function durationIdForNights(nights) {
@@ -88,23 +85,44 @@ if (root) {
     return Math.max(1, adults + children);
   }
 
-  function selectedRoomCapacity() {
+  function guestBreakdown() {
+    return {
+      adults: Number(root.querySelector('input[name="adults"]')?.value || 0),
+      children: Number(root.querySelector('input[name="children"]')?.value || 0)
+    };
+  }
+
+  function selectedRoomLimits() {
     const room = root.querySelector('input[name="room"]:checked');
-    return Math.max(1, numberFrom(room, 'capacity') || 2);
+    const capacity = Math.max(1, numberFrom(room, 'capacity') || 2);
+    return {
+      capacity,
+      adultCapacity: Math.max(1, numberFrom(room, 'adultCapacity') || capacity),
+      childCapacity: Math.max(0, numberFrom(room, 'childCapacity') || capacity)
+    };
   }
 
   function minRoomsForSelection() {
-    return Math.max(1, Math.ceil(guestCount() / selectedRoomCapacity()));
+    const guests = guestBreakdown();
+    const limits = selectedRoomLimits();
+    const byGuests = Math.ceil(guestCount() / limits.capacity);
+    const byAdults = Math.ceil(guests.adults / limits.adultCapacity);
+    const byChildren = limits.childCapacity > 0 ? Math.ceil(guests.children / limits.childCapacity) : 1;
+    return Math.max(1, byGuests, byAdults, byChildren);
   }
 
   function updateRoomCount() {
     if (!roomCountInput) return 1;
 
     const minRooms = minRoomsForSelection();
+    const currentRoomCount = Number(roomCountInput.value || 0);
+    const shouldFollowMinimum = currentRoomCount <= lastAutoRoomCount;
+
     roomCountInput.min = String(minRooms);
-    if (Number(roomCountInput.value || 0) < minRooms) {
+    if (shouldFollowMinimum || currentRoomCount < minRooms) {
       roomCountInput.value = String(minRooms);
     }
+    lastAutoRoomCount = minRooms;
 
     if (roomCountHint) {
       roomCountHint.textContent = lang === 'de'
@@ -262,14 +280,22 @@ if (root) {
   }
 
   if (rangeGrid) {
-    rangeGrid.addEventListener('click', (event) => {
+    function handleRangeDateActivation(event) {
       const btn = event.target.closest('[data-date-value]');
-      if (btn && !btn.disabled) selectRangeDate(btn.dataset.dateValue);
+      if (!btn || btn.disabled) return;
+      event.preventDefault();
+      selectRangeDate(btn.dataset.dateValue);
+    }
+
+    rangeGrid.addEventListener('pointerdown', handleRangeDateActivation);
+
+    rangeGrid.addEventListener('click', (event) => {
+      if (event.detail === 0) handleRangeDateActivation(event);
     });
 
     rangeGrid.addEventListener('mouseover', (event) => {
       const btn = event.target.closest('[data-date-value]');
-      if (btn && rangeState === 1) {
+      if (btn && rangeState === 1 && rangeHover !== btn.dataset.dateValue) {
         rangeHover = btn.dataset.dateValue;
         renderRangeCalendar();
       }
@@ -308,6 +334,17 @@ if (root) {
           rangeHint.classList.add('range-hint--error');
         }
       }
+    });
+  }
+
+  if (roomCountInput) {
+    roomCountInput.addEventListener('input', () => {
+      const minRooms = minRoomsForSelection();
+      const currentRoomCount = Number(roomCountInput.value || 0);
+      if (currentRoomCount < minRooms) {
+        roomCountInput.value = String(minRooms);
+      }
+      calculateTotal();
     });
   }
 
