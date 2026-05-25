@@ -589,6 +589,35 @@ textarea:focus {
   border-color: var(--green-mid);
 }
 
+.guest-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.guest-fields input {
+  text-align: center;
+}
+
+.room-count-field {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) 1fr;
+  gap: 12px;
+  align-items: end;
+  margin-top: 14px;
+}
+
+.room-count-field input {
+  text-align: center;
+}
+
+.room-count-field small {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+  padding-bottom: 12px;
+}
+
 .date-picker-field small {
   display: block;
   min-height: 18px;

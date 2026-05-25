@@ -65,6 +65,8 @@ const booking = {
     roomTitle: 'Unterkunft wählen',
     extrasTitle: 'Extras & Add-ons',
     formTitle: 'Buchung abschließen',
+    guestsTitle: 'Gäste',
+    roomCountTitle: 'Zimmeranzahl',
     total: 'Voraussichtlicher Gesamtpreis',
     submit: 'Jetzt kostenpflichtig anfragen',
     nightsLabel: 'Nächte',
@@ -75,7 +77,12 @@ const booking = {
       phone: 'Telefon',
       address: 'Straße & Hausnummer',
       city: 'PLZ & Ort',
-      arrive: 'Anreisedatum'
+      arrive: 'Anreisedatum',
+      adults: 'Erwachsene',
+      children: 'Kinder',
+      roomCount: 'Zimmer',
+      roomCapacity: 'Bis zu {count} Personen pro Zimmer',
+      minRooms: 'Mindestens {count} Zimmer für diese Gästezahl'
     },
     durations: [
       { id: 'weekend', label: 'Wochenende', nights: 2, price: 380 },
@@ -92,9 +99,9 @@ const booking = {
       { id: 'kneipp', label: 'Kneipp-Therapie', desc: 'Wassertreten & Güsse', price: 45 }
     ],
     rooms: [
-      { id: 'standard', label: 'Panorama-Zimmer', desc: 'Gemütliches Zimmer mit Bergblick, 22 m²', pricePerNight: 0 },
-      { id: 'superior', label: 'Superior Suite', desc: 'Wohnbereich und Balkon mit Alpenpanorama, 38 m²', pricePerNight: 60 },
-      { id: 'penthouse', label: 'Wellness-Penthouse', desc: 'Private Sauna, Whirlpool und Dachterrasse, 65 m²', pricePerNight: 140 }
+      { id: 'standard', label: 'Panorama-Zimmer', desc: 'Gemütliches Zimmer mit Bergblick, 22 m²', capacity: 2, pricePerNight: 0 },
+      { id: 'superior', label: 'Superior Suite', desc: 'Wohnbereich und Balkon mit Alpenpanorama, 38 m²', capacity: 4, pricePerNight: 60 },
+      { id: 'penthouse', label: 'Wellness-Penthouse', desc: 'Private Sauna, Whirlpool und Dachterrasse, 65 m²', capacity: 5, pricePerNight: 140 }
     ],
     extras: [
       { id: 'breakfast', label: 'Frühstücksbuffet', desc: 'Bio-Frühstück täglich', pricePerNight: 28 },
@@ -113,6 +120,8 @@ const booking = {
     roomTitle: 'Choose Accommodation',
     extrasTitle: 'Extras & Add-ons',
     formTitle: 'Complete Booking',
+    guestsTitle: 'Guests',
+    roomCountTitle: 'Number of rooms',
     total: 'Estimated Total',
     submit: 'Request booking',
     nightsLabel: 'nights',
@@ -123,7 +132,12 @@ const booking = {
       phone: 'Phone',
       address: 'Street & Number',
       city: 'ZIP & City',
-      arrive: 'Arrival Date'
+      arrive: 'Arrival Date',
+      adults: 'Adults',
+      children: 'Children',
+      roomCount: 'Rooms',
+      roomCapacity: 'Up to {count} guests per room',
+      minRooms: 'At least {count} rooms for this guest count'
     },
     durations: [
       { id: 'weekend', label: 'Weekend', nights: 2, price: 380 },
@@ -140,9 +154,9 @@ const booking = {
       { id: 'kneipp', label: 'Kneipp Therapy', desc: 'Water treading & affusions', price: 45 }
     ],
     rooms: [
-      { id: 'standard', label: 'Panorama Room', desc: 'Cozy room with mountain view, 22 m²', pricePerNight: 0 },
-      { id: 'superior', label: 'Superior Suite', desc: 'Living area and balcony with Alpine panorama, 38 m²', pricePerNight: 60 },
-      { id: 'penthouse', label: 'Wellness Penthouse', desc: 'Private sauna, whirlpool and rooftop terrace, 65 m²', pricePerNight: 140 }
+      { id: 'standard', label: 'Panorama Room', desc: 'Cozy room with mountain view, 22 m²', capacity: 2, pricePerNight: 0 },
+      { id: 'superior', label: 'Superior Suite', desc: 'Living area and balcony with Alpine panorama, 38 m²', capacity: 4, pricePerNight: 60 },
+      { id: 'penthouse', label: 'Wellness Penthouse', desc: 'Private sauna, whirlpool and rooftop terrace, 65 m²', capacity: 5, pricePerNight: 140 }
     ],
     extras: [
       { id: 'breakfast', label: 'Breakfast Buffet', desc: 'Organic breakfast daily', pricePerNight: 28 },

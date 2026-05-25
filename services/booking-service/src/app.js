@@ -34,7 +34,22 @@ function asArray(value) {
   return [value];
 }
 
+function numberFromBody(value, fallback) {
+  if (value === undefined || value === null || value === '') return fallback;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function durationIdForNights(nights) {
+  if (nights <= 2) return 'weekend';
+  if (nights <= 4) return 'midweek';
+  if (nights <= 7) return 'week';
+  return 'twoweeks';
+}
+
 function validateBooking(body) {
+  const nights = Math.trunc(numberFromBody(body.nights, 0));
+
   const customer = {
     name: String(body.name || '').trim(),
     email: String(body.email || '').trim(),
@@ -44,11 +59,15 @@ function validateBooking(body) {
   };
 
   const selection = {
-    durationId: String(body.duration || '').trim(),
+    durationId: String(body.duration || durationIdForNights(nights)).trim(),
     roomId: String(body.room || '').trim(),
     treatmentIds: asArray(body.treatments).map((id) => String(id).trim()).filter(Boolean),
     extraIds: asArray(body.extras).map((id) => String(id).trim()).filter(Boolean),
-    arrive: String(body.arrive || '').trim()
+    arrive: String(body.arrive || '').trim(),
+    nights,
+    adults: Math.trunc(numberFromBody(body.adults, 2)),
+    children: Math.trunc(numberFromBody(body.children, 0)),
+    roomCount: Math.trunc(numberFromBody(body.roomCount, 1))
   };
 
   if (!customer.name || !customer.email || !customer.phone || !customer.address || !customer.city) {
@@ -61,6 +80,18 @@ function validateBooking(body) {
 
   if (!selection.durationId || !selection.roomId || !selection.arrive) {
     throw Object.assign(new Error('Duration, room and arrival date are required.'), { statusCode: 400 });
+  }
+
+  if (selection.nights < 1 || selection.nights > 30) {
+    throw Object.assign(new Error('A valid stay length between 1 and 30 nights is required.'), { statusCode: 400 });
+  }
+
+  if (selection.adults < 1 || selection.adults > 12 || selection.children < 0 || selection.children > 12) {
+    throw Object.assign(new Error('Guest counts must include at least one adult and no more than 12 adults or children.'), { statusCode: 400 });
+  }
+
+  if (selection.roomCount < 1 || selection.roomCount > 12) {
+    throw Object.assign(new Error('A valid room count between 1 and 12 is required.'), { statusCode: 400 });
   }
 
   const arrivalDate = new Date(`${selection.arrive}T00:00:00Z`);
@@ -93,6 +124,7 @@ async function buildOptions(lang) {
       id: item.id,
       label: lang === 'en' ? item.label_en : item.label_de,
       desc: lang === 'en' ? item.desc_en : item.desc_de,
+      capacity: item.capacity,
       pricePerNight: item.price_per_night
     })),
     extras: options.extras.map((item) => ({

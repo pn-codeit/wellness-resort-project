@@ -54,6 +54,7 @@ async function createSchema() {
       label_en VARCHAR(160) NOT NULL,
       desc_de TEXT NOT NULL,
       desc_en TEXT NOT NULL,
+      capacity INT NOT NULL DEFAULT 2,
       price_per_night DECIMAL(10,2) NOT NULL,
       active BOOLEAN NOT NULL DEFAULT TRUE,
       updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -89,6 +90,9 @@ async function createSchema() {
       duration_id VARCHAR(40) NOT NULL,
       duration_label VARCHAR(160) NOT NULL,
       nights INT NOT NULL,
+      adult_count INT NOT NULL DEFAULT 2,
+      child_count INT NOT NULL DEFAULT 0,
+      room_count INT NOT NULL DEFAULT 1,
       room_id VARCHAR(40) NOT NULL,
       room_label VARCHAR(160) NOT NULL,
       total_amount DECIMAL(10,2) NOT NULL,
@@ -111,6 +115,28 @@ async function createSchema() {
       FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
     )
   `);
+
+  await ensureColumn('bookings', 'adult_count', 'INT NOT NULL DEFAULT 2 AFTER nights');
+  await ensureColumn('bookings', 'child_count', 'INT NOT NULL DEFAULT 0 AFTER adult_count');
+  await ensureColumn('bookings', 'room_count', 'INT NOT NULL DEFAULT 1 AFTER child_count');
+  await ensureColumn('booking_rooms', 'capacity', 'INT NOT NULL DEFAULT 2 AFTER desc_en');
+}
+
+async function ensureColumn(tableName, columnName, definition) {
+  const [rows] = await pool.query(
+    `
+      SELECT COLUMN_NAME
+      FROM INFORMATION_SCHEMA.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME = ?
+        AND COLUMN_NAME = ?
+    `,
+    [tableName, columnName]
+  );
+
+  if (rows.length === 0) {
+    await pool.query(`ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${definition}`);
+  }
 }
 
 function addDays(date, days) {
@@ -177,13 +203,14 @@ async function seedOptions() {
 
   await pool.query(
     `
-      INSERT INTO booking_rooms (id, label_de, label_en, desc_de, desc_en, price_per_night, active)
+      INSERT INTO booking_rooms (id, label_de, label_en, desc_de, desc_en, capacity, price_per_night, active)
       VALUES ?
       ON DUPLICATE KEY UPDATE
         label_de = VALUES(label_de),
         label_en = VALUES(label_en),
         desc_de = VALUES(desc_de),
         desc_en = VALUES(desc_en),
+        capacity = VALUES(capacity),
         price_per_night = VALUES(price_per_night),
         active = VALUES(active)
     `,
@@ -193,6 +220,7 @@ async function seedOptions() {
       item.label_en,
       item.desc_de,
       item.desc_en,
+      item.capacity,
       item.price_per_night,
       true
     ])]
@@ -265,7 +293,7 @@ async function getOptions() {
   `);
 
   const [rooms] = await pool.query(`
-    SELECT id, label_de, label_en, desc_de, desc_en, price_per_night
+    SELECT id, label_de, label_en, desc_de, desc_en, capacity, price_per_night
     FROM booking_rooms
     WHERE active = TRUE
     ORDER BY FIELD(id, 'standard', 'superior', 'penthouse'), id
@@ -345,6 +373,18 @@ function byId(rows) {
   return new Map(rows.map((row) => [row.id, row]));
 }
 
+function basePriceForNights(nights) {
+  if (nights <= 0) return 0;
+  if (nights <= 2) return Math.round(190 * nights);
+  if (nights <= 4) return Math.round(180 * nights);
+  if (nights <= 7) return Math.round(169 * nights);
+  return Math.round(150 * nights);
+}
+
+function roomLabelForError(room, lang) {
+  return lang === 'en' ? room.label_en : room.label_de;
+}
+
 async function createBooking({ customer, selection, lang }) {
   await ensureDatabase();
 
@@ -371,17 +411,30 @@ async function createBooking({ customer, selection, lang }) {
     throw Object.assign(new Error(`Unknown room id ${selection.roomId}`), { statusCode: 400 });
   }
 
+  const guestCount = selection.adults + selection.children;
+  const roomCapacity = Math.max(1, Number(room.capacity || 2));
+  const minRoomCount = Math.ceil(guestCount / roomCapacity);
+  if (selection.roomCount < minRoomCount) {
+    throw Object.assign(
+      new Error(`At least ${minRoomCount} rooms are required for ${guestCount} guests in ${roomLabelForError(room, lang)}.`),
+      { statusCode: 400 }
+    );
+  }
+
   const lines = [];
-  const durationLabel = lang === 'en' ? duration.label_en : duration.label_de;
+  const durationLabel = lang === 'en'
+    ? `${selection.nights} ${selection.nights === 1 ? 'Night' : 'Nights'}`
+    : `${selection.nights} ${selection.nights === 1 ? 'Nacht' : 'Naechte'}`;
   const roomLabel = lang === 'en' ? room.label_en : room.label_de;
+  const basePrice = basePriceForNights(selection.nights);
 
   lines.push({
     type: 'duration',
     itemId: duration.id,
     label: durationLabel,
-    quantity: 1,
-    unitPrice: duration.price,
-    lineTotal: duration.price
+    quantity: selection.roomCount,
+    unitPrice: basePrice,
+    lineTotal: Number((basePrice * selection.roomCount).toFixed(2))
   });
 
   if (room.price_per_night > 0) {
@@ -389,9 +442,9 @@ async function createBooking({ customer, selection, lang }) {
       type: 'room',
       itemId: room.id,
       label: roomLabel,
-      quantity: duration.nights,
+      quantity: selection.nights * selection.roomCount,
       unitPrice: room.price_per_night,
-      lineTotal: Number((room.price_per_night * duration.nights).toFixed(2))
+      lineTotal: Number((room.price_per_night * selection.nights * selection.roomCount).toFixed(2))
     });
   }
 
@@ -419,7 +472,7 @@ async function createBooking({ customer, selection, lang }) {
     }
 
     const unitPrice = extra.price_per_night > 0 ? extra.price_per_night : extra.price;
-    const quantity = extra.price_per_night > 0 ? duration.nights : 1;
+    const quantity = extra.price_per_night > 0 ? selection.nights : 1;
     const label = lang === 'en' ? extra.label_en : extra.label_de;
 
     lines.push({
@@ -442,8 +495,9 @@ async function createBooking({ customer, selection, lang }) {
       `
         INSERT INTO bookings (
           reference, customer_name, customer_email, customer_phone, customer_address, customer_city,
-          arrival_date, lang, duration_id, duration_label, nights, room_id, room_label, total_amount
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          arrival_date, lang, duration_id, duration_label, nights, adult_count, child_count, room_count,
+          room_id, room_label, total_amount
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         reference,
@@ -456,7 +510,10 @@ async function createBooking({ customer, selection, lang }) {
         lang,
         duration.id,
         durationLabel,
-        duration.nights,
+        selection.nights,
+        selection.adults,
+        selection.children,
+        selection.roomCount,
         room.id,
         roomLabel,
         total
@@ -485,7 +542,10 @@ async function createBooking({ customer, selection, lang }) {
       reference,
       status: 'received',
       total,
-      nights: duration.nights,
+      nights: selection.nights,
+      adults: selection.adults,
+      children: selection.children,
+      roomCount: selection.roomCount,
       arrivalDate: selection.arrive,
       items: lines
     };

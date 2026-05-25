@@ -7,6 +7,8 @@ const pageText = {
     roomTitle: 'Unterkunft waehlen',
     extrasTitle: 'Extras & Add-ons',
     formTitle: 'Buchung abschliessen',
+    guestsTitle: 'Gaeste',
+    roomCountTitle: 'Zimmeranzahl',
     total: 'Voraussichtlicher Gesamtpreis',
     submit: 'Jetzt kostenpflichtig anfragen',
     nightsLabel: 'Naechte',
@@ -17,7 +19,12 @@ const pageText = {
       phone: 'Telefon',
       address: 'Strasse & Hausnummer',
       city: 'PLZ & Ort',
-      arrive: 'Anreisedatum'
+      arrive: 'Anreisedatum',
+      adults: 'Erwachsene',
+      children: 'Kinder',
+      roomCount: 'Zimmer',
+      roomCapacity: 'Bis zu {count} Personen pro Zimmer',
+      minRooms: 'Mindestens {count} Zimmer fuer diese Gaestezahl'
     }
   },
   en: {
@@ -28,6 +35,8 @@ const pageText = {
     roomTitle: 'Choose Accommodation',
     extrasTitle: 'Extras & Add-ons',
     formTitle: 'Complete Booking',
+    guestsTitle: 'Guests',
+    roomCountTitle: 'Number of rooms',
     total: 'Estimated Total',
     submit: 'Request booking',
     nightsLabel: 'nights',
@@ -38,7 +47,12 @@ const pageText = {
       phone: 'Phone',
       address: 'Street & Number',
       city: 'ZIP & City',
-      arrive: 'Arrival Date'
+      arrive: 'Arrival Date',
+      adults: 'Adults',
+      children: 'Children',
+      roomCount: 'Rooms',
+      roomCapacity: 'Up to {count} guests per room',
+      minRooms: 'At least {count} rooms for this guest count'
     }
   }
 };
@@ -108,6 +122,7 @@ const seedRooms = [
     label_en: 'Panorama Room',
     desc_de: 'Gemuetliches Zimmer mit Bergblick, 22 qm',
     desc_en: 'Cozy room with mountain view, 22 sqm',
+    capacity: 2,
     price_per_night: 0
   },
   {
@@ -116,6 +131,7 @@ const seedRooms = [
     label_en: 'Superior Suite',
     desc_de: 'Wohnbereich und Balkon mit Alpenpanorama, 38 qm',
     desc_en: 'Living area and balcony with Alpine panorama, 38 sqm',
+    capacity: 4,
     price_per_night: 60
   },
   {
@@ -124,6 +140,7 @@ const seedRooms = [
     label_en: 'Wellness Penthouse',
     desc_de: 'Private Sauna, Whirlpool und Dachterrasse, 65 qm',
     desc_en: 'Private sauna, whirlpool and rooftop terrace, 65 sqm',
+    capacity: 5,
     price_per_night: 140
   }
 ];

@@ -3,6 +3,9 @@ const root = document.querySelector('[data-booking-root]');
 if (root) {
   const totalNode = root.querySelector('[data-total]');
   const totalInput = root.querySelector('[data-total-input]');
+  const durationInput = root.querySelector('[data-duration-input]');
+  const roomCountInput = root.querySelector('[data-room-count]');
+  const roomCountHint = root.querySelector('[data-room-count-hint]');
   const form = root.querySelector('form');
 
   const rangeCheckInInput = root.querySelector('[data-range-checkin]');
@@ -33,6 +36,7 @@ if (root) {
   let calendarMonth = availability.minArrivalDate ? dateFromKey(availability.minArrivalDate) : new Date();
 
   function numberFrom(input, key) {
+    if (!input) return 0;
     return Number(input.dataset[key] || 0);
   }
 
@@ -71,6 +75,46 @@ if (root) {
     return Math.round(150 * nights);
   }
 
+  function durationIdForNights(nights) {
+    if (nights <= 2) return 'weekend';
+    if (nights <= 4) return 'midweek';
+    if (nights <= 7) return 'week';
+    return 'twoweeks';
+  }
+
+  function guestCount() {
+    const adults = Number(root.querySelector('input[name="adults"]')?.value || 0);
+    const children = Number(root.querySelector('input[name="children"]')?.value || 0);
+    return Math.max(1, adults + children);
+  }
+
+  function selectedRoomCapacity() {
+    const room = root.querySelector('input[name="room"]:checked');
+    return Math.max(1, numberFrom(room, 'capacity') || 2);
+  }
+
+  function minRoomsForSelection() {
+    return Math.max(1, Math.ceil(guestCount() / selectedRoomCapacity()));
+  }
+
+  function updateRoomCount() {
+    if (!roomCountInput) return 1;
+
+    const minRooms = minRoomsForSelection();
+    roomCountInput.min = String(minRooms);
+    if (Number(roomCountInput.value || 0) < minRooms) {
+      roomCountInput.value = String(minRooms);
+    }
+
+    if (roomCountHint) {
+      roomCountHint.textContent = lang === 'de'
+        ? `Mindestens ${minRooms} ${minRooms === 1 ? 'Zimmer' : 'Zimmer'} fuer diese Gaestezahl`
+        : `At least ${minRooms} ${minRooms === 1 ? 'room' : 'rooms'} for this guest count`;
+    }
+
+    return Number(roomCountInput.value || minRooms);
+  }
+
   function isCheckInAvailable(key) {
     if (!key) return false;
     if (availability.minArrivalDate && key < availability.minArrivalDate) return false;
@@ -81,13 +125,15 @@ if (root) {
 
   function calculateTotal() {
     const nights = Number(rangeNightsInput ? rangeNightsInput.value : 0);
-    let total = basePriceForNights(nights);
+    const roomCount = updateRoomCount();
+    let total = basePriceForNights(nights) * roomCount;
+    if (durationInput) durationInput.value = nights > 0 ? durationIdForNights(nights) : '';
 
     const room = root.querySelector('input[name="room"]:checked');
     root.querySelectorAll('input[name="treatments"]:checked').forEach((input) => {
       total += numberFrom(input, 'price');
     });
-    if (room) total += numberFrom(room, 'pricePerNight') * nights;
+    if (room) total += numberFrom(room, 'pricePerNight') * nights * roomCount;
     root.querySelectorAll('input[name="extras"]:checked').forEach((input) => {
       total += numberFrom(input, 'price') + numberFrom(input, 'pricePerNight') * nights;
     });
