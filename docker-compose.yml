@@ -98,6 +98,17 @@ services:
       impressions-service:
         condition: service_started
 
+  minio-seed:
+    image: minio/mc
+    depends_on:
+      minio:
+        condition: service_started
+    volumes:
+      - ./seed:/seed
+    entrypoint: /bin/sh
+    command: /seed/seed.sh
+    restart: on-failure
+
   mysql:
     image: mysql:8.4
     environment:
@@ -124,6 +135,9 @@ services:
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
     volumes:
       - minio-data:/data
 
