@@ -101,15 +101,21 @@ services:
         condition: service_started
 
   minio-seed:
-    image: minio/mc
+    image: minio/mc:latest
     depends_on:
       minio:
         condition: service_started
     volumes:
       - ./seed:/seed
-    entrypoint: /bin/sh
-    command: /seed/seed.sh
-    restart: on-failure
+    entrypoint: >
+      /bin/sh -c "
+        sleep 3 &&
+        mc alias set local http://minio:9000 $${MINIO_ROOT_USER:-minioadmin} $${MINIO_ROOT_PASSWORD:-minioadmin} &&
+        mc mb --ignore-existing local/wellness-impressions &&
+        mc mb --ignore-existing local/wellness-shop &&
+        mc cp --recursive /seed/seed/wellness-impressions/ local/wellness-impressions/ &&
+        echo 'Seed complete'
+      "
 
   mysql:
     image: mysql:8.4
