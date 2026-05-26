@@ -100,9 +100,9 @@ const booking = {
       { id: 'kneipp', label: 'Kneipp-Therapie', desc: 'Wassertreten & Güsse', price: 45 }
     ],
     rooms: [
-      { id: 'standard', label: 'Panorama-Zimmer', desc: 'Gemütliches Zimmer mit Bergblick, 22 m²', capacity: 2, adultCapacity: 2, childCapacity: 2, pricePerNight: 159 },
+      { id: 'standard', label: 'Panorama Zimmer', desc: 'Gemütliches Zimmer mit Bergblick, 22 m²', capacity: 2, adultCapacity: 2, childCapacity: 2, pricePerNight: 159 },
       { id: 'superior', label: 'Superior Suite', desc: 'Wohnbereich und Balkon mit Alpenpanorama, 38 m²', capacity: 2, adultCapacity: 2, childCapacity: 2, pricePerNight: 249 },
-      { id: 'penthouse', label: 'Wellness-Penthouse', desc: 'Private Sauna, Whirlpool und Dachterrasse, 65 m²', capacity: 2, adultCapacity: 2, childCapacity: 2, pricePerNight: 399 },
+      { id: 'penthouse', label: 'Wellness Penthouse', desc: 'Private Sauna, Whirlpool und Dachterrasse, 65 m²', capacity: 2, adultCapacity: 2, childCapacity: 2, pricePerNight: 399 },
       { id: 'family', label: 'Family Zimmer', desc: 'Großzügiges Familienzimmer mit Schlafbereich für Kinder, 34 m²', capacity: 4, adultCapacity: 2, childCapacity: 2, pricePerNight: 289 }
     ],
     extras: [
@@ -248,7 +248,7 @@ const galleryItems = [
   { id: 6, cat_de: 'Natur', cat_en: 'Nature', label_de: 'Morgenspaziergang', label_en: 'Morning Walk', color1: '#b8d4a0', color2: '#78a460' },
   { id: 7, cat_de: 'Spa & Wellness', cat_en: 'Spa & Wellness', label_de: 'Ayurveda-Massageraum', label_en: 'Ayurveda Massage Room', color1: '#d4c0a0', color2: '#a89070' },
   { id: 8, cat_de: 'Kulinarik', cat_en: 'Cuisine', label_de: 'Gourmet-Abendmenü', label_en: 'Gourmet Evening Menu', color1: '#d4a898', color2: '#a87868' },
-  { id: 9, cat_de: 'Zimmer', cat_en: 'Rooms', label_de: 'Wellness-Penthouse', label_en: 'Wellness Penthouse', color1: '#b0bcd4', color2: '#7888a8' }
+  { id: 9, cat_de: 'Zimmer', cat_en: 'Rooms', label_de: 'Wellness Penthouse', label_en: 'Wellness Penthouse', color1: '#b0bcd4', color2: '#7888a8' }
 ];
 
 const videos = [

@@ -336,7 +336,7 @@ function localAdvice(input, lang) {
         recommendation: {
           duration: 'Wochenende',
           treatments: ['Ayurveda Abhyanga', 'Sauna-Ritual'],
-          room: 'Wellness-Penthouse',
+          room: 'Wellness Penthouse',
           extras: ['Blumenarrangement', 'Weinpaket', 'Halbpension'],
           focus_areas: focus.de[type],
           schedule: schedules.de[type],

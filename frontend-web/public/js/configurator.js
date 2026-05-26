@@ -158,7 +158,7 @@ if (root) {
 
     if (roomCountHint) {
       roomCountHint.textContent = lang === 'de'
-        ? `Mindestens ${minRooms} ${minRooms === 1 ? 'Zimmer' : 'Zimmer'} fuer diese Gaestezahl`
+        ? `Mindestens ${minRooms} ${minRooms === 1 ? 'Zimmer' : 'Zimmer'} für diese Gästezahl`
         : `At least ${minRooms} ${minRooms === 1 ? 'room' : 'rooms'} for this guest count`;
     }
 

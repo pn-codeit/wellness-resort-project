@@ -100,7 +100,7 @@ const galleryItems = [
     id: 'wellness-penthouse',
     cat_de: 'Zimmer',
     cat_en: 'Rooms',
-    label_de: 'Wellness-Penthouse',
+    label_de: 'Wellness Penthouse',
     label_en: 'Wellness Penthouse',
     color1: '#b0bcd4',
     color2: '#7888a8',

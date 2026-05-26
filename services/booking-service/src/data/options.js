@@ -1,23 +1,23 @@
 const pageText = {
   de: {
     title: 'Urlaub konfigurieren',
-    subtitle: 'Gestalten Sie Ihren persoenlichen Wellness-Aufenthalt Schritt fuer Schritt.',
-    durationTitle: 'Wie lange moechten Sie bleiben?',
-    treatmentsTitle: 'Waehlen Sie Ihre Behandlungen',
-    roomTitle: 'Unterkunft waehlen',
+    subtitle: 'Gestalten Sie Ihren persönlichen Wellness-Aufenthalt Schritt für Schritt.',
+    durationTitle: 'Wie lange möchten Sie bleiben?',
+    treatmentsTitle: 'Wählen Sie Ihre Behandlungen',
+    roomTitle: 'Unterkunft wählen',
     extrasTitle: 'Extras & Add-ons',
-    formTitle: 'Buchung abschliessen',
-    guestsTitle: 'Gaeste',
+    formTitle: 'Buchung abschließen',
+    guestsTitle: 'Gäste',
     roomCountTitle: 'Zimmeranzahl',
     total: 'Voraussichtlicher Gesamtpreis',
     submit: 'Jetzt kostenpflichtig anfragen',
-    nightsLabel: 'Naechte',
+    nightsLabel: 'Nächte',
     included: 'Inkl.',
     labels: {
       name: 'Vor- & Nachname',
       email: 'E-Mail-Adresse',
       phone: 'Telefon',
-      address: 'Strasse & Hausnummer',
+      address: 'Straße & Hausnummer',
       city: 'PLZ & Ort',
       arrive: 'Anreisedatum',
       adults: 'Erwachsene',
@@ -25,7 +25,7 @@ const pageText = {
       roomCount: 'Zimmer',
       roomCapacity: 'Bis zu {count} Personen pro Zimmer',
       familyRoomCapacity: '1-2 Erwachsene und 1-2 Kinder pro Zimmer',
-      minRooms: 'Mindestens {count} Zimmer fuer diese Gaestezahl'
+      minRooms: 'Mindestens {count} Zimmer für diese Gästezahl'
     }
   },
   en: {
@@ -61,7 +61,7 @@ const pageText = {
 
 const seedDurations = [
   { id: 'weekend', label_de: 'Wochenende', label_en: 'Weekend', nights: 2, price: 380 },
-  { id: 'midweek', label_de: '4 Naechte', label_en: '4 Nights', nights: 4, price: 720 },
+  { id: 'midweek', label_de: '4 Nächte', label_en: '4 Nights', nights: 4, price: 720 },
   { id: 'week', label_de: '1 Woche', label_en: '1 Week', nights: 7, price: 1180 },
   { id: 'twoweeks', label_de: '2 Wochen', label_en: '2 Weeks', nights: 14, price: 2100 }
 ];
@@ -79,7 +79,7 @@ const seedTreatments = [
     id: 'ayurveda',
     label_de: 'Ayurveda Abhyanga',
     label_en: 'Ayurveda Abhyanga',
-    desc_de: 'Ganzkoerper-Oelmassage 90 Min.',
+    desc_de: 'Ganzkörper-Ölmassage 90 Min.',
     desc_en: 'Full-body oil massage 90 min.',
     price: 145
   },
@@ -87,7 +87,7 @@ const seedTreatments = [
     id: 'fango',
     label_de: 'Fango-Packung',
     label_en: 'Fango Pack',
-    desc_de: 'Waermebehandlung mit Heilerde',
+    desc_de: 'Wärmebehandlung mit Heilerde',
     desc_en: 'Heat treatment with healing clay',
     price: 75
   },
@@ -95,7 +95,7 @@ const seedTreatments = [
     id: 'yoga',
     label_de: 'Yoga-Paket',
     label_en: 'Yoga Package',
-    desc_de: '5 gefuehrte Yoga-Einheiten',
+    desc_de: '5 geführte Yoga-Einheiten',
     desc_en: '5 guided yoga sessions',
     price: 120
   },
@@ -111,7 +111,7 @@ const seedTreatments = [
     id: 'kneipp',
     label_de: 'Kneipp-Therapie',
     label_en: 'Kneipp Therapy',
-    desc_de: 'Wassertreten & Guesse',
+    desc_de: 'Wassertreten & Güsse',
     desc_en: 'Water treading & affusions',
     price: 45
   }
@@ -120,9 +120,9 @@ const seedTreatments = [
 const seedRooms = [
   {
     id: 'standard',
-    label_de: 'Panorama-Zimmer',
+    label_de: 'Panorama Zimmer',
     label_en: 'Panorama Room',
-    desc_de: 'Gemuetliches Zimmer mit Bergblick, 22 qm',
+    desc_de: 'Gemütliches Zimmer mit Bergblick, 22 qm',
     desc_en: 'Cozy room with mountain view, 22 sqm',
     capacity: 2,
     adult_capacity: 2,
@@ -142,7 +142,7 @@ const seedRooms = [
   },
   {
     id: 'penthouse',
-    label_de: 'Wellness-Penthouse',
+    label_de: 'Wellness Penthouse',
     label_en: 'Wellness Penthouse',
     desc_de: 'Private Sauna, Whirlpool und Dachterrasse, 65 qm',
     desc_en: 'Private sauna, whirlpool and rooftop terrace, 65 sqm',
@@ -155,7 +155,7 @@ const seedRooms = [
     id: 'family',
     label_de: 'Family Zimmer',
     label_en: 'Family Room',
-    desc_de: 'Grosszuegiges Familienzimmer mit Schlafbereich fuer Kinder, 34 qm',
+    desc_de: 'Großzügiges Familienzimmer mit Schlafbereich für Kinder, 34 qm',
     desc_en: 'Spacious family room with a sleeping area for children, 34 sqm',
     capacity: 4,
     adult_capacity: 2,
@@ -167,9 +167,9 @@ const seedRooms = [
 const seedExtras = [
   {
     id: 'breakfast',
-    label_de: 'Fruehstuecksbuffet',
+    label_de: 'Frühstücksbuffet',
     label_en: 'Breakfast Buffet',
-    desc_de: 'Bio-Fruehstueck taeglich',
+    desc_de: 'Bio-Frühstück täglich',
     desc_en: 'Organic breakfast daily',
     price: 0,
     price_per_night: 28
@@ -178,7 +178,7 @@ const seedExtras = [
     id: 'dinner',
     label_de: 'Halbpension',
     label_en: 'Half Board',
-    desc_de: 'Abendmenue inbegriffen',
+    desc_de: 'Abendmenü inbegriffen',
     desc_en: 'Evening menu included',
     price: 0,
     price_per_night: 55
@@ -187,7 +187,7 @@ const seedExtras = [
     id: 'transfer',
     label_de: 'Airport-Transfer',
     label_en: 'Airport Transfer',
-    desc_de: 'Ab/zum Flughafen Muenchen',
+    desc_de: 'Ab/zum Flughafen München',
     desc_en: 'To/from Munich Airport',
     price: 120,
     price_per_night: 0
@@ -205,16 +205,16 @@ const seedExtras = [
     id: 'wine',
     label_de: 'Weinpaket',
     label_en: 'Wine Package',
-    desc_de: '3 ausgewaehlte Allgaeuer Weine',
-    desc_en: '3 selected Allgaeu wines',
+    desc_de: '3 ausgewählte Allgäuer Weine',
+    desc_en: '3 selected Allgäu wines',
     price: 65,
     price_per_night: 0
   },
   {
     id: 'hiking',
-    label_de: 'Gefuehrte Wanderung',
+    label_de: 'Geführte Wanderung',
     label_en: 'Guided Hike',
-    desc_de: 'Tagesausflug mit Bergfuehrer',
+    desc_de: 'Tagesausflug mit Bergführer',
     desc_en: 'Day trip with mountain guide',
     price: 85,
     price_per_night: 0

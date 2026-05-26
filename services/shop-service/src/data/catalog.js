@@ -1,7 +1,7 @@
 const pageText = {
   de: {
     title: 'Wellness Shop',
-    subtitle: 'Bringen Sie das Serenity-Gefuehl nach Hause.',
+    subtitle: 'Bringen Sie das Serenity-Gefühl nach Hause.',
     cartTitle: 'Warenkorb',
     checkoutTitle: 'Kasse',
     add: 'In den Warenkorb',
@@ -14,7 +14,7 @@ const pageText = {
       address: 'Lieferadresse',
       city: 'PLZ & Ort'
     },
-    categories: ['Alle', 'Pflege', 'Aromatherapie', 'Nahrung', 'Zubehoer']
+    categories: ['Alle', 'Pflege', 'Aromatherapie', 'Nahrung', 'Zubehör']
   },
   en: {
     title: 'Wellness Shop',
@@ -38,12 +38,12 @@ const pageText = {
 const seedProducts = [
   {
     id: 1,
-    name_de: 'Alpenkraeuter Badeoel',
+    name_de: 'Alpenkräuter Badeöl',
     name_en: 'Alpine Herb Bath Oil',
     cat_de: 'Pflege',
     cat_en: 'Care',
     price: 34.9,
-    desc_de: 'Regenerierendes Badeoel mit Latschenkiefer, Arnika und Alpenrose',
+    desc_de: 'Regenerierendes Badeöl mit Latschenkiefer, Arnika und Alpenrose',
     desc_en: 'Regenerating bath oil with mountain pine, arnica and alpine rose',
     color: '#8aab6e',
     object_name: 'shop/products/1-alpine-herb-bath-oil.svg'
@@ -74,19 +74,19 @@ const seedProducts = [
   },
   {
     id: 4,
-    name_de: 'Allgaeuer Kraeutertee Set',
-    name_en: 'Allgaeu Herbal Tea Set',
+    name_de: 'Allgäuer Kräutertee Set',
+    name_en: 'Allgäu Herbal Tea Set',
     cat_de: 'Nahrung',
     cat_en: 'Nutrition',
     price: 29.5,
-    desc_de: '6 Sorten alpine Heilkraeuter, biologisch zertifiziert',
+    desc_de: '6 Sorten alpine Heilkräuter, biologisch zertifiziert',
     desc_en: '6 varieties of alpine medicinal herbs, organically certified',
     color: '#b8d4a0',
     object_name: 'shop/products/4-allgaeu-herbal-tea-set.svg'
   },
   {
     id: 5,
-    name_de: 'Aetherisches Oel Trio',
+    name_de: 'Ätherisches Öl Trio',
     name_en: 'Essential Oil Trio',
     cat_de: 'Aromatherapie',
     cat_en: 'Aromatherapy',
@@ -100,10 +100,10 @@ const seedProducts = [
     id: 6,
     name_de: 'Basalt-Massagestein Set',
     name_en: 'Basalt Massage Stone Set',
-    cat_de: 'Zubehoer',
+    cat_de: 'Zubehör',
     cat_en: 'Accessories',
     price: 68,
-    desc_de: '8 natuerliche Basaltsteine fuer Hot-Stone-Massagen',
+    desc_de: '8 natürliche Basaltsteine für Hot-Stone-Massagen',
     desc_en: '8 natural basalt stones for hot stone massages',
     color: '#9a9a9a',
     object_name: 'shop/products/6-basalt-massage-stone-set.svg'
@@ -115,7 +115,7 @@ const seedProducts = [
     cat_de: 'Pflege',
     cat_en: 'Care',
     price: 21.9,
-    desc_de: 'Mildes Naturshampoo fuer kraeftiges, glaenzendes Haar',
+    desc_de: 'Mildes Naturshampoo für kräftiges, glänzendes Haar',
     desc_en: 'Mild natural shampoo for strong, glossy hair',
     color: '#d4c4a0',
     object_name: 'shop/products/7-birch-water-shampoo.svg'
@@ -124,7 +124,7 @@ const seedProducts = [
     id: 8,
     name_de: 'Himalaya Salzkristall Lampe',
     name_en: 'Himalayan Salt Crystal Lamp',
-    cat_de: 'Zubehoer',
+    cat_de: 'Zubehör',
     cat_en: 'Accessories',
     price: 49.9,
     desc_de: 'Authentische Salzlampe, ca. 2-3 kg, mit Kabel',

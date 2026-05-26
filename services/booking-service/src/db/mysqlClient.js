@@ -507,7 +507,7 @@ async function createBooking({ customer, selection, lang }) {
   const lines = [];
   const durationLabel = lang === 'en'
     ? `${selection.nights} ${selection.nights === 1 ? 'Night' : 'Nights'}`
-    : `${selection.nights} ${selection.nights === 1 ? 'Nacht' : 'Naechte'}`;
+    : `${selection.nights} ${selection.nights === 1 ? 'Nacht' : 'Nächte'}`;
   const roomLabel = lang === 'en' ? room.label_en : room.label_de;
   const basePrice = basePriceForNights(selection.nights);
 

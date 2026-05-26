@@ -44,8 +44,8 @@
       </div>
 
       <div class="form-section">
-        <h2><%= booking.guestsTitle || (lang === 'de' ? 'Gaeste' : 'Guests') %></h2>
-        <div class="guest-fields" aria-label="<%= booking.guestsTitle || (lang === 'de' ? 'Gaeste' : 'Guests') %>">
+        <h2><%= booking.guestsTitle || (lang === 'de' ? 'Gäste' : 'Guests') %></h2>
+        <div class="guest-fields" aria-label="<%= booking.guestsTitle || (lang === 'de' ? 'Gäste' : 'Guests') %>">
           <label>
             <span><%= booking.labels.adults || (lang === 'de' ? 'Erwachsene' : 'Adults') %></span>
             <input required name="adults" type="number" min="1" max="12" step="1" value="2">
