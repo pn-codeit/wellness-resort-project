@@ -20,6 +20,7 @@ const pool = mysql.createPool({
 let ready = false;
 let lastError = null;
 let initializing = null;
+let resetDone = false;
 
 const roomInventory = {
   standard: 30,
@@ -28,66 +29,18 @@ const roomInventory = {
   family: 10
 };
 
+async function resetSchema() {
+  await pool.query('DROP TABLE IF EXISTS booking_items');
+  await pool.query('DROP TABLE IF EXISTS bookings');
+}
+
 async function createSchema() {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS booking_durations (
-      id VARCHAR(40) PRIMARY KEY,
-      label_de VARCHAR(160) NOT NULL,
-      label_en VARCHAR(160) NOT NULL,
-      nights INT NOT NULL,
-      price DECIMAL(10,2) NOT NULL,
-      active BOOLEAN NOT NULL DEFAULT TRUE,
-      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
-  `);
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS booking_treatments (
-      id VARCHAR(40) PRIMARY KEY,
-      label_de VARCHAR(160) NOT NULL,
-      label_en VARCHAR(160) NOT NULL,
-      desc_de TEXT NOT NULL,
-      desc_en TEXT NOT NULL,
-      price DECIMAL(10,2) NOT NULL,
-      active BOOLEAN NOT NULL DEFAULT TRUE,
-      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
-  `);
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS booking_rooms (
-      id VARCHAR(40) PRIMARY KEY,
-      label_de VARCHAR(160) NOT NULL,
-      label_en VARCHAR(160) NOT NULL,
-      desc_de TEXT NOT NULL,
-      desc_en TEXT NOT NULL,
-      capacity INT NOT NULL DEFAULT 2,
-      adult_capacity INT NOT NULL DEFAULT 2,
-      child_capacity INT NOT NULL DEFAULT 2,
-      price_per_night DECIMAL(10,2) NOT NULL,
-      active BOOLEAN NOT NULL DEFAULT TRUE,
-      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
-  `);
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS booking_extras (
-      id VARCHAR(40) PRIMARY KEY,
-      label_de VARCHAR(160) NOT NULL,
-      label_en VARCHAR(160) NOT NULL,
-      desc_de TEXT NOT NULL,
-      desc_en TEXT NOT NULL,
-      price DECIMAL(10,2) NOT NULL DEFAULT 0,
-      price_per_night DECIMAL(10,2) NOT NULL DEFAULT 0,
-      active BOOLEAN NOT NULL DEFAULT TRUE,
-      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
-  `);
-
   await pool.query(`
     CREATE TABLE IF NOT EXISTS bookings (
       id BIGINT AUTO_INCREMENT PRIMARY KEY,
       reference VARCHAR(40) NOT NULL UNIQUE,
+      customer_first_name VARCHAR(80) NOT NULL,
+      customer_last_name VARCHAR(100) NOT NULL,
       customer_name VARCHAR(160) NOT NULL,
       customer_email VARCHAR(180) NOT NULL,
       customer_phone VARCHAR(80) NOT NULL,
@@ -105,16 +58,15 @@ async function createSchema() {
       room_id VARCHAR(40) NOT NULL,
       room_label VARCHAR(160) NOT NULL,
       total_amount DECIMAL(10,2) NOT NULL,
-      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (duration_id) REFERENCES booking_durations(id),
-      FOREIGN KEY (room_id) REFERENCES booking_rooms(id)
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
   `);
 
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS booking_line_items (
+    CREATE TABLE IF NOT EXISTS booking_items (
       id BIGINT AUTO_INCREMENT PRIMARY KEY,
       booking_id BIGINT NOT NULL,
+      reference VARCHAR(40) NOT NULL DEFAULT '',
       item_type VARCHAR(32) NOT NULL,
       item_id VARCHAR(40) NOT NULL,
       item_label VARCHAR(160) NOT NULL,
@@ -128,9 +80,9 @@ async function createSchema() {
   await ensureColumn('bookings', 'adult_count', 'INT NOT NULL DEFAULT 2 AFTER nights');
   await ensureColumn('bookings', 'child_count', 'INT NOT NULL DEFAULT 0 AFTER adult_count');
   await ensureColumn('bookings', 'room_count', 'INT NOT NULL DEFAULT 1 AFTER child_count');
-  await ensureColumn('booking_rooms', 'capacity', 'INT NOT NULL DEFAULT 2 AFTER desc_en');
-  await ensureColumn('booking_rooms', 'adult_capacity', 'INT NOT NULL DEFAULT 2 AFTER capacity');
-  await ensureColumn('booking_rooms', 'child_capacity', 'INT NOT NULL DEFAULT 2 AFTER adult_capacity');
+  await ensureColumn('bookings', 'customer_first_name', "VARCHAR(80) NOT NULL DEFAULT '' AFTER reference");
+  await ensureColumn('bookings', 'customer_last_name', "VARCHAR(100) NOT NULL DEFAULT '' AFTER customer_first_name");
+  await ensureColumn('booking_items', 'reference', "VARCHAR(40) NOT NULL DEFAULT '' AFTER booking_id");
 }
 
 async function ensureColumn(tableName, columnName, definition) {
@@ -183,109 +135,17 @@ function availabilityWindow() {
   };
 }
 
-async function seedOptions() {
-  await pool.query(
-    `
-      INSERT INTO booking_durations (id, label_de, label_en, nights, price, active)
-      VALUES ?
-      ON DUPLICATE KEY UPDATE
-        label_de = VALUES(label_de),
-        label_en = VALUES(label_en),
-        nights = VALUES(nights),
-        price = VALUES(price),
-        active = VALUES(active)
-    `,
-    [seedDurations.map((item) => [item.id, item.label_de, item.label_en, item.nights, item.price, true])]
-  );
-
-  await pool.query(
-    `
-      INSERT INTO booking_treatments (id, label_de, label_en, desc_de, desc_en, price, active)
-      VALUES ?
-      ON DUPLICATE KEY UPDATE
-        label_de = VALUES(label_de),
-        label_en = VALUES(label_en),
-        desc_de = VALUES(desc_de),
-        desc_en = VALUES(desc_en),
-        price = VALUES(price),
-        active = VALUES(active)
-    `,
-    [seedTreatments.map((item) => [
-      item.id,
-      item.label_de,
-      item.label_en,
-      item.desc_de,
-      item.desc_en,
-      item.price,
-      true
-    ])]
-  );
-
-  await pool.query(
-    `
-      INSERT INTO booking_rooms (
-        id, label_de, label_en, desc_de, desc_en, capacity, adult_capacity, child_capacity, price_per_night, active
-      )
-      VALUES ?
-      ON DUPLICATE KEY UPDATE
-        label_de = VALUES(label_de),
-        label_en = VALUES(label_en),
-        desc_de = VALUES(desc_de),
-        desc_en = VALUES(desc_en),
-        capacity = VALUES(capacity),
-        adult_capacity = VALUES(adult_capacity),
-        child_capacity = VALUES(child_capacity),
-        price_per_night = VALUES(price_per_night),
-        active = VALUES(active)
-    `,
-    [seedRooms.map((item) => [
-      item.id,
-      item.label_de,
-      item.label_en,
-      item.desc_de,
-      item.desc_en,
-      item.capacity,
-      item.adult_capacity,
-      item.child_capacity,
-      item.price_per_night,
-      true
-    ])]
-  );
-
-  await pool.query(
-    `
-      INSERT INTO booking_extras (id, label_de, label_en, desc_de, desc_en, price, price_per_night, active)
-      VALUES ?
-      ON DUPLICATE KEY UPDATE
-        label_de = VALUES(label_de),
-        label_en = VALUES(label_en),
-        desc_de = VALUES(desc_de),
-        desc_en = VALUES(desc_en),
-        price = VALUES(price),
-        price_per_night = VALUES(price_per_night),
-        active = VALUES(active)
-    `,
-    [seedExtras.map((item) => [
-      item.id,
-      item.label_de,
-      item.label_en,
-      item.desc_de,
-      item.desc_en,
-      item.price,
-      item.price_per_night,
-      true
-    ])]
-  );
-}
-
 async function ensureDatabase() {
   if (ready) return true;
   if (initializing) return initializing;
 
   initializing = (async () => {
     try {
+      if (!resetDone && process.env.RESET_DATABASE_ON_START === 'true') {
+        await resetSchema();
+        resetDone = true;
+      }
       await createSchema();
-      await seedOptions();
       ready = true;
       lastError = null;
       return true;
@@ -304,39 +164,11 @@ async function ensureDatabase() {
 async function getOptions() {
   await ensureDatabase();
 
-  const [durations] = await pool.query(`
-    SELECT id, label_de, label_en, nights, price
-    FROM booking_durations
-    WHERE active = TRUE
-    ORDER BY FIELD(id, 'weekend', 'midweek', 'week', 'twoweeks'), id
-  `);
-
-  const [treatments] = await pool.query(`
-    SELECT id, label_de, label_en, desc_de, desc_en, price
-    FROM booking_treatments
-    WHERE active = TRUE
-    ORDER BY FIELD(id, 'massage', 'ayurveda', 'fango', 'yoga', 'sauna', 'kneipp'), id
-  `);
-
-  const [rooms] = await pool.query(`
-    SELECT id, label_de, label_en, desc_de, desc_en, capacity, adult_capacity, child_capacity, price_per_night
-    FROM booking_rooms
-    WHERE active = TRUE
-    ORDER BY FIELD(id, 'standard', 'superior', 'penthouse', 'family'), id
-  `);
-
-  const [extras] = await pool.query(`
-    SELECT id, label_de, label_en, desc_de, desc_en, price, price_per_night
-    FROM booking_extras
-    WHERE active = TRUE
-    ORDER BY FIELD(id, 'breakfast', 'dinner', 'transfer', 'flowers', 'wine', 'hiking'), id
-  `);
-
   return {
-    durations: durations.map(normalizeMoney),
-    treatments: treatments.map(normalizeMoney),
-    rooms: rooms.map(normalizeMoney),
-    extras: extras.map(normalizeMoney)
+    durations: seedDurations.map(normalizeMoney),
+    treatments: seedTreatments.map(normalizeMoney),
+    rooms: seedRooms.map(normalizeMoney),
+    extras: seedExtras.map(normalizeMoney)
   };
 }
 
@@ -579,13 +411,15 @@ async function createBooking({ customer, selection, lang }) {
     const [bookingResult] = await connection.query(
       `
         INSERT INTO bookings (
-          reference, customer_name, customer_email, customer_phone, customer_address, customer_city,
+          reference, customer_first_name, customer_last_name, customer_name, customer_email, customer_phone, customer_address, customer_city,
           arrival_date, lang, duration_id, duration_label, nights, adult_count, child_count, room_count,
           room_id, room_label, total_amount
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         reference,
+        customer.firstName,
+        customer.lastName,
         customer.name,
         customer.email,
         customer.phone,
@@ -607,12 +441,13 @@ async function createBooking({ customer, selection, lang }) {
 
     await connection.query(
       `
-        INSERT INTO booking_line_items (
-          booking_id, item_type, item_id, item_label, quantity, unit_price, line_total
+        INSERT INTO booking_items (
+          booking_id, reference, item_type, item_id, item_label, quantity, unit_price, line_total
         ) VALUES ?
       `,
       [lines.map((line) => [
         bookingResult.insertId,
+        reference,
         line.type,
         line.itemId,
         line.label,

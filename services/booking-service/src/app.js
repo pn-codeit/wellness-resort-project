@@ -49,10 +49,16 @@ function durationIdForNights(nights) {
 
 function validateBooking(body) {
   const nights = Math.trunc(numberFromBody(body.nights, 0));
+  const firstName = String(body.firstName || '').trim();
+  const lastName = String(body.lastName || '').trim();
+  const legacyName = String(body.name || '').trim();
 
   const customer = {
-    name: String(body.name || '').trim(),
+    firstName,
+    lastName,
+    name: firstName && lastName ? `${firstName} ${lastName}` : legacyName,
     email: String(body.email || '').trim(),
+    emailConfirm: String(body.emailConfirm || '').trim(),
     phone: String(body.phone || '').trim(),
     address: String(body.address || '').trim(),
     city: String(body.city || '').trim()
@@ -70,12 +76,22 @@ function validateBooking(body) {
     roomCount: Math.trunc(numberFromBody(body.roomCount, 1))
   };
 
-  if (!customer.name || !customer.email || !customer.phone || !customer.address || !customer.city) {
-    throw Object.assign(new Error('Customer name, email, phone, address and city are required.'), { statusCode: 400 });
+  if (!customer.firstName && legacyName) {
+    const [fallbackFirstName, ...fallbackLastName] = legacyName.split(/\s+/);
+    customer.firstName = fallbackFirstName || legacyName;
+    customer.lastName = fallbackLastName.join(' ');
+  }
+
+  if (!customer.firstName || !customer.lastName || !customer.email || !customer.emailConfirm || !customer.phone || !customer.address || !customer.city) {
+    throw Object.assign(new Error('Customer first name, last name, email, email confirmation, phone, address and city are required.'), { statusCode: 400 });
   }
 
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(customer.email)) {
     throw Object.assign(new Error('A valid email address is required.'), { statusCode: 400 });
+  }
+
+  if (customer.email.toLowerCase() !== customer.emailConfirm.toLowerCase()) {
+    throw Object.assign(new Error('Email address and confirmation must match.'), { statusCode: 400 });
   }
 
   if (!selection.durationId || !selection.roomId || !selection.arrive) {

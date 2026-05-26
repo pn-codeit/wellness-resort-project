@@ -63,7 +63,7 @@ const booking = {
     durationTitle: 'Wie lange möchten Sie bleiben?',
     treatmentsTitle: 'Wählen Sie Ihre Behandlungen',
     roomTitle: 'Unterkunft wählen',
-    extrasTitle: 'Extras & Add-ons',
+    extrasTitle: 'Extras & Addons',
     formTitle: 'Buchung abschließen',
     guestsTitle: 'Gäste',
     roomCountTitle: 'Zimmeranzahl',
@@ -72,8 +72,10 @@ const booking = {
     nightsLabel: 'Nächte',
     included: 'Inkl.',
     labels: {
-      name: 'Vor- & Nachname',
+      firstName: 'Vorname',
+      lastName: 'Nachname',
       email: 'E-Mail-Adresse',
+      emailConfirm: 'E-Mail-Adresse bestätigen',
       phone: 'Telefon',
       address: 'Straße & Hausnummer',
       city: 'PLZ & Ort',
@@ -94,10 +96,10 @@ const booking = {
     treatments: [
       { id: 'massage', label: 'Klassische Massage', desc: 'Entspannungsmassage 60 Min.', price: 95 },
       { id: 'ayurveda', label: 'Ayurveda Abhyanga', desc: 'Ganzkörper-Ölmassage 90 Min.', price: 145 },
-      { id: 'fango', label: 'Fango-Packung', desc: 'Wärmebehandlung mit Heilerde', price: 75 },
-      { id: 'yoga', label: 'Yoga-Paket', desc: '5 geführte Yoga-Einheiten', price: 120 },
-      { id: 'sauna', label: 'Sauna-Ritual', desc: 'Aufguss-Zeremonie & Ruheraum', price: 55 },
-      { id: 'kneipp', label: 'Kneipp-Therapie', desc: 'Wassertreten & Güsse', price: 45 }
+      { id: 'fango', label: 'Fango Packung', desc: 'Wärmebehandlung mit Heilerde', price: 75 },
+      { id: 'yoga', label: 'Yoga Paket', desc: '5 geführte Yoga Einheiten', price: 120 },
+      { id: 'sauna', label: 'Sauna Ritual', desc: 'Aufguss Zeremonie & Ruheraum', price: 55 },
+      { id: 'kneipp', label: 'Kneipp Therapie', desc: 'Wassertreten & Güsse', price: 45 }
     ],
     rooms: [
       { id: 'standard', label: 'Panorama Zimmer', desc: 'Gemütliches Zimmer mit Bergblick, 22 m²', capacity: 2, adultCapacity: 2, childCapacity: 2, pricePerNight: 159 },
@@ -108,7 +110,7 @@ const booking = {
     extras: [
       { id: 'breakfast', label: 'Frühstücksbuffet', desc: 'Bio-Frühstück täglich', pricePerNight: 28 },
       { id: 'dinner', label: 'Halbpension', desc: 'Abendmenü inbegriffen', pricePerNight: 55 },
-      { id: 'transfer', label: 'Airport-Transfer', desc: 'Ab/zum Flughafen München', price: 120 },
+      { id: 'transfer', label: 'Airport Transfer', desc: 'Ab/zum Flughafen München', price: 120 },
       { id: 'flowers', label: 'Blumenarrangement', desc: 'Willkommensblumen im Zimmer', price: 35 },
       { id: 'wine', label: 'Weinpaket', desc: '3 ausgewählte Allgäuer Weine', price: 65 },
       { id: 'hiking', label: 'Geführte Wanderung', desc: 'Tagesausflug mit Bergführer', price: 85 }
@@ -120,7 +122,7 @@ const booking = {
     durationTitle: 'How long would you like to stay?',
     treatmentsTitle: 'Choose Your Treatments',
     roomTitle: 'Choose Accommodation',
-    extrasTitle: 'Extras & Add-ons',
+    extrasTitle: 'Extras & Addons',
     formTitle: 'Complete Booking',
     guestsTitle: 'Guests',
     roomCountTitle: 'Number of rooms',
@@ -129,8 +131,10 @@ const booking = {
     nightsLabel: 'nights',
     included: 'Included',
     labels: {
-      name: 'Full Name',
+      firstName: 'First name',
+      lastName: 'Last name',
       email: 'Email Address',
+      emailConfirm: 'Confirm email address',
       phone: 'Phone',
       address: 'Street & Number',
       city: 'ZIP & City',

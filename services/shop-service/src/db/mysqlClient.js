@@ -15,6 +15,13 @@ const pool = mysql.createPool({
 let ready = false;
 let lastError = null;
 let initializing = null;
+let resetDone = false;
+
+async function resetSchema() {
+  await pool.query('DROP TABLE IF EXISTS shop_order_items');
+  await pool.query('DROP TABLE IF EXISTS shop_orders');
+  await pool.query('DROP TABLE IF EXISTS shop_products');
+}
 
 async function createSchema() {
   await pool.query(`
@@ -106,6 +113,10 @@ async function ensureDatabase() {
 
   initializing = (async () => {
     try {
+      if (!resetDone && process.env.RESET_DATABASE_ON_START === 'true') {
+        await resetSchema();
+        resetDone = true;
+      }
       await createSchema();
       await seedCatalog();
       ready = true;

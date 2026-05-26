@@ -7,6 +7,8 @@ if (root) {
   const roomCountInput = root.querySelector('[data-room-count]');
   const roomCountHint = root.querySelector('[data-room-count-hint]');
   const form = root.querySelector('form');
+  const emailInput = root.querySelector('[data-email-input]');
+  const emailConfirmInput = root.querySelector('[data-email-confirm-input]');
 
   const rangeCheckInInput = root.querySelector('[data-range-checkin]');
   const rangeCheckOutInput = root.querySelector('[data-range-checkout]');
@@ -418,6 +420,18 @@ if (root) {
     }
   }
 
+  function validateEmailConfirmation() {
+    if (!emailInput || !emailConfirmInput) return true;
+
+    const email = emailInput.value.trim().toLowerCase();
+    const emailConfirm = emailConfirmInput.value.trim().toLowerCase();
+    const isValid = !emailConfirm || email === emailConfirm;
+    emailConfirmInput.setCustomValidity(isValid
+      ? ''
+      : (lang === 'de' ? 'Die E-Mail-Adressen stimmen nicht überein.' : 'Email addresses do not match.'));
+    return isValid;
+  }
+
   if (rangeGrid) {
     function handleRangeDateActivation(event) {
       const btn = event.target.closest('[data-date-value]');
@@ -464,6 +478,8 @@ if (root) {
 
   if (form) {
     form.addEventListener('submit', (event) => {
+      validateEmailConfirmation();
+
       if (!rangeCheckIn || !rangeCheckOut) {
         event.preventDefault();
         if (rangeHint) {
@@ -474,6 +490,11 @@ if (root) {
         }
       }
     });
+  }
+
+  if (emailInput && emailConfirmInput) {
+    emailInput.addEventListener('input', validateEmailConfirmation);
+    emailConfirmInput.addEventListener('input', validateEmailConfirmation);
   }
 
   if (roomCountInput) {

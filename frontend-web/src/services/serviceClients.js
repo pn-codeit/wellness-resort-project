@@ -314,7 +314,7 @@ function localAdvice(input, lang) {
   };
   const schedules = {
     de: {
-      stress: ['Ankommen mit Sauna-Ritual und früher Ruhezeit.', 'Yoga und Ayurveda mit viel Abstand zwischen den Terminen.', 'Geführte Wanderung als leichter Abschluss in der Natur.'],
+      stress: ['Ankommen mit Sauna Ritual und früher Ruhezeit.', 'Yoga und Ayurveda mit viel Abstand zwischen den Terminen.', 'Geführte Wanderung als leichter Abschluss in der Natur.'],
       pain: ['Start mit Wärme und Fango, damit der Körper loslassen kann.', 'Massage als zentraler Behandlungstermin am zweiten Tag.', 'Kneipp-Anwendung und kurze Spaziergänge zur sanften Mobilisierung.'],
       romance: ['Private Anreise mit Blumen und ruhigem Abendessen.', 'Ayurveda und Sauna als gemeinsames Wellness-Ritual.', 'Freier Vormittag ohne Programm vor der Abreise.'],
       detox: ['Leichter Start mit Yoga und viel Wasserzeit.', 'Ayurveda und Kneipp zur Aktivierung ohne Überladung.', 'Wanderung als frischer Abschluss mit Bewegung an der Luft.'],
@@ -335,7 +335,7 @@ function localAdvice(input, lang) {
         greeting: 'Das klingt nach einem besonderen Anlass, der Ruhe und kleine Rituale verdient.',
         recommendation: {
           duration: 'Wochenende',
-          treatments: ['Ayurveda Abhyanga', 'Sauna-Ritual'],
+          treatments: ['Ayurveda Abhyanga', 'Sauna Ritual'],
           room: 'Wellness Penthouse',
           extras: ['Blumenarrangement', 'Weinpaket', 'Halbpension'],
           focus_areas: focus.de[type],
@@ -352,7 +352,7 @@ function localAdvice(input, lang) {
         : 'Auf Basis Ihrer Wünsche passt ein balancierter Aufenthalt mit Erholung und sanfter Aktivierung.',
       recommendation: {
         duration: pain ? '4 Nächte' : '1 Woche',
-        treatments: pain ? ['Klassische Massage', 'Fango-Packung', 'Kneipp-Therapie'] : ['Yoga-Paket', 'Ayurveda Abhyanga', 'Sauna-Ritual'],
+        treatments: pain ? ['Klassische Massage', 'Fango Packung', 'Kneipp Therapie'] : ['Yoga Paket', 'Ayurveda Abhyanga', 'Sauna Ritual'],
         room: 'Superior Suite',
         extras: ['Frühstücksbuffet', 'Geführte Wanderung'],
         focus_areas: focus.de[type],
