@@ -20,6 +20,8 @@ if (root) {
   const rangePrevBtn = root.querySelector('[data-range-prev]');
   const rangeNextBtn = root.querySelector('[data-range-next]');
   const rangeHint = root.querySelector('[data-range-hint]');
+  const emailInput = root.querySelector('[data-email-input]');
+  const emailError = root.querySelector('[data-email-error]');
 
   const availabilityNode = document.querySelector('[data-booking-availability]');
   const availability = availabilityNode ? JSON.parse(availabilityNode.textContent || '{}') : {};
@@ -390,8 +392,40 @@ if (root) {
     });
   }
 
+  function validateEmail(value) {
+    return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value.trim());
+  }
+
+  function showEmailError(show) {
+    if (!emailError) return;
+    if (show) {
+      emailError.textContent = lang === 'de'
+        ? 'Bitte geben Sie eine gültige E-Mail-Adresse an.'
+        : 'Please enter a valid email address.';
+      emailError.removeAttribute('hidden');
+    } else {
+      emailError.setAttribute('hidden', '');
+    }
+  }
+
+  if (emailInput) {
+    emailInput.addEventListener('input', () => {
+      if (emailInput.value.trim()) showEmailError(!validateEmail(emailInput.value));
+      else showEmailError(false);
+    });
+    emailInput.addEventListener('blur', () => {
+      if (emailInput.value.trim()) showEmailError(!validateEmail(emailInput.value));
+    });
+  }
+
   if (form) {
     form.addEventListener('submit', (event) => {
+      if (emailInput && !validateEmail(emailInput.value)) {
+        event.preventDefault();
+        showEmailError(true);
+        emailInput.focus();
+        return;
+      }
       if (!rangeCheckIn || !rangeCheckOut) {
         event.preventDefault();
         if (rangeHint) {

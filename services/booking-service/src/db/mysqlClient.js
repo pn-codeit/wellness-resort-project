@@ -1,10 +1,5 @@
 const mysql = require('mysql2/promise');
-const {
-  seedDurations,
-  seedExtras,
-  seedRooms,
-  seedTreatments
-} = require('../data/options');
+const { seedDurations, seedExtras, seedRooms, seedTreatments } = require('../data/options');
 
 const pool = mysql.createPool({
   host: process.env.MYSQL_HOST || 'localhost',
@@ -14,7 +9,8 @@ const pool = mysql.createPool({
   database: process.env.MYSQL_DATABASE || 'wellness_resort',
   waitForConnections: true,
   connectionLimit: Number(process.env.MYSQL_CONNECTION_LIMIT || 10),
-  charset: 'utf8mb4'
+  charset: 'utf8mb4',
+  collation: 'utf8mb4_unicode_ci'
 });
 
 let ready = false;
@@ -29,108 +25,54 @@ const roomInventory = {
 };
 
 async function createSchema() {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS booking_durations (
-      id VARCHAR(40) PRIMARY KEY,
-      label_de VARCHAR(160) NOT NULL,
-      label_en VARCHAR(160) NOT NULL,
-      nights INT NOT NULL,
-      price DECIMAL(10,2) NOT NULL,
-      active BOOLEAN NOT NULL DEFAULT TRUE,
-      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
-  `);
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS booking_treatments (
-      id VARCHAR(40) PRIMARY KEY,
-      label_de VARCHAR(160) NOT NULL,
-      label_en VARCHAR(160) NOT NULL,
-      desc_de TEXT NOT NULL,
-      desc_en TEXT NOT NULL,
-      price DECIMAL(10,2) NOT NULL,
-      active BOOLEAN NOT NULL DEFAULT TRUE,
-      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
-  `);
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS booking_rooms (
-      id VARCHAR(40) PRIMARY KEY,
-      label_de VARCHAR(160) NOT NULL,
-      label_en VARCHAR(160) NOT NULL,
-      desc_de TEXT NOT NULL,
-      desc_en TEXT NOT NULL,
-      capacity INT NOT NULL DEFAULT 2,
-      adult_capacity INT NOT NULL DEFAULT 2,
-      child_capacity INT NOT NULL DEFAULT 2,
-      price_per_night DECIMAL(10,2) NOT NULL,
-      active BOOLEAN NOT NULL DEFAULT TRUE,
-      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
-  `);
-
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS booking_extras (
-      id VARCHAR(40) PRIMARY KEY,
-      label_de VARCHAR(160) NOT NULL,
-      label_en VARCHAR(160) NOT NULL,
-      desc_de TEXT NOT NULL,
-      desc_en TEXT NOT NULL,
-      price DECIMAL(10,2) NOT NULL DEFAULT 0,
-      price_per_night DECIMAL(10,2) NOT NULL DEFAULT 0,
-      active BOOLEAN NOT NULL DEFAULT TRUE,
-      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
-  `);
+  await pool.query('SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci');
+  await pool.query('DROP TABLE IF EXISTS booking_options');
+  await pool.query('DROP TABLE IF EXISTS booking_line_items');
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS bookings (
-      id BIGINT AUTO_INCREMENT PRIMARY KEY,
-      reference VARCHAR(40) NOT NULL UNIQUE,
-      customer_name VARCHAR(160) NOT NULL,
-      customer_email VARCHAR(180) NOT NULL,
-      customer_phone VARCHAR(80) NOT NULL,
-      customer_address VARCHAR(255) NOT NULL,
-      customer_city VARCHAR(120) NOT NULL,
-      arrival_date DATE NOT NULL,
-      lang VARCHAR(5) NOT NULL DEFAULT 'de',
-      status VARCHAR(32) NOT NULL DEFAULT 'received',
-      duration_id VARCHAR(40) NOT NULL,
-      duration_label VARCHAR(160) NOT NULL,
-      nights INT NOT NULL,
-      adult_count INT NOT NULL DEFAULT 2,
-      child_count INT NOT NULL DEFAULT 0,
-      room_count INT NOT NULL DEFAULT 1,
-      room_id VARCHAR(40) NOT NULL,
-      room_label VARCHAR(160) NOT NULL,
-      total_amount DECIMAL(10,2) NOT NULL,
-      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (duration_id) REFERENCES booking_durations(id),
-      FOREIGN KEY (room_id) REFERENCES booking_rooms(id)
-    )
+      id               BIGINT        AUTO_INCREMENT PRIMARY KEY,
+      reference        VARCHAR(40)   NOT NULL UNIQUE,
+      customer_name    VARCHAR(160)  NOT NULL,
+      customer_email   VARCHAR(180)  NOT NULL,
+      customer_phone   VARCHAR(80)   NOT NULL,
+      customer_address VARCHAR(255)  NOT NULL,
+      customer_city    VARCHAR(120)  NOT NULL,
+      arrival_date     DATE          NOT NULL,
+      lang             VARCHAR(5)    NOT NULL DEFAULT 'de',
+      status           VARCHAR(32)   NOT NULL DEFAULT 'received',
+      duration_id      VARCHAR(40)   NOT NULL,
+      duration_label   VARCHAR(160)  NOT NULL,
+      nights           INT           NOT NULL,
+      adult_count      INT           NOT NULL DEFAULT 2,
+      child_count      INT           NOT NULL DEFAULT 0,
+      room_count       INT           NOT NULL DEFAULT 1,
+      room_id          VARCHAR(40)   NOT NULL,
+      room_label       VARCHAR(160)  NOT NULL,
+      total_amount     DECIMAL(10,2) NOT NULL,
+      created_at       TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
+    ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
   `);
 
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS booking_line_items (
-      id BIGINT AUTO_INCREMENT PRIMARY KEY,
-      booking_id BIGINT NOT NULL,
-      item_type VARCHAR(32) NOT NULL,
-      item_id VARCHAR(40) NOT NULL,
-      item_label VARCHAR(160) NOT NULL,
-      quantity INT NOT NULL DEFAULT 1,
-      unit_price DECIMAL(10,2) NOT NULL,
-      line_total DECIMAL(10,2) NOT NULL,
+    CREATE TABLE IF NOT EXISTS booking_items (
+      id          BIGINT        AUTO_INCREMENT PRIMARY KEY,
+      booking_id  BIGINT        NOT NULL,
+      reference   VARCHAR(40)   NOT NULL DEFAULT '',
+      item_type   VARCHAR(32)   NOT NULL,
+      item_id     VARCHAR(40)   NOT NULL,
+      item_label  VARCHAR(160)  NOT NULL,
+      quantity    INT           NOT NULL DEFAULT 1,
+      unit_price  DECIMAL(10,2) NOT NULL,
+      line_total  DECIMAL(10,2) NOT NULL,
       FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
-    )
+    ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
   `);
 
   await ensureColumn('bookings', 'adult_count', 'INT NOT NULL DEFAULT 2 AFTER nights');
   await ensureColumn('bookings', 'child_count', 'INT NOT NULL DEFAULT 0 AFTER adult_count');
   await ensureColumn('bookings', 'room_count', 'INT NOT NULL DEFAULT 1 AFTER child_count');
-  await ensureColumn('booking_rooms', 'capacity', 'INT NOT NULL DEFAULT 2 AFTER desc_en');
-  await ensureColumn('booking_rooms', 'adult_capacity', 'INT NOT NULL DEFAULT 2 AFTER capacity');
-  await ensureColumn('booking_rooms', 'child_capacity', 'INT NOT NULL DEFAULT 2 AFTER adult_capacity');
+  await ensureColumn('booking_items', 'reference', "VARCHAR(40) NOT NULL DEFAULT '' AFTER booking_id");
 }
 
 async function ensureColumn(tableName, columnName, definition) {
@@ -183,99 +125,9 @@ function availabilityWindow() {
   };
 }
 
-async function seedOptions() {
-  await pool.query(
-    `
-      INSERT INTO booking_durations (id, label_de, label_en, nights, price, active)
-      VALUES ?
-      ON DUPLICATE KEY UPDATE
-        label_de = VALUES(label_de),
-        label_en = VALUES(label_en),
-        nights = VALUES(nights),
-        price = VALUES(price),
-        active = VALUES(active)
-    `,
-    [seedDurations.map((item) => [item.id, item.label_de, item.label_en, item.nights, item.price, true])]
-  );
-
-  await pool.query(
-    `
-      INSERT INTO booking_treatments (id, label_de, label_en, desc_de, desc_en, price, active)
-      VALUES ?
-      ON DUPLICATE KEY UPDATE
-        label_de = VALUES(label_de),
-        label_en = VALUES(label_en),
-        desc_de = VALUES(desc_de),
-        desc_en = VALUES(desc_en),
-        price = VALUES(price),
-        active = VALUES(active)
-    `,
-    [seedTreatments.map((item) => [
-      item.id,
-      item.label_de,
-      item.label_en,
-      item.desc_de,
-      item.desc_en,
-      item.price,
-      true
-    ])]
-  );
-
-  await pool.query(
-    `
-      INSERT INTO booking_rooms (
-        id, label_de, label_en, desc_de, desc_en, capacity, adult_capacity, child_capacity, price_per_night, active
-      )
-      VALUES ?
-      ON DUPLICATE KEY UPDATE
-        label_de = VALUES(label_de),
-        label_en = VALUES(label_en),
-        desc_de = VALUES(desc_de),
-        desc_en = VALUES(desc_en),
-        capacity = VALUES(capacity),
-        adult_capacity = VALUES(adult_capacity),
-        child_capacity = VALUES(child_capacity),
-        price_per_night = VALUES(price_per_night),
-        active = VALUES(active)
-    `,
-    [seedRooms.map((item) => [
-      item.id,
-      item.label_de,
-      item.label_en,
-      item.desc_de,
-      item.desc_en,
-      item.capacity,
-      item.adult_capacity,
-      item.child_capacity,
-      item.price_per_night,
-      true
-    ])]
-  );
-
-  await pool.query(
-    `
-      INSERT INTO booking_extras (id, label_de, label_en, desc_de, desc_en, price, price_per_night, active)
-      VALUES ?
-      ON DUPLICATE KEY UPDATE
-        label_de = VALUES(label_de),
-        label_en = VALUES(label_en),
-        desc_de = VALUES(desc_de),
-        desc_en = VALUES(desc_en),
-        price = VALUES(price),
-        price_per_night = VALUES(price_per_night),
-        active = VALUES(active)
-    `,
-    [seedExtras.map((item) => [
-      item.id,
-      item.label_de,
-      item.label_en,
-      item.desc_de,
-      item.desc_en,
-      item.price,
-      item.price_per_night,
-      true
-    ])]
-  );
+async function clearBookings() {
+  await pool.query('DELETE FROM booking_items');
+  await pool.query('DELETE FROM bookings');
 }
 
 async function ensureDatabase() {
@@ -285,7 +137,10 @@ async function ensureDatabase() {
   initializing = (async () => {
     try {
       await createSchema();
-      await seedOptions();
+      if (process.env.CLEAR_BOOKINGS_ON_START === 'true') {
+        await clearBookings();
+        console.log('booking-service: bookings cleared (CLEAR_BOOKINGS_ON_START)');
+      }
       ready = true;
       lastError = null;
       return true;
@@ -301,42 +156,12 @@ async function ensureDatabase() {
   return initializing;
 }
 
-async function getOptions() {
-  await ensureDatabase();
-
-  const [durations] = await pool.query(`
-    SELECT id, label_de, label_en, nights, price
-    FROM booking_durations
-    WHERE active = TRUE
-    ORDER BY FIELD(id, 'weekend', 'midweek', 'week', 'twoweeks'), id
-  `);
-
-  const [treatments] = await pool.query(`
-    SELECT id, label_de, label_en, desc_de, desc_en, price
-    FROM booking_treatments
-    WHERE active = TRUE
-    ORDER BY FIELD(id, 'massage', 'ayurveda', 'fango', 'yoga', 'sauna', 'kneipp'), id
-  `);
-
-  const [rooms] = await pool.query(`
-    SELECT id, label_de, label_en, desc_de, desc_en, capacity, adult_capacity, child_capacity, price_per_night
-    FROM booking_rooms
-    WHERE active = TRUE
-    ORDER BY FIELD(id, 'standard', 'superior', 'penthouse', 'family'), id
-  `);
-
-  const [extras] = await pool.query(`
-    SELECT id, label_de, label_en, desc_de, desc_en, price, price_per_night
-    FROM booking_extras
-    WHERE active = TRUE
-    ORDER BY FIELD(id, 'breakfast', 'dinner', 'transfer', 'flowers', 'wine', 'hiking'), id
-  `);
-
+function getOptions() {
   return {
-    durations: durations.map(normalizeMoney),
-    treatments: treatments.map(normalizeMoney),
-    rooms: rooms.map(normalizeMoney),
-    extras: extras.map(normalizeMoney)
+    durations:  seedDurations,
+    treatments: seedTreatments,
+    rooms:      seedRooms,
+    extras:     seedExtras,
   };
 }
 
@@ -607,12 +432,13 @@ async function createBooking({ customer, selection, lang }) {
 
     await connection.query(
       `
-        INSERT INTO booking_line_items (
-          booking_id, item_type, item_id, item_label, quantity, unit_price, line_total
+        INSERT INTO booking_items (
+          booking_id, reference, item_type, item_id, item_label, quantity, unit_price, line_total
         ) VALUES ?
       `,
       [lines.map((line) => [
         bookingResult.insertId,
+        reference,
         line.type,
         line.itemId,
         line.label,

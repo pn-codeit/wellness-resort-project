@@ -33,6 +33,7 @@ services:
       REDIS_HOST: redis
       BOOKING_AVAILABILITY_DAYS: ${BOOKING_AVAILABILITY_DAYS:-180}
       BOOKING_DAILY_ARRIVAL_CAPACITY: ${BOOKING_DAILY_ARRIVAL_CAPACITY:-8}
+      CLEAR_BOOKINGS_ON_START: ${CLEAR_BOOKINGS_ON_START:-true}
     depends_on:
       mysql:
         condition: service_healthy

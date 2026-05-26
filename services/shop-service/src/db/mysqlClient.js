@@ -16,6 +16,17 @@ let ready = false;
 let lastError = null;
 let initializing = null;
 
+async function ensureColumn(tableName, columnName, definition) {
+  const [rows] = await pool.query(
+    `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?`,
+    [tableName, columnName]
+  );
+  if (rows.length === 0) {
+    await pool.query(`ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${definition}`);
+  }
+}
+
 async function createSchema() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS shop_products (
@@ -54,15 +65,19 @@ async function createSchema() {
     CREATE TABLE IF NOT EXISTS shop_order_items (
       id BIGINT AUTO_INCREMENT PRIMARY KEY,
       order_id BIGINT NOT NULL,
+      reference VARCHAR(40) NOT NULL,
       product_id INT NOT NULL,
       product_name VARCHAR(160) NOT NULL,
       quantity INT NOT NULL,
       unit_price DECIMAL(10,2) NOT NULL,
       line_total DECIMAL(10,2) NOT NULL,
       FOREIGN KEY (order_id) REFERENCES shop_orders(id) ON DELETE CASCADE,
+      FOREIGN KEY (reference) REFERENCES shop_orders(reference) ON DELETE CASCADE,
       FOREIGN KEY (product_id) REFERENCES shop_products(id)
     )
   `);
+
+  await ensureColumn('shop_order_items', 'reference', "VARCHAR(40) NOT NULL DEFAULT '' AFTER order_id");
 }
 
 async function seedCatalog() {
@@ -186,11 +201,12 @@ async function createOrder({ customer, lang, items }) {
     await connection.query(
       `
         INSERT INTO shop_order_items (
-          order_id, product_id, product_name, quantity, unit_price, line_total
+          order_id, reference, product_id, product_name, quantity, unit_price, line_total
         ) VALUES ?
       `,
       [lines.map((line) => [
         orderId,
+        reference,
         line.productId,
         line.productName,
         line.quantity,

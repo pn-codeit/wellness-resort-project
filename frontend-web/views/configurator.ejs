@@ -117,8 +117,10 @@
     <aside class="booking-sidebar">
       <div class="sticky-panel">
         <h2><%= booking.formTitle %></h2>
-        <label><span><%= booking.labels.name %></span><input required name="name" type="text"></label>
-        <label><span><%= booking.labels.email %></span><input required name="email" type="email"></label>
+        <label><span><%= booking.labels.firstName %></span><input required name="firstName" type="text"></label>
+        <label><span><%= booking.labels.lastName %></span><input required name="lastName" type="text"></label>
+        <label><span><%= booking.labels.email %></span><input required name="email" type="email" data-email-input></label>
+        <span class="field-error" data-email-error hidden></span>
         <label><span><%= booking.labels.phone %></span><input required name="phone" type="tel"></label>
         <label><span><%= booking.labels.address %></span><input required name="address" type="text"></label>
         <label><span><%= booking.labels.city %></span><input required name="city" type="text"></label>

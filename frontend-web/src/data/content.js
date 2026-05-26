@@ -72,7 +72,8 @@ const booking = {
     nightsLabel: 'Nächte',
     included: 'Inkl.',
     labels: {
-      name: 'Vor- & Nachname',
+      firstName: 'Vorname',
+      lastName: 'Nachname',
       email: 'E-Mail-Adresse',
       phone: 'Telefon',
       address: 'Straße & Hausnummer',

@@ -50,8 +50,11 @@ function durationIdForNights(nights) {
 function validateBooking(body) {
   const nights = Math.trunc(numberFromBody(body.nights, 0));
 
+  const firstName = String(body.firstName || '').trim();
+  const lastName = String(body.lastName || '').trim();
+
   const customer = {
-    name: String(body.name || '').trim(),
+    name: [firstName, lastName].filter(Boolean).join(' ') || String(body.name || '').trim(),
     email: String(body.email || '').trim(),
     phone: String(body.phone || '').trim(),
     address: String(body.address || '').trim(),
@@ -70,8 +73,8 @@ function validateBooking(body) {
     roomCount: Math.trunc(numberFromBody(body.roomCount, 1))
   };
 
-  if (!customer.name || !customer.email || !customer.phone || !customer.address || !customer.city) {
-    throw Object.assign(new Error('Customer name, email, phone, address and city are required.'), { statusCode: 400 });
+  if (!firstName || !lastName || !customer.email || !customer.phone || !customer.address || !customer.city) {
+    throw Object.assign(new Error('First name, last name, email, phone, address and city are required.'), { statusCode: 400 });
   }
 
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(customer.email)) {

@@ -47,7 +47,8 @@ const konfText = {
     summary_total: 'Gesamtpreis',
     nights_label: 'Nächte',
     book_title: 'Buchung abschließen',
-    name_label: 'Vor- & Nachname',
+    firstName_label: 'Vorname',
+    lastName_label: 'Nachname',
     email_label: 'E-Mail-Adresse',
     phone_label: 'Telefon',
     address_label: 'Straße & Hausnummer',
@@ -104,7 +105,8 @@ const konfText = {
     summary_total: 'Total',
     nights_label: 'nights',
     book_title: 'Complete Booking',
-    name_label: 'Full Name',
+    firstName_label: 'First Name',
+    lastName_label: 'Last Name',
     email_label: 'Email Address',
     phone_label: 'Phone',
     address_label: 'Street & Number',
@@ -123,8 +125,13 @@ function Konfigurator({ lang }) {
   const [treatments, setTreatments] = React.useState([]);
   const [room, setRoom] = React.useState(null);
   const [extras, setExtras] = React.useState([]);
-  const [form, setForm] = React.useState({ name:'', email:'', phone:'', address:'', city:'', arrive:'' });
+  const [form, setForm] = React.useState({ firstName:'', lastName:'', email:'', phone:'', address:'', city:'', arrive:'' });
+  const [emailError, setEmailError] = React.useState(false);
   const [booked, setBooked] = React.useState(false);
+
+  function isValidEmail(value) {
+    return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value.trim());
+  }
 
   const dur = t.duration_options.find(d => d.id === duration);
   const nights = dur ? dur.nights : 0;
@@ -161,10 +168,11 @@ function Konfigurator({ lang }) {
     true,
     !!room,
     true,
-    Object.values(form).every(v => v.trim()),
+    Object.values(form).every(v => v.trim()) && isValidEmail(form.email),
   ][step];
 
   function handleBook() {
+    if (!isValidEmail(form.email)) { setEmailError(true); return; }
     if (Object.values(form).every(v => v.trim())) setBooked(true);
   }
 
@@ -394,7 +402,8 @@ function Konfigurator({ lang }) {
                   <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', color: 'var(--green-deep)', marginBottom: '20px' }}>{t.book_title}</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {[
-                      { key: 'name', label: t.name_label, type: 'text' },
+                      { key: 'firstName', label: t.firstName_label, type: 'text' },
+                      { key: 'lastName', label: t.lastName_label, type: 'text' },
                       { key: 'email', label: t.email_label, type: 'email' },
                       { key: 'phone', label: t.phone_label, type: 'tel' },
                       { key: 'address', label: t.address_label, type: 'text' },
@@ -406,11 +415,24 @@ function Konfigurator({ lang }) {
                         <input
                           type={field.type}
                           value={form[field.key]}
-                          onChange={e => setForm(f => ({ ...f, [field.key]: e.target.value }))}
-                          style={inputStyle}
-                          onFocus={e => e.target.style.borderColor = 'var(--green-mid)'}
-                          onBlur={e => e.target.style.borderColor = 'oklch(80% 0.05 145)'}
+                          onChange={e => {
+                            setForm(f => ({ ...f, [field.key]: e.target.value }));
+                            if (field.key === 'email') {
+                              setEmailError(e.target.value.trim() ? !isValidEmail(e.target.value) : false);
+                            }
+                          }}
+                          style={{ ...inputStyle, ...(field.key === 'email' && emailError ? { borderColor: '#c0392b' } : {}) }}
+                          onFocus={e => e.target.style.borderColor = field.key === 'email' && emailError ? '#c0392b' : 'var(--green-mid)'}
+                          onBlur={e => {
+                            if (field.key === 'email' && form.email.trim()) setEmailError(!isValidEmail(form.email));
+                            e.target.style.borderColor = field.key === 'email' && emailError ? '#c0392b' : 'oklch(80% 0.05 145)';
+                          }}
                         />
+                        {field.key === 'email' && emailError && (
+                          <span style={{ display: 'block', marginTop: '4px', color: '#c0392b', fontSize: '12px' }}>
+                            {lang === 'de' ? 'Bitte geben Sie eine gültige E-Mail-Adresse an.' : 'Please enter a valid email address.'}
+                          </span>
+                        )}
                       </div>
                     ))}
                   </div>

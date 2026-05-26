@@ -14,7 +14,8 @@ const pageText = {
     nightsLabel: 'Nächte',
     included: 'Inkl.',
     labels: {
-      name: 'Vor- & Nachname',
+      firstName: 'Vorname',
+      lastName: 'Nachname',
       email: 'E-Mail-Adresse',
       phone: 'Telefon',
       address: 'Straße & Hausnummer',
@@ -43,7 +44,8 @@ const pageText = {
     nightsLabel: 'nights',
     included: 'Included',
     labels: {
-      name: 'Full Name',
+      firstName: 'First Name',
+      lastName: 'Last Name',
       email: 'Email Address',
       phone: 'Phone',
       address: 'Street & Number',
@@ -85,7 +87,7 @@ const seedTreatments = [
   },
   {
     id: 'fango',
-    label_de: 'Fango-Packung',
+    label_de: 'Fango Packung',
     label_en: 'Fango Pack',
     desc_de: 'Wärmebehandlung mit Heilerde',
     desc_en: 'Heat treatment with healing clay',
@@ -93,7 +95,7 @@ const seedTreatments = [
   },
   {
     id: 'yoga',
-    label_de: 'Yoga-Paket',
+    label_de: 'Yoga Paket',
     label_en: 'Yoga Package',
     desc_de: '5 geführte Yoga-Einheiten',
     desc_en: '5 guided yoga sessions',
@@ -101,7 +103,7 @@ const seedTreatments = [
   },
   {
     id: 'sauna',
-    label_de: 'Sauna-Ritual',
+    label_de: 'Sauna Ritual',
     label_en: 'Sauna Ritual',
     desc_de: 'Aufguss-Zeremonie & Ruheraum',
     desc_en: 'Infusion ceremony & relaxation room',
@@ -109,7 +111,7 @@ const seedTreatments = [
   },
   {
     id: 'kneipp',
-    label_de: 'Kneipp-Therapie',
+    label_de: 'Kneipp Therapie',
     label_en: 'Kneipp Therapy',
     desc_de: 'Wassertreten & Güsse',
     desc_en: 'Water treading & affusions',
@@ -185,7 +187,7 @@ const seedExtras = [
   },
   {
     id: 'transfer',
-    label_de: 'Airport-Transfer',
+    label_de: 'Airport Transfer',
     label_en: 'Airport Transfer',
     desc_de: 'Ab/zum Flughafen München',
     desc_en: 'To/from Munich Airport',

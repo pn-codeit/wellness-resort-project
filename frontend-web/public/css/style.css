@@ -578,6 +578,13 @@ label span {
   font-size: 12px;
 }
 
+.field-error {
+  display: block;
+  margin-top: -10px;
+  color: #c0392b;
+  font-size: 12px;
+}
+
 input,
 textarea {
   width: 100%;
