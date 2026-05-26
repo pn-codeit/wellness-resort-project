@@ -2129,3 +2129,36 @@ input:invalid {
   color: #a74430;
   font-weight: 500;
 }
+/* ── Sonnenaufgang / Sonnenuntergang ── */
+.sun-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.sun-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+}
+
+.sun-icon-el {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.sun-lbl {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 2px;
+}
+
+.sun-time {
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+}
