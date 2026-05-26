@@ -129,7 +129,7 @@
               <% if (contextSources.booking) { %><span><%= assistant.bookingSourceLabel %></span><% } %>
             </div>
             <div class="button-row left">
-              <a class="button gold" href="/configurator?lang=<%= lang %>"><%= assistant.bookCta %></a>
+              <a class="button gold" href="<%= advice.configuratorUrl || `/configurator?lang=${lang}` %>"><%= assistant.bookCta %></a>
               <a class="button pale" href="/assistant?lang=<%= lang %>"><%= assistant.newAdvice %></a>
             </div>
           </footer>

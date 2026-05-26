@@ -348,6 +348,78 @@ if (root) {
     calculateTotal();
   }
 
+  function findInputByValue(name, value) {
+    return Array.from(root.querySelectorAll(`input[name="${name}"]`))
+      .find((input) => input.value === value);
+  }
+
+  function queryValues(params, key) {
+    return params.getAll(key)
+      .flatMap((value) => String(value || '').split(','))
+      .map((value) => value.trim())
+      .filter(Boolean);
+  }
+
+  function findAvailableRangeForNights(nights) {
+    if (!nights || nights < 1) return null;
+
+    let candidates = [];
+    if (availableDates.size > 0) {
+      candidates = Array.from(availableDates).sort();
+    } else if (availability.minArrivalDate) {
+      const maxArrivalDate = availability.maxArrivalDate || addDaysToKey(availability.minArrivalDate, 180);
+      for (let key = availability.minArrivalDate; key <= maxArrivalDate; key = addDaysToKey(key, 1)) {
+        candidates.push(key);
+      }
+    }
+
+    for (const checkIn of candidates) {
+      const checkOut = addDaysToKey(checkIn, nights);
+      if (isCheckInAvailable(checkIn) && isRoomAvailableForRange(checkIn, checkOut)) {
+        return { checkIn, checkOut };
+      }
+    }
+
+    return null;
+  }
+
+  function applyInitialSelectionFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const roomId = params.get('room');
+    const nights = Math.min(30, Math.max(0, Number(params.get('nights') || 0)));
+    const treatmentIds = new Set(queryValues(params, 'treatments'));
+    const extraIds = new Set(queryValues(params, 'extras'));
+
+    if (roomId) {
+      const roomInput = findInputByValue('room', roomId);
+      if (roomInput) roomInput.checked = true;
+    }
+
+    updateRoomCount();
+
+    if (treatmentIds.size > 0) {
+      root.querySelectorAll('input[name="treatments"]').forEach((input) => {
+        input.checked = treatmentIds.has(input.value);
+      });
+    }
+
+    if (extraIds.size > 0) {
+      root.querySelectorAll('input[name="extras"]').forEach((input) => {
+        input.checked = extraIds.has(input.value);
+      });
+    }
+
+    if (nights > 0) {
+      const range = findAvailableRangeForNights(nights);
+      if (range) {
+        rangeCheckIn = range.checkIn;
+        rangeCheckOut = range.checkOut;
+        rangeState = 2;
+        calendarMonth = dateFromKey(range.checkIn);
+      }
+    }
+  }
+
   if (rangeGrid) {
     function handleRangeDateActivation(event) {
       const btn = event.target.closest('[data-date-value]');
@@ -461,6 +533,7 @@ if (root) {
 
   const defaultDate = availability.minArrivalDate || '';
   if (defaultDate) calendarMonth = dateFromKey(defaultDate);
+  applyInitialSelectionFromQuery();
   updateRangeDisplay();
   calculateTotal();
   renderRangeCalendar();
