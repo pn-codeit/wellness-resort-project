@@ -129,7 +129,7 @@ async function getImpressions(lang) {
     items: data.items.map((item) => ({
       ...item,
       mediaUrl: item.media && item.media.objectName
-        ? `/impressions/media/${encodeURIComponent(item.media.objectName)}`
+        ? `/impressions/media/${encodeObjectPath(item.media.objectName)}`
         : null
     }))
   };
@@ -139,7 +139,7 @@ async function getImpressionMedia(objectName) {
   if (!serviceUrls.impressions || !objectName) return null;
 
   try {
-    const res = await fetch(`${serviceUrls.impressions}/media/${encodeURIComponent(objectName)}`, {
+    const res = await fetch(`${serviceUrls.impressions}/media/${encodeObjectPath(objectName)}`, {
       headers: {
         Accept: '*/*'
       }
@@ -150,6 +150,13 @@ async function getImpressionMedia(objectName) {
   } catch (_err) {
     return null;
   }
+}
+
+function encodeObjectPath(objectName) {
+  return String(objectName || '')
+    .split('/')
+    .map((part) => encodeURIComponent(part))
+    .join('/');
 }
 
 function wmoToCondition(code) {
