@@ -1847,44 +1847,6 @@ input:invalid {
   background: #4ade80;
   display: inline-block;
 }
-.daylight-bar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 16px;
-  font-size: 13px;
-  color: rgba(255,255,255,0.7);
-  max-width: 600px;
-}
-.daylight-track {
-  position: relative;
-  flex: 1;
-  height: 6px;
-  border-radius: 3px;
-  background: rgba(255,255,255,0.15);
-}
-
-.daylight-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #f5c842, #ff9500);
-  width: 50%;
-}
-
-.sun-dot {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #f5c842;
-  box-shadow: 0 0 8px rgba(245, 200, 66, 0.8);
-}
 .temp-chart {
   display: flex;
   align-items: flex-end;
@@ -2128,6 +2090,39 @@ input:invalid {
 .range-hint--error {
   color: #a74430;
   font-weight: 500;
+}
+/* ── Sonnenaufgang / Sonnenuntergang ── */
+.sun-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.sun-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+}
+
+.sun-icon-el {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.sun-lbl {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 2px;
+}
+
+.sun-time {
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
 }
 /* ── Sonnenaufgang / Sonnenuntergang ── */
 .sun-row {
