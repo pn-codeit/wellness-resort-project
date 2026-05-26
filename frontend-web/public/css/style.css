@@ -516,12 +516,17 @@ h1, h2, h3, p {
   display: flex;
   gap: 14px;
   min-height: 100%;
-  border: 2px solid transparent;
+  border: 2px solid oklch(82% 0.07 145);
   border-radius: var(--radius);
-  background: var(--cream-dark);
+  background: oklch(95% 0.035 145);
   cursor: pointer;
   padding: 18px;
   transition: 0.2s ease;
+}
+
+.choice-card:hover {
+  border-color: var(--green-mid);
+  background: oklch(92% 0.055 145);
 }
 
 .choice-card.horizontal {
@@ -537,7 +542,7 @@ h1, h2, h3, p {
 
 .choice-card:has(input:checked) {
   border-color: var(--green-mid);
-  background: oklch(94% 0.04 145);
+  background: oklch(90% 0.07 145);
 }
 
 .choice-body {
@@ -655,7 +660,11 @@ textarea:focus {
 
 .date-picker-toggle[aria-invalid="true"],
 input:invalid {
-  border-color: #b85d4a;
+  border-color: var(--green-deep);
+}
+
+.configurator-page input:invalid {
+  border-color: var(--green-deep);
 }
 
 .date-picker-popover {
@@ -875,7 +884,7 @@ input:invalid {
 }
 
 .impressions-page {
-  max-width: 1280px;
+  max-width: 1200px;
 }
 
 .impressions-page .page-header {
