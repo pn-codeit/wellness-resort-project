@@ -13,28 +13,36 @@
           <p><%= weather.current.description %></p>
         </div>
       </div>
-      <div class="weather-stats">
-        <div><span><%= weather.feels %></span><b><%= weather.current.feels %>°C</b></div>
-        <div><span><%= weather.humidity %></span><b><%= weather.current.humidity %>%</b></div>
-        <div><span><%= weather.wind %></span><b><%= weather.current.wind %> km/h</b></div>
-        <div><span><%= weather.pressure %></span><b><%= weather.current.pressure %> hPa</b></div>
-        <div><span><%= weather.sunrise %></span><b><%= weather.current.sunrise %> Uhr</b></div>
-        <div><span><%= weather.sunset %></span><b><%= weather.current.sunset %> Uhr</b></div>
-        <div><span><%= weather.precip || 'Niederschlag' %></span><b><%= weather.current.precip %> mm</b></div>
-        <div><span>UV-Index</span><b><%= weather.current.uv %></b></div>
-      </div>
-       <div class="live-row">
-        <span class="live-dot"></span>
-        <span>Zuletzt aktualisiert: <%= new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) %> Uhr</span>
-            </div>
-            <div class="daylight-bar">
-              <span>🌅 Sonnenaufgang<br><%= weather.current.sunrise %> Uhr</span>
-              <div class="daylight-track">
-                <div class="daylight-fill"></div>
-                <div class="sun-dot"></div>
-              </div>
-              <span>🌇 Sonnenuntergang<br><%= weather.current.sunset %> Uhr</span>
-            </div>
+  <div class="weather-stats">
+  <div><span><%= weather.feels %></span><b><%= weather.current.feels %>°C</b></div>
+  <div><span><%= weather.humidity %></span><b><%= weather.current.humidity %>%</b></div>
+  <div><span><%= weather.wind %></span><b><%= weather.current.wind %> km/h</b></div>
+  <div><span><%= weather.pressure %></span><b><%= weather.current.pressure %> hPa</b></div>
+  <div><span><%= weather.precip || 'Niederschlag' %></span><b><%= weather.current.precip %> mm</b></div>
+  <div><span>UV-Index</span><b><%= weather.current.uv %></b></div>
+</div>
+
+<div class="sun-row">
+  <div class="sun-card">
+    <span class="sun-icon-el">🌅</span>
+    <div>
+      <div class="sun-lbl">Sonnenaufgang</div>
+      <div class="sun-time"><%= weather.current.sunrise %> Uhr</div>
+    </div>
+  </div>
+  <div class="sun-card">
+    <span class="sun-icon-el">🌇</span>
+    <div>
+      <div class="sun-lbl">Sonnenuntergang</div>
+      <div class="sun-time"><%= weather.current.sunset %> Uhr</div>
+    </div>
+  </div>
+</div>
+
+<div class="live-row">
+  <span class="live-dot"></span>
+  <span>Zuletzt aktualisiert: <%= new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) %> Uhr</span>
+</div>
     </div>
   </section>
 
