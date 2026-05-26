@@ -8,6 +8,58 @@ function getLang(req) {
   return req.body.lang === 'en' || req.query.lang === 'en' ? 'en' : 'de';
 }
 
+function normalizeLabel(value) {
+  return String(value || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function findOptionId(options, label) {
+  const normalizedLabel = normalizeLabel(label);
+  if (!normalizedLabel) return null;
+
+  const exact = (options || []).find((item) => normalizeLabel(item.label) === normalizedLabel);
+  if (exact) return exact.id;
+
+  const partial = (options || []).find((item) => {
+    const optionLabel = normalizeLabel(item.label);
+    return optionLabel && (normalizedLabel.includes(optionLabel) || optionLabel.includes(normalizedLabel));
+  });
+
+  return partial ? partial.id : null;
+}
+
+function findDurationNights(durations, label) {
+  const id = findOptionId(durations, label);
+  const byId = (durations || []).find((item) => item.id === id);
+  if (byId) return byId.nights;
+
+  const numeric = String(label || '').match(/\d+/);
+  return numeric ? Number(numeric[0]) : null;
+}
+
+function buildConfiguratorUrl(lang, recommendation, bookingOptions) {
+  const params = new URLSearchParams({ lang });
+  const roomId = findOptionId(bookingOptions.rooms, recommendation.room);
+  const nights = findDurationNights(bookingOptions.durations, recommendation.duration);
+  const treatmentIds = (recommendation.treatments || [])
+    .map((label) => findOptionId(bookingOptions.treatments, label))
+    .filter(Boolean);
+  const extraIds = (recommendation.extras || [])
+    .map((label) => findOptionId(bookingOptions.extras, label))
+    .filter(Boolean);
+
+  if (roomId) params.set('room', roomId);
+  if (nights) params.set('nights', String(nights));
+  treatmentIds.forEach((id) => params.append('treatments', id));
+  extraIds.forEach((id) => params.append('extras', id));
+
+  return `/configurator?${params.toString()}`;
+}
+
 router.post('/booking', async (req, res, next) => {
   try {
     const lang = getLang(req);
@@ -59,7 +111,15 @@ router.post('/assistant/advice', async (req, res, next) => {
   try {
     const lang = getLang(req);
     const input = String(req.body.input || '').trim();
-    const advice = input ? await serviceClients.getAssistantAdvice({ input, lang }) : null;
+    let advice = input ? await serviceClients.getAssistantAdvice({ input, lang }) : null;
+
+    if (advice && advice.recommendation) {
+      const bookingOptions = await serviceClients.getBookingOptions(lang);
+      advice = {
+        ...advice,
+        configuratorUrl: buildConfiguratorUrl(lang, advice.recommendation, bookingOptions)
+      };
+    }
 
     res.render('assistant', {
       page: 'assistant',
