@@ -420,6 +420,16 @@ if (root) {
     }
   }
 
+  function validateEmailFormat() {
+    if (!emailInput) return true;
+    const email = emailInput.value.trim();
+    const isValid = !email || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+    emailInput.setCustomValidity(isValid
+      ? ''
+      : (lang === 'de' ? 'Bitte geben Sie eine gültige E-Mail-Adresse ein (z. B. name@beispiel.de).' : 'Please enter a valid email address (e.g. name@example.com).'));
+    return isValid;
+  }
+
   function validateEmailConfirmation() {
     if (!emailInput || !emailConfirmInput) return true;
 
@@ -478,6 +488,7 @@ if (root) {
 
   if (form) {
     form.addEventListener('submit', (event) => {
+      validateEmailFormat();
       validateEmailConfirmation();
 
       if (!rangeCheckIn || !rangeCheckOut) {
@@ -493,7 +504,7 @@ if (root) {
   }
 
   if (emailInput && emailConfirmInput) {
-    emailInput.addEventListener('input', validateEmailConfirmation);
+    emailInput.addEventListener('input', () => { validateEmailFormat(); validateEmailConfirmation(); });
     emailConfirmInput.addEventListener('input', validateEmailConfirmation);
   }
 
