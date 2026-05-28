@@ -8,10 +8,12 @@ Server-rendered Express/EJS frontend for the university wellness resort project.
 docker compose up --build
 ```
 
-The only host-facing application service is:
+The host-facing services are:
 
 - Frontend: http://localhost:8080
 - Health: http://localhost:8080/health
+- MinIO API: http://localhost:9000
+- MinIO Console: http://localhost:9001
 
 If port `8080` is already in use, set `FRONTEND_PORT` in `.env` and start Compose again:
 
