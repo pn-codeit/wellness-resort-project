@@ -46,7 +46,7 @@ const seedProducts = [
     desc_de: 'Regenerierendes Badeöl mit Latschenkiefer, Arnika und Alpenrose',
     desc_en: 'Regenerating bath oil with mountain pine, arnica and alpine rose',
     color: '#8aab6e',
-    object_name: 'shop/products/1-alpine-herb-bath-oil.svg'
+    object_name: 'shop/photos/Alpenkräuter_Badeöl.png'
   },
   {
     id: 2,
@@ -58,7 +58,7 @@ const seedProducts = [
     desc_de: 'Tiefenwirksame Feuchtigkeitspflege mit Gletscherwasser',
     desc_en: 'Deep-acting moisturiser with glacial water',
     color: '#a8c5d8',
-    object_name: 'shop/products/2-mountain-crystal-face-cream.svg'
+    object_name: 'shop/photos/Bergkristall_Creme.png'
   },
   {
     id: 3,
@@ -70,7 +70,7 @@ const seedProducts = [
     desc_de: 'Handgegossene Sojakerze, 40 Std. Brenndauer',
     desc_en: 'Hand-poured soy candle, 40h burn time',
     color: '#c5a8d8',
-    object_name: 'shop/products/3-lavender-scented-candle.svg'
+    object_name: 'shop/photos/Lavendel_Kerze.png'
   },
   {
     id: 4,
@@ -82,7 +82,7 @@ const seedProducts = [
     desc_de: '6 Sorten alpine Heilkräuter, biologisch zertifiziert',
     desc_en: '6 varieties of alpine medicinal herbs, organically certified',
     color: '#b8d4a0',
-    object_name: 'shop/products/4-allgaeu-herbal-tea-set.svg'
+    object_name: 'shop/photos/Allgäuer_Kräutertee.png'
   },
   {
     id: 5,
@@ -94,7 +94,7 @@ const seedProducts = [
     desc_de: 'Bergkiefer, Eukalyptus und Zirbe, 3 x 10 ml',
     desc_en: 'Mountain pine, eucalyptus and arolla pine, 3 x 10 ml',
     color: '#a8d4b8',
-    object_name: 'shop/products/5-essential-oil-trio.svg'
+    object_name: 'shop/photos/Ätherische_Öle_Trio.png'
   },
   {
     id: 6,
@@ -106,7 +106,7 @@ const seedProducts = [
     desc_de: '8 natürliche Basaltsteine für Hot-Stone-Massagen',
     desc_en: '8 natural basalt stones for hot stone massages',
     color: '#9a9a9a',
-    object_name: 'shop/products/6-basalt-massage-stone-set.svg'
+    object_name: 'shop/photos/Basalt_Stein_Set.png'
   },
   {
     id: 7,
@@ -118,7 +118,7 @@ const seedProducts = [
     desc_de: 'Mildes Naturshampoo für kräftiges, glänzendes Haar',
     desc_en: 'Mild natural shampoo for strong, glossy hair',
     color: '#d4c4a0',
-    object_name: 'shop/products/7-birch-water-shampoo.svg'
+    object_name: 'shop/photos/Birkenwasser_Shampoo.png'
   },
   {
     id: 8,
@@ -130,7 +130,7 @@ const seedProducts = [
     desc_de: 'Authentische Salzlampe, ca. 2-3 kg, mit Kabel',
     desc_en: 'Authentic salt lamp, approx. 2-3 kg, with cable',
     color: '#e8b89a',
-    object_name: 'shop/products/8-himalayan-salt-crystal-lamp.svg'
+    object_name: 'shop/photos/Salzkristall_Lampe.png'
   },
   {
     id: 9,
@@ -142,7 +142,7 @@ const seedProducts = [
     desc_de: '200 g Bio-Moringapulver, kaltgepresst und roh',
     desc_en: '200 g organic moringa powder, cold-pressed and raw',
     color: '#9abb7a',
-    object_name: 'shop/products/9-moringa-superfood-powder.svg'
+    object_name: 'shop/photos/Moringa_Superfood.png'
   }
 ];
 
