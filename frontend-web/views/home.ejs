@@ -1,0 +1,78 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="page-enter">
+  <section class="hero" data-hero-slider>
+    <div class="hero-slides">
+      <% heroSlides.forEach((url, i) => { %>
+        <div class="hero-slide <%= i === 0 ? 'active' : '' %>" style="background-image:url('<%= url %>')"></div>
+      <% }) %>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-inner">
+      <p class="hero-eyebrow">Luxury Mountain Resort</p>
+      <p class="hero-location"><%= home.heroSub %></p>
+      <h1><%- home.heroTitle %></h1>
+      <p class="hero-desc"><%= home.heroDesc %></p>
+      <div class="button-row">
+        <a class="button gold" href="/configurator?lang=<%= lang %>"><%= home.ctaPrimary %></a>
+        <a class="button ghost" href="/impressions?lang=<%= lang %>"><%= home.ctaSecondary %></a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <svg class="hero-stat-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <div class="hero-stat-text">
+          <span class="hero-stat-num"><%= home.heroStats[0].num %></span>
+          <span class="hero-stat-label"><%= home.heroStats[0].label %></span>
+        </div>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <svg class="hero-stat-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22V12m0 0C12 7 7 4 3 5c0 4 3 8 9 7m0-7c0-5 5-8 9-7 0 4-3 8-9 7"/></svg>
+        <div class="hero-stat-text">
+          <span class="hero-stat-num"><%= home.heroStats[1].num %></span>
+          <span class="hero-stat-label"><%= home.heroStats[1].label %></span>
+        </div>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <svg class="hero-stat-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 20 10 8 14 14 17 10 21 20"/></svg>
+        <div class="hero-stat-text">
+          <span class="hero-stat-num"><%= home.heroStats[2].num %></span>
+          <span class="hero-stat-label"><%= home.heroStats[2].label %></span>
+        </div>
+      </div>
+      <div class="hero-stat-divider"></div>
+      <div class="hero-stat">
+        <svg class="hero-stat-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <div class="hero-stat-text">
+          <span class="hero-stat-num"><%= home.heroStats[3].num %></span>
+          <span class="hero-stat-label"><%= home.heroStats[3].label %></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2><%= home.featuresTitle %></h2>
+    <div class="feature-grid">
+      <% home.features.forEach((feature) => { %>
+        <article class="feature-card">
+          <span class="line-icon icon-<%= feature.icon %>" aria-hidden="true"></span>
+          <h3><%= feature.title %></h3>
+          <p><%= feature.desc %></p>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <h2><%= home.ctaTitle %></h2>
+    <p><%= home.ctaText %></p>
+    <a class="button gold" href="/configurator?lang=<%= lang %>"><%= home.ctaButton %></a>
+  </section>
+</main>
+
+<script src="/js/hero-slider.js"></script>
+<%- include('partials/footer') %>

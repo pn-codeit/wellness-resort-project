@@ -1,0 +1,143 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="assistant-page">
+  <section class="assistant-hero">
+    <div class="assistant-inner">
+      <div class="assistant-mark" aria-hidden="true">✦</div>
+      <div class="assistant-copy">
+        <p class="assistant-eyebrow"><%= assistant.eyebrow %></p>
+        <h1><%= assistant.title %></h1>
+        <p><%= assistant.subtitle %></p>
+        <div class="assistant-hero-points" aria-label="<%= assistant.heroPointsLabel %>">
+          <% assistant.heroPoints.forEach((point) => { %>
+            <span><%= point %></span>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="assistant-workspace">
+    <div class="assistant-grid">
+      <article class="assistant-form-card">
+        <% if (!advice) { %>
+          <header class="assistant-card-header">
+            <p><%= assistant.stepLabel %></p>
+            <h2><%= assistant.inputTitle %></h2>
+          </header>
+          <form method="post" action="/assistant/advice">
+            <input type="hidden" name="lang" value="<%= lang %>">
+            <label>
+              <span><%= assistant.inputLabel %></span>
+              <textarea name="input" required rows="7" maxlength="1200" placeholder="<%= assistant.placeholder %>"><%= input %></textarea>
+            </label>
+            <% if (error) { %><p class="form-error"><%= error %></p><% } %>
+            <div class="assistant-submit-row">
+              <button class="button gold" type="submit"><span aria-hidden="true">✦</span> <%= assistant.send %></button>
+              <small><%= assistant.privacyNote %></small>
+            </div>
+          </form>
+        <% } else { %>
+          <header class="assistant-card-header">
+            <p><%= assistant.recapLabel %></p>
+            <h2><%= assistant.resultTitle %></h2>
+          </header>
+          <blockquote class="assistant-recap">“<%= input %>”</blockquote>
+          <div class="assistant-submit-row">
+            <a class="button pale" href="/assistant?lang=<%= lang %>"><%= assistant.newAdvice %></a>
+          </div>
+        <% } %>
+      </article>
+    </div>
+
+    <% if (!advice) { %>
+      <div class="assistant-examples">
+        <p><%= assistant.examplesTitle %></p>
+        <div class="assistant-example-grid">
+          <% assistant.examples.forEach((example) => { %>
+            <button type="button" data-fill-example="<%= example %>">“<%= example %>”</button>
+          <% }) %>
+        </div>
+      </div>
+    <% } else { %>
+      <%
+        const recommendation = advice.recommendation || {};
+        const focusAreas = recommendation.focus_areas || [];
+        const schedule = recommendation.schedule || [];
+        const contextSources = advice.contextSources || {};
+      %>
+      <article class="advisor-result">
+        <header class="advisor-result-header">
+          <div>
+            <p><%= assistant.resultEyebrow %></p>
+            <h2><%= assistant.packagesTitle %></h2>
+          </div>
+          <strong><%= recommendation.total_price %></strong>
+        </header>
+
+        <div class="advisor-result-body">
+          <div class="advisor-main-card">
+            <p class="advisor-greeting"><%= advice.greeting %></p>
+            <% if (focusAreas.length) { %>
+              <div class="focus-row">
+                <% focusAreas.forEach((area) => { %><span><%= area %></span><% }) %>
+              </div>
+            <% } %>
+            <p class="advisor-reasoning"><%= recommendation.reasoning %></p>
+          </div>
+
+          <div class="recommendation-grid">
+            <div>
+              <small><%= assistant.stayLabel %></small>
+              <b><%= recommendation.duration %></b>
+            </div>
+            <div>
+              <small><%= assistant.roomLabel %></small>
+              <b><%= recommendation.room %></b>
+            </div>
+          </div>
+
+          <div class="assistant-detail-grid">
+            <section>
+              <h3><%= assistant.treatmentsTitle %></h3>
+              <div class="pill-row">
+                <% (recommendation.treatments || []).forEach((item) => { %><span><%= item %></span><% }) %>
+              </div>
+            </section>
+            <section>
+              <h3><%= assistant.extrasTitle %></h3>
+              <div class="pill-row gold-pills">
+                <% (recommendation.extras || []).forEach((item) => { %><span><%= item %></span><% }) %>
+              </div>
+            </section>
+          </div>
+
+          <% if (schedule.length) { %>
+            <section class="assistant-plan">
+              <h3><%= assistant.planTitle %></h3>
+              <ol>
+                <% schedule.forEach((item) => { %><li><%= item %></li><% }) %>
+              </ol>
+            </section>
+          <% } %>
+
+          <footer class="advisor-actions">
+            <div class="assistant-source-row">
+              <span><%= assistant.sourceLabel %>: <%= advice.source === 'gemini' ? assistant.sourceAi : assistant.sourceFallback %></span>
+              <% if (advice.cached) { %><span><%= assistant.cachedLabel %></span><% } %>
+              <% if (contextSources.booking) { %><span><%= assistant.bookingSourceLabel %></span><% } %>
+            </div>
+            <div class="button-row left">
+              <a class="button gold" href="<%= advice.configuratorUrl || `/configurator?lang=${lang}` %>"><%= assistant.bookCta %></a>
+              <a class="button pale" href="/assistant?lang=<%= lang %>"><%= assistant.newAdvice %></a>
+            </div>
+          </footer>
+        </div>
+      </article>
+    <% } %>
+  </section>
+</main>
+
+<script src="/js/assistant.js"></script>
+<%- include('partials/footer') %>

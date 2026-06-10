@@ -1,0 +1,289 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="content-page impressions-page">
+  <header class="page-header">
+    <h1><%= impressions.title %></h1>
+    <p><%= impressions.subtitle %></p>
+  </header>
+
+  <section>
+    <h2 class="section-title"><%= impressions.photosTitle %></h2>
+
+    <div class="filter-row">
+      <% impressions.categories.forEach((category, index) => { %>
+        <button 
+          class="<%= index === 0 ? 'active' : '' %>" 
+          data-filter="<%= category %>">
+          <%= category %>
+        </button>
+      <% }) %>
+    </div>
+
+    <div class="gallery-grid">
+      <% impressions.items.forEach((item, index) => { %>
+        <% const cat = lang === 'de' ? item.cat_de : item.cat_en; %>
+        <% const label = lang === 'de' ? item.label_de : item.label_en; %>
+
+        <article class="gallery-card" data-category="<%= cat %>">
+          <div class="gallery-art" style="--c1: <%= item.color1 %>; --c2: <%= item.color2 %>">
+            <% if (item.mediaUrl) { %>
+              <img
+                src="<%= item.mediaUrl %>"
+                alt="<%= label %>"
+                loading="lazy"
+                class="gallery-image"
+                data-index="<%= index %>"
+              >
+            <% } else { %>
+              <svg viewBox="0 0 80 60" aria-hidden="true">
+                <polygon points="8,52 30,16 48,52"></polygon>
+                <polygon points="32,52 54,22 74,52"></polygon>
+                <circle cx="58" cy="16" r="8"></circle>
+              </svg>
+            <% } %>
+          </div>
+
+          <div>
+            <small><%= cat %></small>
+            <h3><%= label %></h3>
+            <% if (item.comment) { %><p class="gallery-comment">&ldquo;<%= item.comment %>&rdquo;</p><% } %>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <div id="lightbox" class="lightbox">
+    <button class="lightbox-close">&times;</button>
+    <button class="lightbox-prev">&#10094;</button>
+    <img id="lightbox-img" src="" alt="Gallery image">
+    <button class="lightbox-next">&#10095;</button>
+  </div>
+
+  <section class="upload-section" id="upload-section" hidden>
+    <h2 class="section-title"><%= impressions.uploadTitle %></h2>
+    <p class="upload-lead"><%= impressions.uploadSubtitle %></p>
+
+    <div class="upload-card" id="upload-card">
+      <input type="file" id="upload-input" accept="image/*" hidden>
+
+      <div class="upload-zone" id="upload-zone">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p><%= impressions.uploadDrop %> <button type="button" class="upload-browse-btn" id="upload-browse"><%= impressions.uploadBrowse %></button></p>
+        <small><%= impressions.uploadHint %></small>
+      </div>
+
+      <div class="upload-preview" id="upload-preview" hidden>
+        <img id="upload-preview-img" src="" alt="Preview">
+        <button type="button" class="upload-remove-btn" id="upload-remove" aria-label="Entfernen">×</button>
+      </div>
+
+      <div class="upload-comment-wrap" id="upload-comment-wrap" hidden>
+        <textarea id="upload-comment" class="upload-comment" rows="3" placeholder="<%= lang === 'de' ? 'Schreib einen Kommentar zu deinem Erlebnis (optional)…' : 'Write a comment about your experience (optional)…' %>"></textarea>
+      </div>
+      <button class="button gold wide" type="button" id="upload-submit" hidden><%= impressions.uploadButton %></button>
+      <p class="upload-status upload-status--success" id="upload-success" hidden><%= impressions.uploadSuccess %></p>
+      <p class="upload-status upload-status--error" id="upload-error" hidden><%= impressions.uploadError %></p>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      const input      = document.getElementById('upload-input');
+      const zone       = document.getElementById('upload-zone');
+      const browse     = document.getElementById('upload-browse');
+      const preview    = document.getElementById('upload-preview');
+      const previewImg = document.getElementById('upload-preview-img');
+      const remove     = document.getElementById('upload-remove');
+      const commentWrap = document.getElementById('upload-comment-wrap');
+      const comment    = document.getElementById('upload-comment');
+      const submit     = document.getElementById('upload-submit');
+      const success    = document.getElementById('upload-success');
+      const error      = document.getElementById('upload-error');
+
+      browse.addEventListener('click', () => input.click());
+      zone.addEventListener('click', (e) => { if (e.target === zone) input.click(); });
+
+      zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+      zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+      });
+
+      input.addEventListener('change', () => { if (input.files[0]) setFile(input.files[0]); });
+
+      function setFile(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImg.src = e.target.result;
+          zone.hidden = true;
+          preview.hidden = false;
+          commentWrap.hidden = false;
+          submit.hidden = false;
+          success.hidden = true;
+          error.hidden = true;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      remove.addEventListener('click', () => {
+        input.value = '';
+        previewImg.src = '';
+        comment.value = '';
+        zone.hidden = false;
+        preview.hidden = true;
+        commentWrap.hidden = true;
+        submit.hidden = true;
+      });
+
+      submit.addEventListener('click', async () => {
+        if (!input.files[0]) return;
+        submit.disabled = true;
+        submit.textContent = '...';
+        const form = new FormData();
+        form.append('file', input.files[0]);
+        if (comment.value.trim()) form.append('comment', comment.value.trim());
+        try {
+          const res = await fetch('/impressions/upload', { method: 'POST', body: form });
+          if (res.ok) {
+            preview.hidden = true;
+            commentWrap.hidden = true;
+            submit.hidden = true;
+            success.hidden = false;
+            zone.hidden = false;
+            input.value = '';
+            comment.value = '';
+            setTimeout(() => window.location.reload(), 2000);
+          } else {
+            error.hidden = false;
+          }
+        } catch {
+          error.hidden = false;
+        } finally {
+          submit.disabled = false;
+          submit.textContent = submit.dataset.label || '<%= impressions.uploadButton %>';
+        }
+      });
+    })();
+  </script>
+
+  <section class="video-section">
+    <h2 class="section-title"><%= impressions.videosTitle %></h2>
+
+    <div class="video-grid">
+      <% impressions.videos.forEach((video) => { %>
+        <article class="video-card">
+          <iframe
+            src="https://www.youtube.com/embed/<%= video.youtubeId %>?rel=0&modestbranding=1"
+            title="<%= lang === 'de' ? video.title_de : video.title_en %>"
+            allowfullscreen>
+          </iframe>
+
+          <div>
+            <h3><%= lang === 'de' ? video.title_de : video.title_en %></h3>
+            <p><%= lang === 'de' ? video.desc_de : video.desc_en %></p>
+          </div>
+        </article>
+      <% }) %>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const images = Array.from(document.querySelectorAll('.gallery-image'));
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      const closeBtn = document.querySelector('.lightbox-close');
+      const prevBtn = document.querySelector('.lightbox-prev');
+      const nextBtn = document.querySelector('.lightbox-next');
+
+      let currentIndex = 0;
+
+      function openLightbox(index) {
+        currentIndex = index;
+        lightboxImg.src = images[currentIndex].src;
+        lightbox.classList.add('active');
+      }
+
+      function closeLightbox() {
+        lightbox.classList.remove('active');
+        lightboxImg.src = '';
+      }
+
+      function showNext(event) {
+        event.stopPropagation();
+        currentIndex = (currentIndex + 1) % images.length;
+        lightboxImg.src = images[currentIndex].src;
+      }
+
+      function showPrev(event) {
+        event.stopPropagation();
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        lightboxImg.src = images[currentIndex].src;
+      }
+
+      images.forEach((img, index) => {
+        img.addEventListener('click', () => openLightbox(index));
+      });
+
+      closeBtn.addEventListener('click', closeLightbox);
+      nextBtn.addEventListener('click', showNext);
+      prevBtn.addEventListener('click', showPrev);
+
+      lightbox.addEventListener('click', (event) => {
+        if (event.target === lightbox) closeLightbox();
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (!lightbox.classList.contains('active')) return;
+
+        if (event.key === 'Escape') closeLightbox();
+        if (event.key === 'ArrowRight') showNext(event);
+        if (event.key === 'ArrowLeft') showPrev(event);
+      });
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterButtons = document.querySelectorAll('.filter-row button');
+      const cards = document.querySelectorAll('.gallery-card');
+
+      const uploadSection = document.getElementById('upload-section');
+      const guestFilterValues = ['Alle', 'All', 'Gästefotos', 'Guest Photos'];
+
+      function updateUploadVisibility(filter) {
+        uploadSection.hidden = !guestFilterValues.includes(filter);
+      }
+
+      // Show on initial load for "Alle"
+      const initialActive = document.querySelector('.filter-row button.active');
+      if (initialActive) updateUploadVisibility(initialActive.dataset.filter);
+
+      filterButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const filter = button.dataset.filter;
+
+          filterButtons.forEach((btn) => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          cards.forEach((card) => {
+            const category = card.dataset.category;
+            card.style.display = (filter === 'Alle' || filter === 'All' || category === filter) ? '' : 'none';
+          });
+
+          updateUploadVisibility(filter);
+        });
+      });
+    });
+  </script>
+</main>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,24 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+<main class="simple-page">
+  <section class="message-panel">
+    <span class="success-mark" aria-hidden="true">✓</span>
+    <h1><%= heading %></h1>
+    <p><%= message %></p>
+    <% if (reference) { %>
+      <p class="reference">Referenz: <strong><%= reference %></strong></p>
+    <% } %>
+    <% if (typeof redirectLabel !== 'undefined' && redirectLabel) { %>
+      <p class="redirect-note"><%= redirectLabel %></p>
+    <% } %>
+    <a class="button gold" href="/?lang=<%= lang %>">Serenity Resort</a>
+  </section>
+</main>
+<% if (typeof redirectUrl !== 'undefined' && redirectUrl) { %>
+  <script>
+    window.setTimeout(() => {
+      window.location.assign('<%= redirectUrl %>');
+    }, <%= typeof redirectDelayMs !== 'undefined' ? redirectDelayMs : 3500 %>);
+  </script>
+<% } %>
+<%- include('partials/footer') %>

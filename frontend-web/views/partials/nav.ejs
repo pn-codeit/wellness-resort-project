@@ -1,0 +1,22 @@
+<%
+  const activeItem = navItems.find((item) => item.id === page) || navItems[0];
+  const langHref = `${activeItem.href}?lang=${langSwitch}`;
+%>
+<nav class="site-nav">
+  <a class="brand" href="/?lang=<%= lang %>" aria-label="Serenity Resort">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+      <ellipse cx="14" cy="14" rx="13" ry="13" fill="none" stroke="currentColor" stroke-width="1.2"></ellipse>
+      <path d="M14 4 C14 4 8 10 8 16 C8 19.3 10.7 22 14 22 C17.3 22 20 19.3 20 16 C20 10 14 4 14 4Z" fill="currentColor" opacity="0.45"></path>
+      <path d="M14 8 C14 8 10 13 10 16.5 C10 18.4 11.8 20 14 20 C16.2 20 18 18.4 18 16.5 C18 13 14 8 14 8Z" fill="currentColor" opacity="0.8"></path>
+    </svg>
+    <span>Serenity</span>
+  </a>
+  <input class="nav-toggle-input" type="checkbox" id="nav-toggle" aria-label="Navigation öffnen">
+  <label class="nav-toggle" for="nav-toggle"><span></span><span></span><span></span></label>
+  <div class="nav-links">
+    <% navItems.forEach((item) => { %>
+      <a class="<%= page === item.id ? 'active' : '' %>" href="<%= item.href %>?lang=<%= lang %>"><%= item.label %></a>
+    <% }) %>
+    <a class="lang-pill" href="<%= langHref %>"><%= langSwitch.toUpperCase() %></a>
+  </div>
+</nav>

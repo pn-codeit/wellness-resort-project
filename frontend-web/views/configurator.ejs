@@ -1,0 +1,150 @@
+<%- include('partials/head') %>
+<%- include('partials/nav') %>
+
+<main class="content-page configurator-page" data-booking-root>
+  <header class="page-header">
+    <h1><%= booking.title %></h1>
+    <p><%= booking.subtitle %></p>
+  </header>
+
+  <form class="config-layout" method="post" action="/booking">
+    <input type="hidden" name="lang" value="<%= lang %>">
+    <input type="hidden" name="estimatedTotal" data-total-input value="0">
+    <input type="hidden" name="duration" data-duration-input value="">
+
+    <section class="config-column">
+      <div class="form-section">
+        <h2><%= booking.durationTitle %></h2>
+        <div class="range-picker" data-range-picker>
+          <div class="range-info-bar">
+            <div class="range-info-item">
+              <small><%= lang === 'de' ? 'Anreise' : 'Check-in' %></small>
+              <strong data-range-checkin-label><%= lang === 'de' ? 'Datum wählen' : 'Select date' %></strong>
+            </div>
+            <div class="range-nights-badge" data-range-nights-badge>—</div>
+            <div class="range-info-item range-info-item--right">
+              <small><%= lang === 'de' ? 'Abreise' : 'Check-out' %></small>
+              <strong data-range-checkout-label><%= lang === 'de' ? 'Datum wählen' : 'Select date' %></strong>
+            </div>
+          </div>
+          <input type="hidden" name="arrive" data-range-checkin>
+          <input type="hidden" name="depart" data-range-checkout>
+          <input type="hidden" name="nights" data-range-nights-value value="0">
+          <div class="range-calendar">
+            <div class="range-calendar-header">
+              <button type="button" data-range-prev aria-label="Previous month">&#8249;</button>
+              <strong data-range-month-label></strong>
+              <button type="button" data-range-next aria-label="Next month">&#8250;</button>
+            </div>
+            <div class="range-weekdays" data-range-weekdays></div>
+            <div class="range-grid" data-range-grid role="grid"></div>
+          </div>
+          <small class="range-hint" data-range-hint><%= lang === 'de' ? 'Wählen Sie Ihr Anreisedatum' : 'Select your check-in date' %></small>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2><%= booking.guestsTitle || (lang === 'de' ? 'Gäste' : 'Guests') %></h2>
+        <div class="guest-fields" aria-label="<%= booking.guestsTitle || (lang === 'de' ? 'Gäste' : 'Guests') %>">
+          <label>
+            <span><%= booking.labels.adults || (lang === 'de' ? 'Erwachsene' : 'Adults') %></span>
+            <input required name="adults" type="number" min="1" max="12" step="1" value="2">
+          </label>
+          <label>
+            <span><%= booking.labels.children || (lang === 'de' ? 'Kinder' : 'Children') %></span>
+            <input required name="children" type="number" min="0" max="12" step="1" value="0">
+          </label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2><%= booking.roomTitle %></h2>
+        <div class="choice-list">
+          <% booking.rooms.forEach((item, index) => { %>
+            <label class="choice-card room-card">
+              <div class="room-card-top">
+                <input type="radio" name="room" value="<%= item.id %>" data-price-per-night="<%= item.pricePerNight %>" data-capacity="<%= item.capacity || 2 %>" data-adult-capacity="<%= item.adultCapacity || item.capacity || 2 %>" data-child-capacity="<%= item.childCapacity || item.capacity || 2 %>" <%= index === 0 ? 'checked' : '' %>>
+                <span class="choice-body">
+                  <strong><%= item.label %></strong>
+                  <small><%= item.desc %></small>
+                  <small><%= item.id === 'family' ? (booking.labels.familyRoomCapacity || (lang === 'de' ? '1-2 Erwachsene und 1-2 Kinder pro Zimmer' : '1-2 adults and 1-2 children per room')) : (booking.labels.roomCapacity || (lang === 'de' ? 'Bis zu {count} Personen pro Zimmer' : 'Up to {count} guests per room')).replace('{count}', item.capacity || 2) %></small>
+                </span>
+                <b><%= item.pricePerNight > 0 ? `+ ${item.pricePerNight} €/Nacht` : booking.included %></b>
+              </div>
+              <% if (roomImages[item.id]) { %>
+                <div class="room-images">
+                  <% roomImages[item.id].forEach((img) => { %>
+                    <% const typeLabel = lang === 'de' ? img.de : img.en; %>
+                    <img src="<%= img.url %>" alt="<%= typeLabel %>" loading="lazy" data-label="<%= typeLabel %> · <%= item.label %>">
+                  <% }) %>
+                </div>
+              <% } %>
+            </label>
+          <% }) %>
+        </div>
+        <div class="room-count-field">
+          <label>
+            <span><%= booking.labels.roomCount || (lang === 'de' ? 'Zimmer' : 'Rooms') %></span>
+            <input required name="roomCount" type="number" min="1" max="12" step="1" value="1" data-room-count>
+          </label>
+          <small data-room-count-hint></small>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2><%= booking.treatmentsTitle %></h2>
+        <div class="choice-grid">
+          <% booking.treatments.forEach((item) => { %>
+            <label class="choice-card">
+              <input type="checkbox" name="treatments" value="<%= item.id %>" data-price="<%= item.price %>">
+              <span class="choice-body">
+                <strong><%= item.label %></strong>
+                <small><%= item.desc %></small>
+                <b>+ <%= item.price %> €</b>
+              </span>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2><%= booking.extrasTitle %></h2>
+        <div class="choice-grid">
+          <% booking.extras.forEach((item) => { %>
+            <label class="choice-card">
+              <input type="checkbox" name="extras" value="<%= item.id %>" data-price="<%= item.price || 0 %>" data-price-per-night="<%= item.pricePerNight || 0 %>">
+              <span class="choice-body">
+                <strong><%= item.label %></strong>
+                <small><%= item.desc %></small>
+                <b><%= item.pricePerNight ? `+ ${item.pricePerNight} €/Nacht` : `+ ${item.price} €` %></b>
+              </span>
+            </label>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+
+    <aside class="booking-sidebar">
+      <div class="sticky-panel">
+        <h2><%= booking.formTitle %></h2>
+        <label><span><%= booking.labels.firstName || (lang === 'de' ? 'Vorname' : 'First name') %></span><input required name="firstName" type="text" autocomplete="given-name"></label>
+        <label><span><%= booking.labels.lastName || (lang === 'de' ? 'Nachname' : 'Last name') %></span><input required name="lastName" type="text" autocomplete="family-name"></label>
+        <label><span><%= booking.labels.email %></span><input required name="email" type="email" autocomplete="email" data-email-input></label>
+        <label><span><%= booking.labels.emailConfirm || (lang === 'de' ? 'E-Mail-Adresse bestätigen' : 'Confirm email address') %></span><input required name="emailConfirm" type="email" autocomplete="off" data-email-confirm-input></label>
+        <label><span><%= booking.labels.phone %></span><input required name="phone" type="tel"></label>
+        <label><span><%= booking.labels.address %></span><input required name="address" type="text"></label>
+        <label><span><%= booking.labels.city %></span><input required name="city" type="text"></label>
+        <div class="total-row">
+          <span><%= booking.total %></span>
+          <strong data-total>0 €</strong>
+        </div>
+        <button class="button gold wide" type="submit"><%= booking.submit %></button>
+      </div>
+    </aside>
+  </form>
+</main>
+
+<script type="application/json" data-booking-availability><%- JSON.stringify(booking.availability || {}) %></script>
+<script src="/js/configurator.js"></script>
+<script src="/js/room-lightbox.js"></script>
+<%- include('partials/footer') %>
