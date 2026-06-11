@@ -110,8 +110,7 @@ services:
       - ./seed:/seed
     entrypoint: >
       /bin/sh -c "
-        sleep 3 &&
-        mc alias set local http://minio:9000 $${MINIO_ROOT_USER:-minioadmin} $${MINIO_ROOT_PASSWORD:-minioadmin} &&
+        until mc alias set local http://minio:9000 $${MINIO_ROOT_USER:-minioadmin} $${MINIO_ROOT_PASSWORD:-minioadmin}; do echo 'Waiting for MinIO...' && sleep 3; done &&
         mc mb --ignore-existing local/wellness-impressions &&
         mc mb --ignore-existing local/wellness-shop &&
         mc mb --ignore-existing local/wellness-homepage &&

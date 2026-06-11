@@ -1,8 +1,8 @@
 #!/bin/sh
-echo "Waiting for MinIO..."
-sleep 10
-
-mc alias set local http://minio:9000 minioadmin minioadmin
+until mc alias set local http://minio:9000 minioadmin minioadmin; do
+  echo "Waiting for MinIO..."
+  sleep 3
+done
 
 mc mb --ignore-existing local/wellness-impressions
 mc mb --ignore-existing local/wellness-shop
